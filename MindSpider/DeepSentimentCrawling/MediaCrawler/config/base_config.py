@@ -1,110 +1,110 @@
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：
-# 1. 不得用于任何商业用途。
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。
-# 3. 不得进行大规模爬取或对平台造成运营干扰。
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。
-# 5. 不得用于任何非法或不当的用途。
+# Disclaimer: This code is for learning and research purposes only. Users must adhere to the following principles:
+# 1. Do not use for any commercial purposes.
+# 2. Comply with the target platform's terms of use and robots.txt rules.
+# 3. Do not perform large-scale crawling or disrupt platform operations.
+# 4. Reasonably control request frequency to avoid unnecessary burden on target platforms.
+# 5. Do not use for any illegal or improper purposes.
 #
-# 详细许可条款请参阅项目根目录下的LICENSE文件。
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。
+# Please refer to the LICENSE file in the project root for detailed license terms.
+# Using this code indicates your agreement to abide by the above principles and all terms in the LICENSE.
 
-# 基础配置
-PLATFORM = "bili"  # 平台，xhs | dy | ks | bili | wb | tieba | zhihu
-KEYWORDS = "电影鬼灭之刃,亲属想侵吞3姐妹亡父赔偿款,网警斩断侵害未成年人网络黑色产业链,2007年后出生的人不能在马尔代夫吸烟,沈月,是公主也是自己的骑士,以军虐囚视频,唐朝诡事录,广州地铁回应APP乘车码频繁弹窗广告,全红婵的减肥计划精确到克"  # 关键词搜索配置，以英文逗号分隔
+# Basic Configuration
+PLATFORM = "bili"  # Platform, xhs | dy | ks | bili | wb | tieba | zhihu
+KEYWORDS = "Demon Slayer Movie, Relatives embezzling compensation of 3 sisters' deceased father, Cyber police cut off online black market targeting minors, People born after 2007 cannot smoke in Maldives, Shen Yue, Is a princess and her own knight, Israeli army abusing prisoners video, Strange Tales of Tang Dynasty, Guangzhou Metro responds to frequent popup ads on app, Quan Hongchan's diet plan accurate to gram"  # Keyword search config, separated by commas
 LOGIN_TYPE = "qrcode"  # qrcode or phone or cookie
 COOKIES = ""
-CRAWLER_TYPE = "search"  # 爬取类型，search(关键词搜索) | detail(帖子详情)| creator(创作者主页数据)
+CRAWLER_TYPE = "search"  # Crawler type, search(keyword search) | detail(post details)| creator(creator homepage data)
 
-# 是否开启 IP 代理
+# Whether to enable IP proxy
 ENABLE_IP_PROXY = False
 
-# 代理IP池数量
+# Number of proxy IPs in pool
 IP_PROXY_POOL_COUNT = 2
 
-# 代理IP提供商名称
+# Proxy IP provider name
 IP_PROXY_PROVIDER_NAME = "kuaidaili"  # kuaidaili | wandouhttp
 
-# 设置为True不会打开浏览器（无头浏览器）
-# 设置False会打开一个浏览器
-# 小红书如果一直扫码登录不通过，打开浏览器手动过一下滑动验证码
-# 抖音如果一直提示失败，打开浏览器看下是否扫码登录之后出现了手机号验证，如果出现了手动过一下再试。
+# Set to True to not open browser (headless browser)
+# Set to False to open a browser
+# If Xiaohongshu login fails repeatedly with QR code, open browser to manually pass sliding captcha
+# If Douyin login fails repeatedly, open browser to see if phone verification appeared after QR scan, pass it manually if so.
 HEADLESS = True
 
-# 是否保存登录状态
+# Whether to save login state
 SAVE_LOGIN_STATE = True
 
-# ==================== CDP (Chrome DevTools Protocol) 配置 ====================
-# 是否启用CDP模式 - 使用用户现有的Chrome/Edge浏览器进行爬取，提供更好的反检测能力
-# 启用后将自动检测并启动用户的Chrome/Edge浏览器，通过CDP协议进行控制
-# 这种方式使用真实的浏览器环境，包括用户的扩展、Cookie和设置，大大降低被检测的风险
+# ==================== CDP (Chrome DevTools Protocol) Config ====================
+# Whether to enable CDP mode - Use user's existing Chrome/Edge browser for crawling, providing better anti-detection capability
+# If enabled, will automatically detect and start user's Chrome/Edge browser, controlled via CDP protocol
+# This method uses real browser environment, including user extensions, cookies and settings, greatly reducing detection risk
 ENABLE_CDP_MODE = True
 
-# CDP调试端口，用于与浏览器通信
-# 如果端口被占用，系统会自动尝试下一个可用端口
+# CDP debug port, used for communicating with browser
+# If port is occupied, system will automatically try next available port
 CDP_DEBUG_PORT = 9222
 
-# 自定义浏览器路径（可选）
-# 如果为空，系统会自动检测Chrome/Edge的安装路径
-# Windows示例: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-# macOS示例: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+# Custom browser path (optional)
+# If empty, system will automatically detect Chrome/Edge installation path
+# Windows example: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+# macOS example: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 CUSTOM_BROWSER_PATH = ""
 
-# CDP模式下是否启用无头模式
-# 注意：即使设置为True，某些反检测功能在无头模式下可能效果不佳
+# Whether to enable headless mode in CDP mode
+# Note: Even if set to True, some anti-detection features may not work well in headless mode
 CDP_HEADLESS = False
 
-# 浏览器启动超时时间（秒）
+# Browser launch timeout (seconds)
 BROWSER_LAUNCH_TIMEOUT = 30
 
-# 是否在程序结束时自动关闭浏览器
-# 设置为False可以保持浏览器运行，便于调试
+# Whether to automatically close browser when program ends
+# Set to False to keep browser running for debugging
 AUTO_CLOSE_BROWSER = True
 
-# 数据保存类型选项配置,支持五种类型：csv、db、json、sqlite、postgresql, 最好保存到DB，有排重的功能。
+# Data save option config, supports five types: csv, db, json, sqlite, postgresql. Best to save to DB for deduplication.
 SAVE_DATA_OPTION = "postgresql"  # csv or db or json or sqlite or postgresql
 
-# 用户浏览器缓存的浏览器文件配置
+# User browser cache file config
 USER_DATA_DIR = "%s_user_data_dir"  # %s will be replaced by platform name
 
-# 爬取开始页数 默认从第一页开始
+# Crawl start page, defaults to 1
 START_PAGE = 1
 
-# 爬取视频/帖子的数量控制
+# Crawl video/post quantity control
 CRAWLER_MAX_NOTES_COUNT = 5
 
-# 并发爬虫数量控制
+# Concurrent crawler quantity control
 MAX_CONCURRENCY_NUM = 1
 
-# 是否开启爬媒体模式（包含图片或视频资源），默认不开启爬媒体
+# Whether to enable media crawling mode (including images or video resources), default disabled
 ENABLE_GET_MEIDAS = False
 
-# 是否开启爬评论模式, 默认开启爬评论
+# Whether to enable comment crawling mode, default enabled
 ENABLE_GET_COMMENTS = True
 
-# 爬取一级评论的数量控制(单视频/帖子)
+# Level 1 comment quantity control (single video/post)
 CRAWLER_MAX_COMMENTS_COUNT_SINGLENOTES = 20
 
-# 是否开启爬二级评论模式, 默认不开启爬二级评论
-# 老版本项目使用了 db, 则需参考 schema/tables.sql line 287 增加表字段
+# Whether to enable level 2 comment crawling mode, default disabled
+# Old version project used db, need to refer to schema/tables.sql line 287 to add table fields
 ENABLE_GET_SUB_COMMENTS = False
 
-# 词云相关
-# 是否开启生成评论词云图
+# Wordcloud related
+# Whether to enable generating comment wordcloud
 ENABLE_GET_WORDCLOUD = False
-# 自定义词语及其分组
-# 添加规则：xx:yy 其中xx为自定义添加的词组，yy为将xx该词组分到的组名。
+# Custom words and their grouping
+# Rule: xx:yy where xx is custom word, yy is group name for xx.
 CUSTOM_WORDS = {
-    "零几": "年份",  # 将“零几”识别为一个整体
-    "高频词": "专业术语",  # 示例自定义词
+    "2000s": "Year",  # Identify "2000s" as a unit
+    "HighFreqWord": "Term",  # Example custom word
 }
 
-# 停用(禁用)词文件路径
+# Stop (forbidden) words file path
 STOP_WORDS_FILE = "./docs/hit_stopwords.txt"
 
-# 中文字体文件路径
+# Chinese font file path
 FONT_PATH = "./docs/STZHONGS.TTF"
 
-# 爬取间隔时间
+# Crawl interval time
 CRAWLER_MAX_SLEEP_SEC = 2
 
 from .bilibili_config import *

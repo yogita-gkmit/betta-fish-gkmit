@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 """
-Qwen3模型配置文件
-定义不同规模的模型参数和配置
+Qwen3 model configuration
+Define model parameters and configurations of different scales
 """
 
-# Qwen3模型配置
+# Qwen3 model configuration
 QWEN3_MODELS = {
     "0.6B": {
         "base_model": "Qwen/Qwen3-0.6B",
@@ -38,7 +37,7 @@ QWEN3_MODELS = {
     }
 }
 
-# 模型文件路径配置
+# Model file path configuration
 MODEL_PATHS = {
     "embedding": {
         "0.6B": "./models/qwen3_embedding_0.6b_sentiment.pth",

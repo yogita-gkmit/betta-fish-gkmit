@@ -1,12 +1,12 @@
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：
-# 1. 不得用于任何商业用途。
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。
-# 3. 不得进行大规模爬取或对平台造成运营干扰。
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。
-# 5. 不得用于任何非法或不当的用途。
+# Disclaimer: This code is for learning and research purposes only. Users must adhere to the following principles:
+# 1. Do not use for any commercial purposes.
+# 2. Comply with the target platform's terms of use and robots.txt rules.
+# 3. Do not perform large-scale crawling or disrupt platform operations.
+# 4. Reasonably control request frequency to avoid unnecessary burden on target platforms.
+# 5. Do not use for any illegal or improper purposes.
 #
-# 详细许可条款请参阅项目根目录下的LICENSE文件。
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。
+# Please refer to the LICENSE file in the project root for detailed license terms.
+# Using this code indicates your agreement to abide by the above principles and all terms in the LICENSE.
 
 
 import asyncio
@@ -53,9 +53,9 @@ crawler: Optional[AbstractCrawler] = None
 
 
 # persist-1<persist1@126.com>
-# 原因：增加 --init_db 功能，用于数据库初始化。
-# 副作用：无
-# 回滚策略：还原此文件。
+# Reason: Added --init_db functionality for database initialization.
+# Side effects: None
+# Rollback strategy: Revert this file.
 async def main():
     # Init crawler
     global crawler

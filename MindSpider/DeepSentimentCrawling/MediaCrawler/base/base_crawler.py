@@ -1,12 +1,12 @@
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：
-# 1. 不得用于任何商业用途。
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。
-# 3. 不得进行大规模爬取或对平台造成运营干扰。
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。
-# 5. 不得用于任何非法或不当的用途。
+# Declaration: This code is for learning and research purposes only. Users must adhere to the following principles:
+# 1. Do not use for any commercial purposes.
+# 2. Comply with the target platform's terms of use and robots.txt rules.
+# 3. Do not perform large-scale crawling or disrupt platform operations.
+# 4. Reasonably control request frequency to avoid unnecessary burden on the target platform.
+# 5. Do not use for any illegal or improper purposes.
 #
-# 详细许可条款请参阅项目根目录下的LICENSE文件。
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。
+# For detailed license terms, please refer to the LICENSE file in the project root directory.
+# Using this code indicates your agreement to abide by the above principles and all terms in the LICENSE.
 
 from abc import ABC, abstractmethod
 from typing import Dict, Optional
@@ -44,14 +44,14 @@ class AbstractCrawler(ABC):
 
     async def launch_browser_with_cdp(self, playwright: Playwright, playwright_proxy: Optional[Dict], user_agent: Optional[str], headless: bool = True) -> BrowserContext:
         """
-        使用CDP模式启动浏览器（可选实现）
-        :param playwright: playwright实例
-        :param playwright_proxy: playwright代理配置
-        :param user_agent: 用户代理
-        :param headless: 无头模式
-        :return: 浏览器上下文
+        Launch browser using CDP mode (optional implementation)
+        :param playwright: playwright instance
+        :param playwright_proxy: playwright proxy configuration
+        :param user_agent: user agent
+        :param headless: headless mode
+        :return: browser context
         """
-        # 默认实现：回退到标准模式
+        # Default implementation: fallback to standard mode
         return await self.launch_browser(playwright.chromium, playwright_proxy, user_agent, headless)
 
 

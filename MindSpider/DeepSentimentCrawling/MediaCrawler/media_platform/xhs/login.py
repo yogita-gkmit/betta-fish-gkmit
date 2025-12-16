@@ -1,12 +1,12 @@
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：  
-# 1. 不得用于任何商业用途。  
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。  
-# 3. 不得进行大规模爬取或对平台造成运营干扰。  
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。   
-# 5. 不得用于任何非法或不当的用途。
-#   
-# 详细许可条款请参阅项目根目录下的LICENSE文件。  
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。  
+# Disclaimer: This code is for educational and research purposes only. Users must adhere to the following principles:
+# 1. Not for any commercial use.
+# 2. Comply with the target platform's terms of service and robots.txt.
+# 3. Do not perform large-scale scraping or disrupt platform operations.
+# 4. Reasonably control request frequency to avoid unnecessary burden on the target platform.
+# 5. Not for any illegal or improper purposes.
+#
+# For detailed license terms, please refer to the LICENSE file in the project root directory.
+# Using this code indicates your agreement to the above principles and all terms in the LICENSE.  
 
 
 import asyncio
@@ -48,7 +48,7 @@ class XiaoHongShuLogin(AbstractLogin):
         """
 
         if "请通过验证" in await self.context_page.content():
-            utils.logger.info("[XiaoHongShuLogin.check_login_state] 登录过程中出现验证码，请手动验证")
+            utils.logger.info("[XiaoHongShuLogin.check_login_state] Captcha appeared during login, please verify manually")
 
         current_cookie = await self.browser_context.cookies()
         _, cookie_dict = utils.convert_cookies(current_cookie)
@@ -67,21 +67,21 @@ class XiaoHongShuLogin(AbstractLogin):
         elif config.LOGIN_TYPE == "cookie":
             await self.login_by_cookies()
         else:
-            raise ValueError("[XiaoHongShuLogin.begin]I nvalid Login Type Currently only supported qrcode or phone or cookies ...")
+            raise ValueError("[XiaoHongShuLogin.begin] Invalid Login Type Currently only supported qrcode or phone or cookies ...")
 
     async def login_by_mobile(self):
         """Login xiaohongshu by mobile"""
         utils.logger.info("[XiaoHongShuLogin.login_by_mobile] Begin login xiaohongshu by mobile ...")
         await asyncio.sleep(1)
         try:
-            # 小红书进入首页后，有可能不会自动弹出登录框，需要手动点击登录按钮
+            # After entering homepage, login box might not pop up automatically, need to click login button manually
             login_button_ele = await self.context_page.wait_for_selector(
                 selector="xpath=//*[@id='app']/div[1]/div[2]/div[1]/ul/div[1]/button",
                 timeout=5000
             )
             await login_button_ele.click()
-            # 弹窗的登录对话框也有两种形态，一种是直接可以看到手机号和验证码的
-            # 另一种是需要点击切换到手机登录的
+            # Login dialog has two forms, one shows phone and captcha directly
+            # Another needs to switch to phone login
             element = await self.context_page.wait_for_selector(
                 selector='xpath=//div[@class="login-container"]//div[@class="other-method"]/div[1]',
                 timeout=5000
@@ -97,11 +97,11 @@ class XiaoHongShuLogin(AbstractLogin):
         await asyncio.sleep(0.5)
 
         send_btn_ele = await login_container_ele.query_selector("label.auth-code > span")
-        await send_btn_ele.click()  # 点击发送验证码
+        await send_btn_ele.click()  # Click send captcha
         sms_code_input_ele = await login_container_ele.query_selector("label.auth-code > input")
         submit_btn_ele = await login_container_ele.query_selector("div.input-container > button")
         cache_client = CacheFactory.create_cache(config.CACHE_TYPE_MEMORY)
-        max_get_sms_code_time = 60 * 2  # 最长获取验证码的时间为2分钟
+        max_get_sms_code_time = 60 * 2  # Max time to get captcha is 2 minutes
         no_logged_in_session = ""
         while max_get_sms_code_time > 0:
             utils.logger.info(f"[XiaoHongShuLogin.login_by_mobile] get sms code from redis remaining time {max_get_sms_code_time}s ...")
@@ -116,15 +116,15 @@ class XiaoHongShuLogin(AbstractLogin):
             _, cookie_dict = utils.convert_cookies(current_cookie)
             no_logged_in_session = cookie_dict.get("web_session")
 
-            await sms_code_input_ele.fill(value=sms_code_value.decode())  # 输入短信验证码
+            await sms_code_input_ele.fill(value=sms_code_value.decode())  # Enter SMS captcha
             await asyncio.sleep(0.5)
             agree_privacy_ele = self.context_page.locator("xpath=//div[@class='agreements']//*[local-name()='svg']")
-            await agree_privacy_ele.click()  # 点击同意隐私协议
+            await agree_privacy_ele.click()  # Click agree privacy agreement
             await asyncio.sleep(0.5)
 
-            await submit_btn_ele.click()  # 点击登录
+            await submit_btn_ele.click()  # Click login
 
-            # todo ... 应该还需要检查验证码的正确性有可能输入的验证码不正确
+            # todo ... should check captcha correctness, input captcha might be incorrect
             break
 
         try:

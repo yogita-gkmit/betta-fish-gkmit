@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：
-# 1. 不得用于任何商业用途。
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。
-# 3. 不得进行大规模爬取或对平台造成运营干扰。
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。
-# 5. 不得用于任何非法或不当的用途。
+# Disclaimer: This code is for educational and research purposes only. Users must adhere to the following principles:
+# 1. Not for any commercial use.
+# 2. Comply with the target platform's terms of service and robots.txt.
+# 3. Do not perform large-scale scraping or disrupt platform operations.
+# 4. Reasonably control request frequency to avoid unnecessary burden on the target platform.
+# 5. Not for any illegal or improper purposes.
 #
-# 详细许可条款请参阅项目根目录下的LICENSE文件。
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。
+# For detailed license terms, please refer to the LICENSE file in the project root directory.
+# Using this code indicates your agreement to the above principles and all terms in the LICENSE.
 
 import hashlib
 import base64
@@ -20,7 +20,7 @@ def _build_c(e: Any, a: Any) -> str:
         c += json.dumps(a, separators=(",", ":"), ensure_ascii=False)
     elif isinstance(a, str):
         c += a
-    # 其它类型不拼
+    # Other types not concatenated
     return c
 
 
@@ -33,8 +33,9 @@ def _md5_hex(s: str) -> str:
 
 
 # ============================================================
-# Playwright 版本（异步）：传入 page（Page 对象）
-#    内部用 page.evaluate('window.mnsv2(...)')
+# ============================================================
+# Playwright Version (Async): Pass page (Page Object)
+#    Internal use page.evaluate('window.mnsv2(...)')
 # ============================================================
 async def seccore_signv2_playwright(
     page,  # Playwright Page
@@ -42,16 +43,16 @@ async def seccore_signv2_playwright(
     a: Any,
 ) -> str:
     """
-    使用 Playwright 的 page.evaluate 调用 window.mnsv2(c, d) 来生成签名。
-    需确保 page 上下文中已存在 window.mnsv2（比如已注入目标站点脚本）。
+    Use Playwright's page.evaluate to call window.mnsv2(c, d) to generate signature.
+    Ensure window.mnsv2 already exists in page context (e.g. target site script injected).
 
-    用法：
+    Usage:
       s = await page.evaluate("(c, d) => window.mnsv2(c, d)", c, d)
     """
     c = _build_c(e, a)
     d = _md5_hex(c)
 
-    # 调用浏览器上下文里的 window.mnsv2
+    # Call window.mnsv2 in browser context
     s = await page.evaluate("(c, d) => window.mnsv2(c, d)", [c, d])
     f = {
         "x0": "4.2.6",

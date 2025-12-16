@@ -1,12 +1,12 @@
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：
-# 1. 不得用于任何商业用途。
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。
-# 3. 不得进行大规模爬取或对平台造成运营干扰。
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。
-# 5. 不得用于任何非法或不当的用途。
+# Declaration: This code is for learning and research purposes only. Users must adhere to the following principles:
+# 1. Do not use for any commercial purposes.
+# 2. Comply with the target platform's terms of use and robots.txt rules.
+# 3. Do not perform large-scale crawling or disrupt platform operations.
+# 4. Reasonably control request frequency to avoid unnecessary burden on the target platform.
+# 5. Do not use for any illegal or improper purposes.
 #
-# 详细许可条款请参阅项目根目录下的LICENSE文件。
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。
+# For detailed license terms, please refer to the LICENSE file in the project root directory.
+# Using this code indicates your agreement to abide by the above principles and all terms in the LICENSE.
 
 import asyncio
 import copy
@@ -30,7 +30,7 @@ class DouYinClient(AbstractApiClient):
 
     def __init__(
         self,
-        timeout=60,  # 若开启爬取媒体选项，抖音的短视频需要更久的超时时间
+        timeout=60,  # If media crawling option is enabled, Douyin short videos require longer timeout
         proxy=None,
         *,
         headers: Dict,
@@ -87,7 +87,7 @@ class DouYinClient(AbstractApiClient):
         params.update(common_params)
         query_string = urllib.parse.urlencode(params)
 
-        # 20240927 a-bogus更新（JS版本）
+        # 20240927 a-bogus update (JS version)
         post_data = {}
         if request_method == "POST":
             post_data = params
@@ -107,7 +107,7 @@ class DouYinClient(AbstractApiClient):
 
     async def get(self, uri: str, params: Optional[Dict] = None, headers: Optional[Dict] = None):
         """
-        GET请求
+        GET request
         """
         await self.__process_req_params(uri, params, headers)
         headers = headers or self.headers
@@ -199,7 +199,7 @@ class DouYinClient(AbstractApiClient):
 
     async def get_sub_comments(self, aweme_id: str, comment_id: str, cursor: int = 0):
         """
-            获取子评论
+            Get sub comments
         """
         uri = "/aweme/v1/web/comment/list/reply/"
         params = {
@@ -224,13 +224,13 @@ class DouYinClient(AbstractApiClient):
         max_count: int = 10,
     ):
         """
-        获取帖子的所有评论，包括子评论
-        :param aweme_id: 帖子ID
-        :param crawl_interval: 抓取间隔
-        :param is_fetch_sub_comments: 是否抓取子评论
-        :param callback: 回调函数，用于处理抓取到的评论
-        :param max_count: 一次帖子爬取的最大评论数量
-        :return: 评论列表
+        Get all comments of the post, including sub comments
+        :param aweme_id: post ID
+        :param crawl_interval: crawling interval
+        :param is_fetch_sub_comments: whether to fetch sub comments
+        :param callback: callback function for processing fetched comments
+        :param max_count: maximum number of comments crawled for a single post
+        :return: comment list
         """
         result = []
         comments_has_more = 1
@@ -245,13 +245,13 @@ class DouYinClient(AbstractApiClient):
             if len(result) + len(comments) > max_count:
                 comments = comments[:max_count - len(result)]
             result.extend(comments)
-            if callback:  # 如果有回调函数，就执行回调函数
+            if callback:  # If there is a callback function, execute it
                 await callback(aweme_id, comments)
 
             await asyncio.sleep(crawl_interval)
             if not is_fetch_sub_comments:
                 continue
-            # 获取二级评论
+            # Fetch level 2 comments
             for comment in comments:
                 reply_comment_total = comment.get("reply_comment_total")
 
@@ -269,7 +269,7 @@ class DouYinClient(AbstractApiClient):
                         if not sub_comments:
                             continue
                         result.extend(sub_comments)
-                        if callback:  # 如果有回调函数，就执行回调函数
+                        if callback:  # If there is a callback function, execute it
                             await callback(aweme_id, sub_comments)
                         await asyncio.sleep(crawl_interval)
         return result
@@ -322,23 +322,23 @@ class DouYinClient(AbstractApiClient):
                 else:
                     return response.content
             except httpx.HTTPError as exc:  # some wrong when call httpx.request method, such as connection error, client error, server error or response status code is not 2xx
-                utils.logger.error(f"[DouYinClient.get_aweme_media] {exc.__class__.__name__} for {exc.request.url} - {exc}")  # 保留原始异常类型名称，以便开发者调试
+                utils.logger.error(f"[DouYinClient.get_aweme_media] {exc.__class__.__name__} for {exc.request.url} - {exc}")  # Keep original exception type name for developer debugging
                 return None
 
     async def resolve_short_url(self, short_url: str) -> str:
         """
-        解析抖音短链接,获取重定向后的真实URL
+        Parse Douyin short link, get real URL after redirection
         Args:
-            short_url: 短链接,如 https://v.douyin.com/iF12345ABC/
+            short_url: short link, e.g. https://v.douyin.com/iF12345ABC/
         Returns:
-            重定向后的完整URL
+            Complete URL after redirection
         """
         async with httpx.AsyncClient(proxy=self.proxy, follow_redirects=False) as client:
             try:
                 utils.logger.info(f"[DouYinClient.resolve_short_url] Resolving short URL: {short_url}")
                 response = await client.get(short_url, timeout=10)
 
-                # 短链接通常返回302重定向
+                # Short links usually return 302 redirect
                 if response.status_code in [301, 302, 303, 307, 308]:
                     redirect_url = response.headers.get("Location", "")
                     utils.logger.info(f"[DouYinClient.resolve_short_url] Resolved to: {redirect_url}")

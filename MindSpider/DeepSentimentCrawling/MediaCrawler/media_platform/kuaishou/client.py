@@ -1,12 +1,12 @@
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：
-# 1. 不得用于任何商业用途。
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。
-# 3. 不得进行大规模爬取或对平台造成运营干扰。
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。
-# 5. 不得用于任何非法或不当的用途。
+# Declaration: This code is for learning and research purposes only. Users must adhere to the following principles:
+# 1. Do not use for any commercial purposes.
+# 2. Comply with the target platform's terms of use and robots.txt rules.
+# 3. Do not perform large-scale crawling or disrupt platform operations.
+# 4. Reasonably control request frequency to avoid unnecessary burden on the target platform.
+# 5. Do not use for any illegal or improper purposes.
 #
-# 详细许可条款请参阅项目根目录下的LICENSE文件。
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。
+# For detailed license terms, please refer to the LICENSE file in the project root directory.
+# Using this code indicates your agreement to abide by the above principles and all terms in the LICENSE.
 
 
 # -*- coding: utf-8 -*-
@@ -203,7 +203,7 @@ class KuaiShouClient(AbstractApiClient):
             comments = vision_commen_list.get("rootComments", [])
             if len(result) + len(comments) > max_count:
                 comments = comments[: max_count - len(result)]
-            if callback:  # 如果有回调函数，就执行回调函数
+            if callback:  # If there is a callback function, execute it
                 await callback(photo_id, comments)
             result.extend(comments)
             await asyncio.sleep(crawl_interval)
@@ -221,12 +221,12 @@ class KuaiShouClient(AbstractApiClient):
         callback: Optional[Callable] = None,
     ) -> List[Dict]:
         """
-        获取指定一级评论下的所有二级评论, 该方法会一直查找一级评论下的所有二级评论信息
+        Get all sub comments under the specified level 1 comment, this method will keep searching for all level 2 comments info under level 1 comment
         Args:
-            comments: 评论列表
-            photo_id: 视频id
-            crawl_interval: 爬取一次评论的延迟单位（秒）
-            callback: 一次评论爬取结束后
+            comments: comments list
+            photo_id: video id
+            crawl_interval: crawling interval unit (seconds)
+            callback: after a comment crawl ends
         Returns:
 
         """
@@ -266,7 +266,7 @@ class KuaiShouClient(AbstractApiClient):
     async def get_creator_info(self, user_id: str) -> Dict:
         """
         eg: https://www.kuaishou.com/profile/3x4jtnbfter525a
-        快手用户主页
+        Kuaishou user homepage
         """
 
         visionProfile = await self.get_creator_profile(user_id)
@@ -279,11 +279,11 @@ class KuaiShouClient(AbstractApiClient):
         callback: Optional[Callable] = None,
     ) -> List[Dict]:
         """
-        获取指定用户下的所有发过的帖子，该方法会一直查找一个用户下的所有帖子信息
+        Get all posts published by the specified user, this method will keep searching for all posts info under a user
         Args:
-            user_id: 用户ID
-            crawl_interval: 爬取一次的延迟单位（秒）
-            callback: 一次分页爬取结束后的更新回调函数
+            user_id: user ID
+            crawl_interval: crawling interval unit (seconds)
+            callback: update callback function after a page crawl ends
         Returns:
 
         """

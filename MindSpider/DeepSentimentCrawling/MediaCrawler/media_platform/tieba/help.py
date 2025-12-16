@@ -1,12 +1,12 @@
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：  
-# 1. 不得用于任何商业用途。  
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。  
-# 3. 不得进行大规模爬取或对平台造成运营干扰。  
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。   
-# 5. 不得用于任何非法或不当的用途。
+# Declaration: This code is for learning and research purposes only. Users must adhere to the following principles:  
+# 1. Do not use for any commercial purposes.  
+# 2. Comply with the target platform's terms of use and robots.txt rules.  
+# 3. Do not perform large-scale crawling or disrupt platform operations.  
+# 4. Reasonably control request frequency to avoid unnecessary burden on the target platform.   
+# 5. Do not use for any illegal or improper purposes.
 #   
-# 详细许可条款请参阅项目根目录下的LICENSE文件。  
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。  
+# For detailed license terms, please refer to the LICENSE file in the project root directory.  
+# Using this code indicates your agreement to abide by the above principles and all terms in the LICENSE.  
 
 
 # -*- coding: utf-8 -*-
@@ -33,12 +33,12 @@ class TieBaExtractor:
     @staticmethod
     def extract_search_note_list(page_content: str) -> List[TiebaNote]:
         """
-        提取贴吧帖子列表，这里提取的关键词搜索结果页的数据，还缺少帖子的回复数和回复页等数据
+        Extract Tieba post list, here extracting data from keyword search result page, missing data like reply count and reply pages
         Args:
-            page_content: 页面内容的HTML字符串
+            page_content: HTML string of page content
 
         Returns:
-            包含帖子信息的字典列表
+            List of dictionaries containing post info
         """
         xpath_selector = "//div[@class='s_post']"
         post_list = Selector(text=page_content).xpath(xpath_selector)
@@ -62,7 +62,7 @@ class TieBaExtractor:
 
     def extract_tieba_note_list(self, page_content: str) -> List[TiebaNote]:
         """
-        提取贴吧帖子列表
+        Extract Tieba post list
         Args:
             page_content:
 
@@ -97,7 +97,7 @@ class TieBaExtractor:
 
     def extract_note_detail(self, page_content: str) -> TiebaNote:
         """
-        提取贴吧帖子详情
+        Extract Tieba post details
         Args:
             page_content:
 
@@ -108,10 +108,10 @@ class TieBaExtractor:
         first_floor_selector = content_selector.xpath("//div[@class='p_postlist'][1]")
         only_view_author_link = content_selector.xpath("//*[@id='lzonly_cntn']/@href").get(default='').strip()
         note_id = only_view_author_link.split("?")[0].split("/")[-1]
-        # 帖子回复数、回复页数
+        # Post reply count, reply page count
         thread_num_infos = content_selector.xpath(
             "//div[@id='thread_theme_5']//li[@class='l_reply_num']//span[@class='red']")
-        # IP地理位置、发表时间
+        # IP location, publish time
         other_info_content = content_selector.xpath(".//div[@class='post-tail-wrap']").get(default="").strip()
         ip_location, publish_time = self.extract_ip_and_pub_time(other_info_content)
         note = TiebaNote(note_id=note_id, title=content_selector.xpath("//title/text()").get(default='').strip(),
@@ -134,7 +134,7 @@ class TieBaExtractor:
 
     def extract_tieba_note_parment_comments(self, page_content: str, note_id: str) -> List[TiebaComment]:
         """
-        提取贴吧帖子一级评论
+        Extract Tieba post level 1 comments
         Args:
             page_content:
             note_id:
@@ -171,7 +171,7 @@ class TieBaExtractor:
 
     def extract_tieba_note_sub_comments(self, page_content: str, parent_comment: TiebaComment) -> List[TiebaComment]:
         """
-        提取贴吧帖子二级评论
+        Extract Tieba post level 2 comments
         Args:
             page_content:
             parent_comment:
@@ -206,7 +206,7 @@ class TieBaExtractor:
 
     def extract_creator_info(self, html_content: str) -> TiebaCreator:
         """
-        提取贴吧创作者信息
+        Extract Tieba creator info
         Args:
             html_content:
 
@@ -242,7 +242,7 @@ class TieBaExtractor:
         html_content: str
     ) -> List[str]:
         """
-        提取贴吧创作者主页的帖子列表
+        Extract post list from Tieba creator homepage
         Args:
             html_content:
 
@@ -262,7 +262,7 @@ class TieBaExtractor:
 
     def extract_ip_and_pub_time(self, html_content: str) -> Tuple[str, str]:
         """
-        提取IP位置和发布时间
+        Extract IP location and publish time
         Args:
             html_content:
 
@@ -277,7 +277,7 @@ class TieBaExtractor:
     @staticmethod
     def extract_ip(html_content: str) -> str:
         """
-        提取IP
+        Extract IP
         Args:
             html_content:
 
@@ -292,7 +292,7 @@ class TieBaExtractor:
     @staticmethod
     def extract_gender(html_content: str) -> str:
         """
-        提取性别
+        Extract gender
         Args:
             html_content:
 
@@ -300,15 +300,15 @@ class TieBaExtractor:
 
         """
         if GENDER_MALE in html_content:
-            return '男'
+            return 'Male'
         elif GENDER_FEMALE in html_content:
-            return '女'
-        return '未知'
+            return 'Female'
+        return 'Unknown'
 
     @staticmethod
     def extract_follow_and_fans(selectors: List[Selector]) -> Tuple[str, str]:
         """
-        提取关注数和粉丝数
+        Extract follow count and fans count
         Args:
             selectors:
 
@@ -336,7 +336,7 @@ class TieBaExtractor:
     @staticmethod
     def extract_data_field_value(selector: Selector) -> Dict:
         """
-        提取data-field的值
+        Extract data-field value
         Args:
             selector:
 
@@ -347,11 +347,11 @@ class TieBaExtractor:
         if not data_field_value or data_field_value == "{}":
             return {}
         try:
-            # 先使用 html.unescape 处理转义字符 再json.loads 将 JSON 字符串转换为 Python 字典
+            # First use html.unescape to handle escape characters, then use json.loads to convert JSON string to Python dictionary
             unescaped_json_str = html.unescape(data_field_value)
             data_field_dict_value = json.loads(unescaped_json_str)
         except Exception as ex:
-            print(f"extract_data_field_value，错误信息：{ex}, 尝试使用其他方式解析")
+            print(f"extract_data_field_value, error info: {ex}, trying other parsing methods")
             data_field_dict_value = {}
         return data_field_dict_value
 

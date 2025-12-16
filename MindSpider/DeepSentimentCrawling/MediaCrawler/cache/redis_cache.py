@@ -1,19 +1,19 @@
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：  
-# 1. 不得用于任何商业用途。  
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。  
-# 3. 不得进行大规模爬取或对平台造成运营干扰。  
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。   
-# 5. 不得用于任何非法或不当的用途。
+# Declaration: This code is for learning and research purposes only. Users must adhere to the following principles:  
+# 1. Do not use for any commercial purposes.  
+# 2. Comply with the target platform's terms of use and robots.txt rules.  
+# 3. Do not perform large-scale crawling or disrupt platform operations.  
+# 4. Reasonably control request frequency to avoid unnecessary burden on the target platform.   
+# 5. Do not use for any illegal or improper purposes.
 #   
-# 详细许可条款请参阅项目根目录下的LICENSE文件。  
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。  
+# For detailed license terms, please refer to the LICENSE file in the project root directory.  
+# Using this code indicates your agreement to abide by the above principles and all terms in the LICENSE.  
 
 
 # -*- coding: utf-8 -*-
 # @Author  : relakkes@gmail.com
-# @Name    : 程序员阿江-Relakkes
+# @Name    : Programmer Ajiang-Relakkes
 # @Time    : 2024/5/29 22:57
-# @Desc    : RedisCache实现
+# @Desc    : RedisCache implementation
 import pickle
 import time
 from typing import Any, List
@@ -27,13 +27,13 @@ from config import db_config
 class RedisCache(AbstractCache):
 
     def __init__(self) -> None:
-        # 连接redis, 返回redis客户端
+        # Connect to redis, return redis client
         self._redis_client = self._connet_redis()
 
     @staticmethod
     def _connet_redis() -> Redis:
         """
-        连接redis, 返回redis客户端, 这里按需配置redis连接信息
+        Connect to redis, return redis client, configure redis connection info as needed here
         :return:
         """
         return Redis(
@@ -45,7 +45,7 @@ class RedisCache(AbstractCache):
 
     def get(self, key: str) -> Any:
         """
-        从缓存中获取键的值, 并且反序列化
+        Get value of key from cache, and deserialize
         :param key:
         :return:
         """
@@ -56,7 +56,7 @@ class RedisCache(AbstractCache):
 
     def set(self, key: str, value: Any, expire_time: int) -> None:
         """
-        将键的值设置到缓存中, 并且序列化
+        Set value of key into cache, and serialize
         :param key:
         :param value:
         :param expire_time:
@@ -66,7 +66,7 @@ class RedisCache(AbstractCache):
 
     def keys(self, pattern: str) -> List[str]:
         """
-        获取所有符合pattern的key
+        Get all keys matching pattern
         """
         return [key.decode() for key in self._redis_client.keys(pattern)]
 
@@ -74,7 +74,7 @@ class RedisCache(AbstractCache):
 if __name__ == '__main__':
     redis_cache = RedisCache()
     # basic usage
-    redis_cache.set("name", "程序员阿江-Relakkes", 1)
+    redis_cache.set("name", "Programmer Ajiang-Relakkes", 1)
     print(redis_cache.get("name"))  # Relakkes
     print(redis_cache.keys("*"))  # ['name']
     time.sleep(2)

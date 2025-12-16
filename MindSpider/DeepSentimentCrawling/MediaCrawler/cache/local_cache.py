@@ -1,19 +1,19 @@
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：  
-# 1. 不得用于任何商业用途。  
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。  
-# 3. 不得进行大规模爬取或对平台造成运营干扰。  
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。   
-# 5. 不得用于任何非法或不当的用途。
+# Declaration: This code is for learning and research purposes only. Users must adhere to the following principles:  
+# 1. Do not use for any commercial purposes.  
+# 2. Comply with the target platform's terms of use and robots.txt rules.  
+# 3. Do not perform large-scale crawling or disrupt platform operations.  
+# 4. Reasonably control request frequency to avoid unnecessary burden on the target platform.   
+# 5. Do not use for any illegal or improper purposes.
 #   
-# 详细许可条款请参阅项目根目录下的LICENSE文件。  
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。  
+# For detailed license terms, please refer to the LICENSE file in the project root directory.  
+# Using this code indicates your agreement to abide by the above principles and all terms in the LICENSE.  
 
 
 # -*- coding: utf-8 -*-
 # @Author  : relakkes@gmail.com
-# @Name    : 程序员阿江-Relakkes
+# @Name    : Programmer Ajiang-Relakkes
 # @Time    : 2024/6/2 11:05
-# @Desc    : 本地缓存
+# @Desc    : Local cache
 
 import asyncio
 import time
@@ -26,19 +26,19 @@ class ExpiringLocalCache(AbstractCache):
 
     def __init__(self, cron_interval: int = 10):
         """
-        初始化本地缓存
-        :param cron_interval: 定时清楚cache的时间间隔
+        Initialize local cache
+        :param cron_interval: Interval for clearing cache
         :return:
         """
         self._cron_interval = cron_interval
         self._cache_container: Dict[str, Tuple[Any, float]] = {}
         self._cron_task: Optional[asyncio.Task] = None
-        # 开启定时清理任务
+        # Start scheduled cleanup task
         self._schedule_clear()
 
     def __del__(self):
         """
-        析构函数，清理定时任务
+        Destructor, clear scheduled task
         :return:
         """
         if self._cron_task is not None:
@@ -46,7 +46,7 @@ class ExpiringLocalCache(AbstractCache):
 
     def get(self, key: str) -> Optional[Any]:
         """
-        从缓存中获取键的值
+        Get value of key from cache
         :param key:
         :return:
         """
@@ -54,7 +54,7 @@ class ExpiringLocalCache(AbstractCache):
         if value is None:
             return None
 
-        # 如果键已过期，则删除键并返回None
+        # If key has expired, delete key and return None
         if expire_time < time.time():
             del self._cache_container[key]
             return None
@@ -63,7 +63,7 @@ class ExpiringLocalCache(AbstractCache):
 
     def set(self, key: str, value: Any, expire_time: int) -> None:
         """
-        将键的值设置到缓存中
+        Set value of key into cache
         :param key:
         :param value:
         :param expire_time:
@@ -73,14 +73,14 @@ class ExpiringLocalCache(AbstractCache):
 
     def keys(self, pattern: str) -> List[str]:
         """
-        获取所有符合pattern的key
-        :param pattern: 匹配模式
+        Get all keys matching pattern
+        :param pattern: Matching pattern
         :return:
         """
         if pattern == '*':
             return list(self._cache_container.keys())
 
-        # 本地缓存通配符暂时将*替换为空
+        # Local cache wildcard temporarily replaces * with empty
         if '*' in pattern:
             pattern = pattern.replace('*', '')
 
@@ -88,7 +88,7 @@ class ExpiringLocalCache(AbstractCache):
 
     def _schedule_clear(self):
         """
-        开启定时清理任务,
+        Start scheduled cleanup task
         :return:
         """
 
@@ -102,7 +102,7 @@ class ExpiringLocalCache(AbstractCache):
 
     def _clear(self):
         """
-        根据过期时间清理缓存
+        Clear cache based on expiration time
         :return:
         """
         for key, (value, expire_time) in self._cache_container.items():
@@ -111,7 +111,7 @@ class ExpiringLocalCache(AbstractCache):
 
     async def _start_clear_cron(self):
         """
-        开启定时清理任务
+        Start scheduled cleanup task
         :return:
         """
         while True:
@@ -121,7 +121,7 @@ class ExpiringLocalCache(AbstractCache):
 
 if __name__ == '__main__':
     cache = ExpiringLocalCache(cron_interval=2)
-    cache.set('name', '程序员阿江-Relakkes', 3)
+    cache.set('name', 'Programmer Ajiang-Relakkes', 3)
     print(cache.get('key'))
     print(cache.keys("*"))
     time.sleep(4)
