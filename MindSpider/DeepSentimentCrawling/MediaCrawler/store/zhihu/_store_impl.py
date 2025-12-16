@@ -1,18 +1,18 @@
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：
-# 1. 不得用于任何商业用途。
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。
-# 3. 不得进行大规模爬取或对平台造成运营干扰。
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。
-# 5. 不得用于任何非法或不当的用途。
+# Declaration: This code is for learning and research purposes only. Users must adhere to the following principles:
+# 1. Must not be used for any commercial purposes.
+# 2. When using, comply with the target platform's terms of service and robots.txt rules.
+# 3. Do not perform large-scale crawling or cause operational disruption to the platform.
+# 4. Reasonably control request frequency to avoid unnecessary load on the target platform.
+# 5. Must not be used for any illegal or improper purposes.
 #
-# 详细许可条款请参阅项目根目录下的LICENSE文件。
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。
+# For detailed license terms, see the LICENSE file in the project root.
+# Using this code indicates your agreement to comply with the above principles and all terms in the LICENSE.
 
 
 # -*- coding: utf-8 -*-
 # @Author  : persist1@126.com
 # @Time    : 2025/9/5 19:34
-# @Desc    : 知乎存储实现类
+# @Desc    : Zhihu storage implementation class
 import asyncio
 import csv
 import json
@@ -33,12 +33,15 @@ from var import crawler_type_var
 from tools.async_file_writer import AsyncFileWriter
 
 def calculate_number_of_files(file_store_path: str) -> int:
-    """计算数据保存文件的前部分排序数字，支持每次运行代码不写到同一个文件中
-    Args:
-        file_store_path;
-    Returns:
-        file nums
     """
+Calculate the leading numeric part of the data storage file name, supporting that each run writes to a different file.
+
+Args:
+    file_store_path (str): Path to the file storage directory.
+
+Returns:
+    int: The next file number.
+"""
     if not os.path.exists(file_store_path):
         return 1
     try:

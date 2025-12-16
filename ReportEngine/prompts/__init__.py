@@ -1,6 +1,6 @@
 """
-Report Engine提示词模块
-定义报告生成各个阶段使用的系统提示词
+Report Engine Prompts Module
+Defines system prompts used in various stages of report generation
 """
 
 from .prompts import (

@@ -1,7 +1,7 @@
 """
 Report Engine
-一个智能报告生成AI代理实现
-基于三个子agent的输出和论坛日志生成综合HTML报告
+An intelligent report generation AI agent implementation
+Generates comprehensive HTML reports based on outputs from three sub-agents and forum logs
 """
 
 from .agent import ReportAgent, create_agent

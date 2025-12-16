@@ -1,6 +1,6 @@
 """
-Report Engine节点基类
-定义所有处理节点的基础接口
+Report Engine Base Node
+Defines basic interface for all processing nodes
 """
 
 from abc import ABC, abstractmethod
@@ -10,15 +10,15 @@ from ..state.state import ReportState
 from loguru import logger
 
 class BaseNode(ABC):
-    """节点基类"""
+    """Base Node"""
     
     def __init__(self, llm_client: LLMClient, node_name: str = ""):
         """
-        初始化节点
+        Initialize node
         
         Args:
-            llm_client: LLM客户端
-            node_name: 节点名称
+            llm_client: LLM client
+            node_name: Node name
         """
         self.llm_client = llm_client
         self.node_name = node_name or self.__class__.__name__
@@ -26,66 +26,66 @@ class BaseNode(ABC):
     @abstractmethod
     def run(self, input_data: Any, **kwargs) -> Any:
         """
-        执行节点处理逻辑
+        Execute node processing logic
         
         Args:
-            input_data: 输入数据
-            **kwargs: 额外参数
+            input_data: Input data
+            **kwargs: Extra parameters
             
         Returns:
-            处理结果
+            Processing result
         """
         pass
     
     def validate_input(self, input_data: Any) -> bool:
         """
-        验证输入数据
+        Validate input data
         
         Args:
-            input_data: 输入数据
+            input_data: Input data
             
         Returns:
-            验证是否通过
+            Whether validation passed
         """
         return True
     
     def process_output(self, output: Any) -> Any:
         """
-        处理输出数据
+        Process output data
         
         Args:
-            output: 原始输出
+            output: Original output
             
         Returns:
-            处理后的输出
+            Processed output
         """
         return output
     
     def log_info(self, message: str):
-        """记录信息日志"""
+        """Log info message"""
         formatted_message = f"[{self.node_name}] {message}"
         logger.info(formatted_message)
     
     def log_error(self, message: str):
-        """记录错误日志"""
+        """Log error message"""
         formatted_message = f"[{self.node_name}] {message}"
         logger.error(formatted_message)
 
 
 class StateMutationNode(BaseNode):
-    """带状态修改功能的节点基类"""
+    """Base node class with state mutation capability"""
     
     @abstractmethod
     def mutate_state(self, input_data: Any, state: ReportState, **kwargs) -> ReportState:
         """
-        修改状态
+        Mutate state
         
         Args:
-            input_data: 输入数据
-            state: 当前状态
-            **kwargs: 额外参数
+            input_data: Input data
+            state: Current state
+            **kwargs: Extra parameters
             
         Returns:
-            修改后的状态
+            Mutated state
         """
         pass

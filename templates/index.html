@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>微舆</title>
+    <title>Micro Opinion</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
     <style>
         * {
@@ -22,14 +22,14 @@
 
         .container {
             max-width: 100vw;
-            height: 100vh; /* 固定高度为视口高度 */
+            height: 100vh; /* Fixed height as viewport height */
             display: flex;
             flex-direction: column;
             border: 2px solid #000000;
-            overflow: hidden; /* 防止整体滚动 */
+            overflow: hidden; /* Prevent overall scrolling */
         }
 
-        /* 搜索框区域 */
+        /* Search box area */
         .search-section {
             border-bottom: 2px solid #000000;
             padding: 20px;
@@ -178,17 +178,17 @@
             color: #8b4513;
         }
 
-        /* 主内容区域 */
+        /* Main content area */
         .main-content {
             flex: 1;
             display: flex;
             height: calc(100vh - 140px);
-            min-height: 0; /* 允许子元素缩小 */
+            min-height: 0; /* Allow child elements to shrink */
         }
 
-        /* 嵌入页面区域 */
+        /* Embedded page area */
         .embedded-section {
-            flex: 1.8; /* 稍微缩小左侧区域 */
+            flex: 1.8; /* Slightly shrink left area */
             border-right: 2px solid #000000;
             background-color: #ffffff;
             position: relative;
@@ -208,17 +208,17 @@
             overflow: hidden;
         }
 
-        /* 控制台输出区域 */
+        /* Console output area */
         .console-section {
-            flex: 1.2; /* 稍微扩大右侧区域 */
+            flex: 1.2; /* Slightly expand right area */
             display: flex;
             flex-direction: column;
             background-color: #ffffff;
-            min-height: 0; /* 允许子元素缩小 */
-            overflow: hidden; /* 防止内容溢出 */
+            min-height: 0; /* Allow child elements to shrink */
+            overflow: hidden; /* Prevent content overflow */
         }
 
-        /* 应用切换按钮 */
+        /* App switcher button */
         .app-switcher {
             display: flex;
             border-bottom: 2px solid #000000;
@@ -292,7 +292,7 @@
             background-color: #ffff00;
         }
 
-        /* 控制台输出 */
+        /* Console output */
         .console-output {
             flex: 1;
             padding: 15px;
@@ -304,14 +304,14 @@
             overflow-x: hidden;
             white-space: pre-wrap;
             word-break: break-all;
-            min-height: 0; /* 允许内容缩小 */
+            min-height: 0; /* Allow content to shrink */
         }
 
         .console-line {
             margin-bottom: 2px;
         }
 
-        /* 状态信息 */
+        /* Status information */
         .status-bar {
             padding: 10px 20px;
             border-top: 2px solid #000000;
@@ -542,7 +542,7 @@
             animation: spin 1s ease-in-out infinite;
         }
 
-        /* 专门用于报告状态的加载指示器，不会让整个容器旋转 */
+        /* Loading indicator specifically for report status, prevents the entire container from rotating */
         .report-loading-spinner {
             display: inline-block;
             width: 16px;
@@ -555,9 +555,9 @@
             vertical-align: middle;
         }
 
-        /* 任务进度条样式 */
+        /* Task progress bar style */
         .task-progress-container {
-            margin: 0; /* 移除margin，使用父容器的gap控制间距 */
+            margin: 0; /* Remove margin, use parent container gap to control spacing */
             padding: 20px;
             border: 2px solid #000000;
             background-color: #f5f5f0;
@@ -598,7 +598,7 @@
             top: 0;
             left: 0;
             z-index: 1;
-            min-width: 2px; /* 确保即使是0%也有一点显示 */
+            min-width: 2px; /* Ensure there is a little display even if 0% */
         }
 
         .task-progress-text {
@@ -684,7 +684,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* 响应式设计 */
+        /* Responsive design */
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
@@ -702,7 +702,7 @@
             }
         }
 
-        /* 消息提示 */
+        /* Message tooltip */
         .message {
             position: fixed;
             top: 20px;
@@ -731,7 +731,7 @@
             background-color: #fff0f0;
         }
 
-        /* Forum Engine 专用样式 */
+        /* Forum Engine specific styles */
         .forum-container {
             display: none;
             height: 100%;
@@ -774,59 +774,59 @@
         }
 
         .forum-message.agent {
-            align-self: stretch; /* 占满整个宽度 */
+            align-self: stretch; /* Occupy full width */
             color: #000000;
-            width: 100%; /* 确保占满宽度 */
-            max-width: 100%; /* 移除最大宽度限制 */
-            margin: 0 0 20px 0; /* 移除左右边距 */
+            width: 100%; /* Ensure full width */
+            max-width: 100%; /* Remove max width limit */
+            margin: 0 0 20px 0; /* Remove left and right margins */
         }
 
-        /* 不同Engine的颜色区分 */
-        .forum-message.agent:has(.forum-message-header:contains("Query Engine")) {
-            background-color: #eaf1f8;
-            border-color: #608ab1;
-        }
+        /* Color distinction for different Engines */
+        .forum-message.agent:has(.forum-message-header:contains("Query Engine")) {
+            background-color: #eaf1f8;
+            border-color: #608ab1;
+        }
 
         .forum-message.agent:has(.forum-message-header:contains("QUERY Engine")) {
-            background-color: #eaf1f8;
-            border-color: #608ab1;
-        }
+            background-color: #eaf1f8;
+            border-color: #608ab1;
+        }
 
-        .forum-message.agent:has(.forum-message-header:contains("Insight Engine")) {
-            background-color: #f2ebf3;
-            border-color: #8e6a9f;
-        }
+        .forum-message.agent:has(.forum-message-header:contains("Insight Engine")) {
+            background-color: #f2ebf3;
+            border-color: #8e6a9f;
+        }
 
         .forum-message.agent:has(.forum-message-header:contains("INSIGHT Engine")) {
-            background-color: #f2ebf3;
-            border-color: #8e6a9f;
-        }
+            background-color: #f2ebf3;
+            border-color: #8e6a9f;
+        }
 
-        .forum-message.agent:has(.forum-message-header:contains("Media Engine")) {
-            background-color: #ebf2ea;
-            border-color: #6a9a6e;
-        }
+        .forum-message.agent:has(.forum-message-header:contains("Media Engine")) {
+            background-color: #ebf2ea;
+            border-color: #6a9a6e;
+        }
 
         .forum-message.agent:has(.forum-message-header:contains("MEDIA Engine")) {
-            background-color: #ebf2ea;
-            border-color: #6a9a6e;
-        }
+            background-color: #ebf2ea;
+            border-color: #6a9a6e;
+        }
 
-        /* 备用方案：通过JavaScript添加的类 */
-        .forum-message.query-engine {
-            background-color: #eaf1f8;
-            border-color: #608ab1;
-        }
+        /* Fallback: Classes added via JavaScript */
+        .forum-message.query-engine {
+            background-color: #eaf1f8;
+            border-color: #608ab1;
+        }
 
-        .forum-message.insight-engine {
-            background-color: #f2ebf3;
-            border-color: #8e6a9f;
-        }
+        .forum-message.insight-engine {
+            background-color: #f2ebf3;
+            border-color: #8e6a9f;
+        }
 
-        .forum-message.media-engine {
-            background-color: #ebf2ea;
-            border-color: #6a9a6e;
-        }
+        .forum-message.media-engine {
+            background-color: #ebf2ea;
+            border-color: #6a9a6e;
+        }
 
         .forum-message.agent.QUERY {
             background-color: #eaf1f8;
@@ -838,10 +838,10 @@
             border-color: #608ab1;
         }
 
-        .forum-message.agent.MEDIA {
-            background-color: #ebf2ea;
-            border-color: #6a9a6e;
-        }
+        .forum-message.agent.MEDIA {
+            background-color: #ebf2ea;
+            border-color: #6a9a6e;
+        }
 
         .forum-message.agent.media-engine {
             background-color: #ebf2ea;
@@ -858,16 +858,16 @@
             border-color: #8e6a9f;
         }
         
-        /* HOST主持人样式 */
+        /* HOST Moderator Styles */
         .forum-message.host {
             align-self: stretch;
-            background-color: #fff8dc;  /* 浅黄色背景 */
-            border-color: #daa520;  /* 金色边框 */
+            background-color: #fff8dc;  /* Light yellow background */
+            border-color: #daa520;  /* Gold border */
             color: #000000;
             width: 100%;
             max-width: 100%;
             margin: 0 0 20px 0;
-            font-style: italic;  /* 斜体字体显示主持人发言 */
+            font-style: italic;  /* Italic font for moderator messages */
         }
 
         .forum-message-header {
@@ -888,7 +888,7 @@
             margin-top: 5px;
         }
 
-        /* Report Engine 专用样式 */
+        /* Report Engine specific styles */
         .report-container {
             display: none;
             height: 100%;
@@ -902,14 +902,14 @@
 
         .report-content {
             flex: 1;
-            padding: 10px 20px 20px 20px; /* 减少上边距 */
+            padding: 10px 20px 20px 20px; /* Reduce top margin */
             overflow-y: auto;
             overflow-x: hidden;
             background-color: #ffffff;
             display: flex;
             flex-direction: column;
-            min-height: 0; /* 允许子元素缩小 */
-            gap: 15px; /* 统一子元素间距 */
+            min-height: 0; /* Allow child elements to shrink */
+            gap: 15px; /* Unify child element spacing */
         }
 
         .report-controls {
@@ -951,7 +951,7 @@
 
         .report-status {
             padding: 15px;
-            margin: 0; /* 移除margin，使用父容器的gap控制间距 */
+            margin: 0; /* Remove margin, use parent container gap to control spacing */
             border: 2px solid #000000;
             background-color: #f8f9fa;
             font-family: 'Courier New', monospace;
@@ -960,7 +960,7 @@
         .report-status.loading {
             border-color: #b8860b;
             background-color: #faf5e6;
-            /* 确保loading状态的报告框不会旋转 */
+            /* Ensure loading status report box does not rotate */
             animation: none;
         }
 
@@ -978,25 +978,25 @@
             border: 2px solid #000000;
             background-color: #ffffff;
             min-height: 400px;
-            max-height: none; /* 移除最大高度限制 */
-            overflow-y: hidden; /* 强制不显示垂直滚动条 */
-            overflow-x: hidden; /* 强制不显示水平滚动条 */
-            flex: 1; /* 让预览区域占用剩余空间 */
+            max-height: none; /* Remove max height limit */
+            overflow-y: hidden; /* Force hide vertical scrollbar */
+            overflow-x: hidden; /* Force hide horizontal scrollbar */
+            flex: 1; /* Let preview area occupy remaining space */
         }
 
         .report-preview iframe {
             width: 100%;
             min-height: 400px;
             border: none;
-            /* 让iframe自适应内容高度 */
+            /* Let iframe adapt to content height */
             height: auto;
-            /* 强制不显示滚动条 */
+            /* Force hide scrollbars */
             overflow: hidden;
             scrollbar-width: none; /* Firefox */
             -ms-overflow-style: none; /* IE and Edge */
         }
         
-        /* 隐藏webkit浏览器的滚动条 */
+        /* Hide webkit browser scrollbars */
         .report-preview iframe::-webkit-scrollbar {
             display: none;
         }
@@ -1013,52 +1013,52 @@
 </head>
 <body>
     <div class="container">
-        <!-- 搜索框区域 -->
+        <!-- Search Box Area -->
         <div class="search-section">
-            <div class="search-title">微舆 - 致力于打造简洁通用的舆情分析平台</div>
+            <div class="search-title">Micro Opinion - Dedicated to building a simple and universal public opinion analysis platform</div>
             <div class="search-row">
-                <button class="config-button" id="openConfigButton">LLM 配置</button>
+                <button class="config-button" id="openConfigButton">LLM Config</button>
                 <div class="search-box">
-                    <input type="text" class="search-input" id="searchInput" placeholder="请输入要分析的内容...">
-                    <button class="search-button" id="searchButton">开始</button>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Enter content to analyze...">
+                    <button class="search-button" id="searchButton">Start</button>
                     <button class="upload-button" id="uploadButton">
-                        上传模板
-                        <input type="file" id="templateFileInput" accept=".md,.txt" title="上传自定义报告模板(支持 .md 和 .txt 文件)">
+                        Upload Template
+                        <input type="file" id="templateFileInput" accept=".md,.txt" title="Upload custom report template (supports .md and .txt files)">
                     </button>
                 </div>
             </div>
             <div class="upload-status" id="uploadStatus"></div>
         </div>
 
-        <!-- 主内容区域 -->
+        <!-- Main Content Area -->
         <div class="main-content">
-            <!-- 嵌入页面区域 -->
+            <!-- Embedded Page Area -->
             <div class="embedded-section">
-                <div class="embedded-header" id="embeddedHeader">嵌入的页面</div>
+                <div class="embedded-header" id="embeddedHeader">Embedded Page</div>
                 <div class="embedded-content" id="embeddedContent">
-                    <!-- 论坛聊天界面 -->
+                    <!-- Forum Chat Interface -->
                     <div class="forum-container" id="forumContainer">
                         <div class="forum-chat-area" id="forumChatArea">
-                            <!-- 动态添加的Engine对话消息将在这里显示 -->
+                            <!-- Dynamically added Engine dialog messages will affect here -->
                         </div>
                     </div>
                     
-                    <!-- 报告引擎界面 -->
+                    <!-- Report Engine Interface -->
                     <div class="report-container" id="reportContainer">
                         <div class="report-content" id="reportContent">
-                            <!-- 报告内容将在这里显示 -->
+                            <!-- Report content will display here -->
                         </div>
                     </div>
                     
                     <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666;">
-                        <span>默认只显示第一个页面 - 点击按钮切换页面</span>
+                        <span>Default displays only the first page - Click buttons to switch pages</span>
                     </div>
                 </div>
             </div>
 
-            <!-- 控制台输出区域 -->
+            <!-- Console Output Area -->
             <div class="console-section">
-                <!-- 应用切换按钮 -->
+                <!-- App Switcher Buttons -->
                 <div class="app-switcher">
                     <button class="app-button active" data-app="insight">
                         <span class="status-indicator" id="status-insight"></span>
@@ -1076,22 +1076,22 @@
                         <span class="status-indicator running" id="status-forum"></span>
                         Forum Engine
                     </button>
-                    <button class="app-button locked" data-app="report" title="需等待其余三个Agent工作完毕">
+                    <button class="app-button locked" data-app="report" title="Wait for other three Agents to complete">
                         <span class="status-indicator" id="status-report"></span>
                         Report Engine
                     </button>
                 </div>
 
-                <!-- 控制台输出 -->
+                <!-- Console Output -->
                 <div class="console-output" id="consoleOutput">
-                    <div class="console-line">[系统] 等待连接...</div>
+                    <div class="console-line">[System] Waiting for connection...</div>
                 </div>
             </div>
         </div>
 
-        <!-- 状态栏 -->
+        <!-- Status Bar -->
         <div class="status-bar">
-            <span id="connectionStatus">连接中...</span>
+            <span id="connectionStatus">Connecting...</span>
             <span id="systemTime"></span>
         </div>
     </div>
@@ -1099,40 +1099,40 @@
     <div class="config-modal-overlay" id="configModal">
         <div class="config-modal">
             <div class="config-modal-header">
-                <div class="config-modal-title">LLM 配置 - 与.env文件双向同步</div>
+                <div class="config-modal-title">LLM Config - Two-way sync with .env file</div>
                 <div class="config-modal-actions">
-                    <button class="config-secondary-button" id="refreshConfigButton">刷新</button>
-                    <button class="config-close-button" id="closeConfigModal" aria-label="关闭配置窗口">×</button>
+                    <button class="config-secondary-button" id="refreshConfigButton">Refresh</button>
+                    <button class="config-close-button" id="closeConfigModal" aria-label="Close config window">×</button>
                 </div>
             </div>
             <div class="config-modal-body" id="configFormContainer">
-                <!-- 由脚本填充 -->
+                <!-- Filled by script -->
             </div>
             <div class="config-modal-footer">
                 <div class="config-status-message" id="configStatusMessage"></div>
                 <div class="config-modal-footer-actions">
-                    <button class="config-save-button" id="saveConfigButton">保存</button>
-                    <button class="config-start-button" id="startSystemButton">保存并启动系统</button>
+                    <button class="config-save-button" id="saveConfigButton">Save</button>
+                    <button class="config-start-button" id="startSystemButton">Save & Start System</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 消息提示 -->
+    <!-- Message Tooltip -->
     <div class="message" id="message"></div>
 
     <script>
-        // 全局变量
+        // Global Variables
         let socket;
         let currentApp = 'insight';
         let appStatus = {
             insight: 'stopped',
             media: 'stopped',
             query: 'stopped',
-            forum: 'stopped',  // 前端启动后再标记为 running
+            forum: 'stopped',  // Mark as running after frontend start
             report: 'stopped'  // Report Engine
         };
-        let customTemplate = ''; // 存储用户上传的自定义模板内容
+        let customTemplate = ''; // Store user uploaded custom template content
         let configValues = {};
         let configDirty = false;
         let configAutoRefreshTimer = null;
@@ -1143,79 +1143,79 @@
         const CONFIG_ENDPOINT = '/api/config';
         const SYSTEM_STATUS_ENDPOINT = '/api/system/status';
         const SYSTEM_START_ENDPOINT = '/api/system/start';
-        const START_BUTTON_DEFAULT_TEXT = '保存并启动系统';
+        const START_BUTTON_DEFAULT_TEXT = 'Save & Start System';
 
         const configFieldGroups = [
             {
-                title: '数据库连接',
-                subtitle: '用于连接业务数据库的基本配置',
+                title: 'Database Connection',
+                subtitle: 'Basic configuration for connecting to business database',
                 fields: [
-                    { key: 'DB_DIALECT', label: '数据库类型', type: 'select', options: ['mysql', 'postgresql'] },
-                    { key: 'DB_HOST', label: '主机地址' },
-                    { key: 'DB_PORT', label: '端口' },
-                    { key: 'DB_USER', label: '用户名' },
-                    { key: 'DB_PASSWORD', label: '密码', type: 'password' },
-                    { key: 'DB_NAME', label: '数据库名称' },
-                    { key: 'DB_CHARSET', label: '字符集' }
+                    { key: 'DB_DIALECT', label: 'DB Type', type: 'select', options: ['mysql', 'postgresql'] },
+                    { key: 'DB_HOST', label: 'Host Address' },
+                    { key: 'DB_PORT', label: 'Port' },
+                    { key: 'DB_USER', label: 'Username' },
+                    { key: 'DB_PASSWORD', label: 'Password', type: 'password' },
+                    { key: 'DB_NAME', label: 'DB Name' },
+                    { key: 'DB_CHARSET', label: 'Charset' }
                 ]
             },
             {
                 title: 'Insight Agent',
-                subtitle: '负责洞察分析的模型配置',
+                subtitle: 'Model config for insight analysis',
                 fields: [
                     { key: 'INSIGHT_ENGINE_API_KEY', label: 'API Key' },
                     { key: 'INSIGHT_ENGINE_BASE_URL', label: 'Base URL' },
-                    { key: 'INSIGHT_ENGINE_MODEL_NAME', label: '模型名称' }
+                    { key: 'INSIGHT_ENGINE_MODEL_NAME', label: 'Model Name' }
                 ]
             },
             {
                 title: 'Media Agent',
-                subtitle: '媒体内容理解与生成模型',
+                subtitle: 'Media content understanding and generation model',
                 fields: [
                     { key: 'MEDIA_ENGINE_API_KEY', label: 'API Key' },
                     { key: 'MEDIA_ENGINE_BASE_URL', label: 'Base URL' },
-                    { key: 'MEDIA_ENGINE_MODEL_NAME', label: '模型名称' }
+                    { key: 'MEDIA_ENGINE_MODEL_NAME', label: 'Model Name' }
                 ]
             },
             {
                 title: 'Query Agent',
-                subtitle: '负责搜索与信息汇总的模型配置',
+                subtitle: 'Model config for search and information summary',
                 fields: [
                     { key: 'QUERY_ENGINE_API_KEY', label: 'API Key' },
                     { key: 'QUERY_ENGINE_BASE_URL', label: 'Base URL' },
-                    { key: 'QUERY_ENGINE_MODEL_NAME', label: '模型名称' }
+                    { key: 'QUERY_ENGINE_MODEL_NAME', label: 'Model Name' }
                 ]
             },
             {
                 title: 'Report Agent',
-                subtitle: '报告生成使用的模型配置',
+                subtitle: 'Model config for report generation',
                 fields: [
                     { key: 'REPORT_ENGINE_API_KEY', label: 'API Key' },
                     { key: 'REPORT_ENGINE_BASE_URL', label: 'Base URL' },
-                    { key: 'REPORT_ENGINE_MODEL_NAME', label: '模型名称' }
+                    { key: 'REPORT_ENGINE_MODEL_NAME', label: 'Model Name' }
                 ]
             },
             {
                 title: 'Forum Host',
-                subtitle: '多智能体协同使用的模型配置',
+                subtitle: 'Model config for multi-agent collaboration',
                 fields: [
                     { key: 'FORUM_HOST_API_KEY', label: 'API Key' },
                     { key: 'FORUM_HOST_BASE_URL', label: 'Base URL' },
-                    { key: 'FORUM_HOST_MODEL_NAME', label: '模型名称' }
+                    { key: 'FORUM_HOST_MODEL_NAME', label: 'Model Name' }
                 ]
             },
             {
                 title: 'Keyword Optimizer',
-                subtitle: 'SQL / 关键词优化模型配置',
+                subtitle: 'SQL / Keyword optimization model config',
                 fields: [
                     { key: 'KEYWORD_OPTIMIZER_API_KEY', label: 'API Key' },
                     { key: 'KEYWORD_OPTIMIZER_BASE_URL', label: 'Base URL' },
-                    { key: 'KEYWORD_OPTIMIZER_MODEL_NAME', label: '模型名称' }
+                    { key: 'KEYWORD_OPTIMIZER_MODEL_NAME', label: 'Model Name' }
                 ]
             },
             {
-                title: '外部检索工具',
-                subtitle: '联动搜索引擎、网站抓取等在线服务',
+                title: 'External Retrieval Tools',
+                subtitle: 'Online services like search engines, web scraping',
                 fields: [
                     { key: 'TAVILY_API_KEY', label: 'Tavily API Key' },
                     { key: 'BOCHA_WEB_SEARCH_API_KEY', label: 'Bocha API Key' }
@@ -1492,7 +1492,7 @@
                     let control;
                     
                     if (field.type === 'select' && field.options) {
-                        // 下拉选择框
+                        // Select box
                         const optionsHtml = field.options.map(option => {
                             const selected = option === value ? 'selected' : '';
                             const safeOption = escapeHtml(String(option));
@@ -1508,7 +1508,7 @@
                             </select>
                         `;
                     } else if (field.type === 'password') {
-                        // 密码输入框
+                        // Password input
                         const inputElement = `
                             <input
                                 type="password"
@@ -1516,18 +1516,18 @@
                                 data-config-key="${field.key}"
                                 data-field-type="password"
                                 value="${safeValue}"
-                                placeholder="填写${field.label}"
+                                placeholder="Enter ${field.label}"
                                 autocomplete="off"
                             >
                         `;
                         control = `
                             <div class="config-password-wrapper">
                                 ${inputElement}
-                                <button type="button" class="config-password-toggle" data-target="${field.key}">显示</button>
+                                <button type="button" class="config-password-toggle" data-target="${field.key}">Show</button>
                             </div>
                         `;
                     } else {
-                        // 普通文本输入框
+                        // Normal text input
                         const inputType = field.type || 'text';
                         control = `
                             <input
@@ -1536,7 +1536,7 @@
                                 data-config-key="${field.key}"
                                 data-field-type="${inputType}"
                                 value="${safeValue}"
-                                placeholder="填写${field.label}"
+                                placeholder="Enter ${field.label}"
                                 autocomplete="on"
                             >
                         `;
@@ -1576,7 +1576,7 @@
                 toggle.addEventListener('click', () => {
                     const reveal = input.getAttribute('type') === 'password';
                     input.setAttribute('type', reveal ? 'text' : 'password');
-                    toggle.textContent = reveal ? '隐藏' : '显示';
+                    toggle.textContent = reveal ? 'Hide' : 'Show';
                     toggle.classList.toggle('revealed', reveal);
                 });
             });
@@ -1627,10 +1627,10 @@
 
             if (!silent && saveButton) {
                 saveButton.disabled = true;
-                saveButton.textContent = '保存中...';
+                saveButton.textContent = 'Saving...';
             }
             if (!silent) {
-                setConfigStatus('正在保存配置...', '');
+                setConfigStatus('Saving config...', '');
             }
 
             const updates = collectConfigUpdates();
@@ -1643,29 +1643,29 @@
                 });
                 const data = await response.json();
                 if (!data.success) {
-                    throw new Error(data.message || '保存失败');
+                    throw new Error(data.message || 'Save failed');
                 }
                 configValues = data.config || {};
                 renderConfigForm(configValues);
                 configDirty = false;
                 if (silent) {
-                    setConfigStatus('配置已保存', 'success');
+                    setConfigStatus('Config saved', 'success');
                 } else {
-                    setConfigStatus('配置已保存', 'success');
-                    showMessage('配置已保存', 'success');
+                    setConfigStatus('Config saved', 'success');
+                    showMessage('Config saved', 'success');
                 }
                 return true;
             } catch (error) {
                 console.error(error);
-                setConfigStatus(`保存失败: ${error.message}`, 'error');
+                setConfigStatus(`Save failed: ${error.message}`, 'error');
                 if (!silent) {
-                    showMessage(`保存失败: ${error.message}`, 'error');
+                    showMessage(`Save failed: ${error.message}`, 'error');
                 }
                 return false;
             } finally {
                 if (!silent && saveButton) {
                     saveButton.disabled = false;
-                    saveButton.textContent = '保存';
+                    saveButton.textContent = 'Save';
                 }
             }
         }
@@ -1678,10 +1678,10 @@
 
             if (systemStarting) {
                 startButton.disabled = true;
-                startButton.textContent = '启动中...';
+                startButton.textContent = 'Starting...';
             } else if (systemStarted) {
                 startButton.disabled = true;
-                startButton.textContent = '系统已启动';
+                startButton.textContent = 'System Started';
             } else {
                 startButton.disabled = false;
                 startButton.textContent = START_BUTTON_DEFAULT_TEXT;
@@ -1733,7 +1733,7 @@
             if (!status || !status.success) {
                 openConfigModal({
                     lock: true,
-                    message: '无法获取系统状态，请检查配置后重试。'
+                    message: 'Unable to get system status, please check config and retry.'
                 });
                 return;
             }
@@ -1741,7 +1741,7 @@
             if (!status.started) {
                 openConfigModal({
                     lock: true,
-                    message: '请先确认配置，然后点击“保存并启动系统”'
+                    message: 'Please confirm config, then click "Save & Start System"'
                 });
             } else {
                 applySystemState(status);
@@ -1751,7 +1751,7 @@
 
         async function startSystem() {
             if (systemStarting) {
-                setConfigStatus('系统正在启动，请稍候...', '');
+                setConfigStatus('System starting, please wait...', '');
                 return;
             }
 
@@ -1760,7 +1760,7 @@
 
             try {
                 if (configDirty) {
-                    setConfigStatus('检测到未保存的修改，正在保存配置...', '');
+                    setConfigStatus('Unsaved changes detected, saving config...', '');
                     const saved = await saveConfigUpdates({ silent: true });
                     if (!saved) {
                         systemStarting = false;
@@ -1769,16 +1769,16 @@
                     }
                 }
 
-                setConfigStatus('正在启动系统...', '');
+                setConfigStatus('Starting system...', '');
                 const response = await fetch(SYSTEM_START_ENDPOINT, { method: 'POST' });
                 const data = await response.json();
                 if (!response.ok || !data.success) {
-                    const message = data && data.message ? data.message : '系统启动失败';
+                    const message = data && data.message ? data.message : 'System start failed';
                     throw new Error(message);
                 }
 
-                showMessage('系统启动成功', 'success');
-                setConfigStatus('系统启动成功', 'success');
+                showMessage('System start success', 'success');
+                setConfigStatus('System start success', 'success');
                 applySystemState({ started: true, starting: false });
                 configModalLocked = false;
 
@@ -1794,8 +1794,8 @@
                     window.location.reload();
                 }, 1200);
             } catch (error) {
-                setConfigStatus(`系统启动失败: ${error.message}`, 'error');
-                showMessage(`系统启动失败: ${error.message}`, 'error');
+                setConfigStatus(`System start failed: ${error.message}`, 'error');
+                showMessage(`System start failed: ${error.message}`, 'error');
                 applySystemState({ started: false, starting: false });
             } finally {
                 systemStarting = false;
@@ -1804,46 +1804,46 @@
             }
         }
 
-        // 执行搜索
+        // Execute Search
         function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
             if (!query) {
-                showMessage('请输入搜索内容', 'error');
+                showMessage('Please enter search content', 'error');
                 return;
             }
 
             const button = document.getElementById('searchButton');
             button.disabled = true;
-            button.innerHTML = '<span class="loading"></span> 搜索中...';
+            button.innerHTML = '<span class="loading"></span> Searching...';
 
-            // 清除现有报告，重置自动生成标志，为新搜索做准备
+            // Clear existing report, reset auto-generate flag, prepare for new search
             const reportPreview = document.getElementById('reportPreview');
             if (reportPreview) {
-                reportPreview.innerHTML = '<div class="report-loading">等待新的搜索结果生成报告...</div>';
+                reportPreview.innerHTML = '<div class="report-loading">Waiting for new search results to generate report...</div>';
             }
             
-            // 清除任务进度显示
+            // Clear task progress display
             const taskProgressArea = document.getElementById('taskProgressArea');
             if (taskProgressArea) {
                 taskProgressArea.innerHTML = '';
             }
             
-            // 重置自动生成相关标志
+            // Reset auto-generate related flags
             autoGenerateTriggered = false;
             reportTaskId = null;
             
-            // 停止可能正在进行的轮询
+            // Stop any polling in progress
             if (reportPollingInterval) {
                 clearInterval(reportPollingInterval);
                 reportPollingInterval = null;
             }
 
-            // 确保所有iframe已初始化
+            // Ensure all iframes initialized
             if (!iframesInitialized) {
                 preloadIframes();
             }
             
-            // 向所有运行中的应用发送搜索请求（通过刷新iframe传递参数）
+            // Send search request to all running apps (pass params by refreshing iframe)
             let totalRunning = 0;
             const ports = { insight: 8501, media: 8502, query: 8503 };
             
@@ -1851,40 +1851,40 @@
                 if (appStatus[app] === 'running' && preloadedIframes[app]) {
                     totalRunning++;
                     
-                    // 构建搜索URL
+                    // Build search URL
                     const searchUrl = `http://${window.location.hostname}:${ports[app]}?query=${encodeURIComponent(query)}&auto_search=true`;
-                    console.log(`向 ${app} 发送搜索请求: ${searchUrl}`);
+                    console.log(`Sending search request to ${app}: ${searchUrl}`);
                     
-                    // 直接更新主iframe的src来传递搜索参数
+                    // Directly update src of main iframe to pass search params
                     preloadedIframes[app].src = searchUrl;
                 }
             });
             
             if (totalRunning === 0) {
                 button.disabled = false;
-                button.innerHTML = '搜索';
-                showMessage('没有运行中的应用，无法执行搜索', 'error');
+                button.innerHTML = 'Search';
+                showMessage('No running apps, cannot execute search', 'error');
             } else {
                 button.disabled = false;
-                button.innerHTML = '搜索';
-                showMessage(`搜索请求已发送到 ${totalRunning} 个应用，页面将刷新以开始研究`, 'success');
+                button.innerHTML = 'Search';
+                showMessage(`Search request sent to ${totalRunning} apps, page will refresh to start research`, 'success');
             }
         }
 
-        // 切换应用
+        // Switch App
         function switchToApp(app) {
             if (app === currentApp) return;
 
-            // 检查Report Engine是否被锁定
+            // Check if Report Engine is locked
             if (app === 'report') {
                 const reportButton = document.querySelector(`[data-app="report"]`);
                 if (reportButton.classList.contains('locked')) {
-                    showMessage('需等待其余三个Agent工作完毕', 'error');
+                    showMessage('Wait for other three Agents to complete', 'error');
                     return;
                 }
             }
 
-            // 更新按钮状态
+            // Update button status
             document.querySelectorAll('.app-button').forEach(btn => {
                 btn.classList.remove('active');
             });
@@ -1892,66 +1892,66 @@
 
             currentApp = app;
 
-            // 根据应用类型处理不同的显示逻辑
+            // Handle different display logic based on app type
             if (app === 'forum') {
-                // 切换到论坛模式
-                document.getElementById('embeddedHeader').textContent = 'Forum Engine - 多智能体交流';
+                // Switch to Forum mode
+                document.getElementById('embeddedHeader').textContent = 'Forum Engine - Multi-Agent Communication';
                 
-                // 显示论坛容器，隐藏其他内容
+                // Show forum container, hide others
                 document.getElementById('forumContainer').classList.add('active');
                 document.getElementById('reportContainer').classList.remove('active');
                 
-                // 清空控制台并加载forum日志
-                document.getElementById('consoleOutput').innerHTML = '<div class="console-line">[系统] 切换到论坛模式</div>';
+                // Clear console and load forum log
+                document.getElementById('consoleOutput').innerHTML = '<div class="console-line">[System] Switched to Forum mode</div>';
                 loadForumLog();
                 
             } else if (app === 'report') {
-                // 切换到报告模式
-                document.getElementById('embeddedHeader').textContent = 'Report Agent - 最终报告生成';
+                // Switch to Report mode
+                document.getElementById('embeddedHeader').textContent = 'Report Agent - Final Report Generation';
                 
-                // 显示报告容器，隐藏其他内容
+                // Show report container, hide others
                 document.getElementById('reportContainer').classList.add('active');
                 document.getElementById('forumContainer').classList.remove('active');
                 
-                // 清空控制台并加载report日志
-                document.getElementById('consoleOutput').innerHTML = '<div class="console-line">[系统] 切换到报告生成模式</div>';
+                // Clear console and load report log
+                document.getElementById('consoleOutput').innerHTML = '<div class="console-line">[System] Switched to Report Generation mode</div>';
                 loadReportLog();
                 
-                // 只在报告界面未初始化时才重新加载
+                // Reload only if report interface not initialized
                 const reportContent = document.getElementById('reportContent');
                 if (!reportContent || reportContent.children.length === 0) {
                     loadReportInterface();
                 }
                 
-                // 切换到report页面时检查是否可以自动生成报告
+                // Check if report can be auto-generated when switching to report page
                 setTimeout(() => {
                     checkReportLockStatus();
                 }, 500);
                 
             } else {
-                // 切换到普通Engine模式
+                // Switch to normal Engine mode
                 document.getElementById('embeddedHeader').textContent = agentTitles[app] || appNames[app];
                 
-                // 隐藏论坛和报告容器
+                // Hide forum and report containers
                 document.getElementById('forumContainer').classList.remove('active');
                 document.getElementById('reportContainer').classList.remove('active');
                 
-                // 清空并加载新的控制台输出
-                document.getElementById('consoleOutput').innerHTML = '<div class="console-line">[系统] 切换到 ' + appNames[app] + '</div>';
+                // Clear and load new console output
+                document.getElementById('consoleOutput').innerHTML = '<div class="console-line">[System] Switched to ' + appNames[app] + '</div>';
                 
-                // 重置行计数
+                // Reset line count
                 lastLineCount[app] = 0;
                 loadConsoleOutput(app);
             }
 
-            // 更新嵌入页面
+            // Update embedded page
             updateEmbeddedPage(app);
         }
 
-        // 存储最后显示的行数，避免重复加载
+        // Store last displayed line count to avoid duplicate loading
         let lastLineCount = {};
         
-        // 加载控制台输出
+        // Load console output
         function loadConsoleOutput(app) {
             if (app === 'forum') {
                 loadForumLog();
@@ -1969,7 +1969,7 @@
                 if (data.success && data.output.length > 0) {
                     const consoleOutput = document.getElementById('consoleOutput');
                     
-                    // 只添加新的行
+                    // Add only new lines
                     const lastCount = lastLineCount[app] || 0;
                     const newLines = data.output.slice(lastCount);
                     
@@ -1989,7 +1989,7 @@
             });
         }
         
-        // 刷新当前应用的控制台输出
+        // Refresh current app console output
         function refreshConsoleOutput() {
             if (currentApp === 'forum') {
                 refreshForumLog();
@@ -2008,7 +2008,7 @@
                     if (data.success && data.output.length > 0) {
                         const consoleOutput = document.getElementById('consoleOutput');
                         
-                        // 只添加新的行
+                        // Add only new lines
                         const lastCount = lastLineCount[currentApp] || 0;
                         const newLines = data.output.slice(lastCount);
                         
@@ -2031,7 +2031,7 @@
             }
         }
 
-        // 添加控制台输出
+        // Add console output
         function addConsoleOutput(line) {
             const consoleOutput = document.getElementById('consoleOutput');
             const div = document.createElement('div');
@@ -2039,15 +2039,15 @@
             div.textContent = line;
             consoleOutput.appendChild(div);
 
-            // 自动滚动到底部显示最新内容
+            // Auto scroll to bottom to show latest content
             consoleOutput.scrollTop = consoleOutput.scrollHeight;
         }
 
-        // 预加载的iframe存储
+        // Preloaded iframe storage
         let preloadedIframes = {};
         let iframesInitialized = false;
         
-        // 预加载所有iframe（只执行一次）
+        // Preload all iframes (execute only once)
         function preloadIframes() {
             if (iframesInitialized) return;
             
@@ -2066,104 +2066,104 @@
                 iframe.style.display = 'none';
                 iframe.id = `iframe-${app}`;
                 
-                // 直接添加到content区域
+                // Directly add to content area
                 content.appendChild(iframe);
                 preloadedIframes[app] = iframe;
                 
-                console.log(`预加载 ${app} 应用完成`);
+                console.log(`Preloaded app ${app}`);
             }
             
             iframesInitialized = true;
-            console.log('所有iframe预加载完成，准备进行无缝切换');
+            console.log('All iframes preloaded, ready for seamless switching');
         }
 
-        // 更新嵌入页面
+        // Update embedded page
         function updateEmbeddedPage(app) {
             const header = document.getElementById('embeddedHeader');
             const content = document.getElementById('embeddedContent');
             
-            // 如果是Forum Engine，直接显示论坛界面
+            // If Forum Engine, show forum interface directly
             if (app === 'forum') {
-                header.textContent = 'Forum Engine - 多智能体交流';
+                header.textContent = 'Forum Engine - Multi-Agent Communication';
                 
-                // 隐藏所有iframe
+                // Hide all iframes
                 if (typeof preloadedIframes !== 'undefined') {
                     Object.values(preloadedIframes).forEach(iframe => {
                         iframe.style.display = 'none';
                     });
                 }
                 
-                // 移除占位符
+                // Remove placeholder
                 const placeholder = content.querySelector('.status-placeholder');
                 if (placeholder) {
                     placeholder.remove();
                 }
                 
-                // 显示论坛容器，隐藏报告容器
+                // Show forum container, hide report container
                 document.getElementById('forumContainer').classList.add('active');
                 document.getElementById('reportContainer').classList.remove('active');
                 return;
             }
             
-            // 如果是Report Engine，显示报告界面
+            // If Report Engine, show report interface
             if (app === 'report') {
-                header.textContent = 'Report Agent - 最终报告生成';
+                header.textContent = 'Report Agent - Final Report Generation';
                 
-                // 隐藏所有iframe
+                // Hide all iframes
                 if (typeof preloadedIframes !== 'undefined') {
                     Object.values(preloadedIframes).forEach(iframe => {
                         iframe.style.display = 'none';
                     });
                 }
                 
-                // 移除占位符
+                // Remove placeholder
                 const placeholder = content.querySelector('.status-placeholder');
                 if (placeholder) {
                     placeholder.remove();
                 }
                 
-                // 显示报告容器，隐藏论坛容器
+                // Show report container, hide forum container
                 document.getElementById('reportContainer').classList.add('active');
                 document.getElementById('forumContainer').classList.remove('active');
                 return;
             }
             
-            // 隐藏论坛和报告容器
+            // Hide forum and report containers
             document.getElementById('forumContainer').classList.remove('active');
             document.getElementById('reportContainer').classList.remove('active');
 
             header.textContent = agentTitles[app] || appNames[app] || app;
 
-            // 如果应用正在运行，显示对应的iframe
+            // If app is running, show corresponding iframe
             if (appStatus[app] === 'running') {
-                // 确保iframe已初始化
+                // Ensure iframe initialized
                 if (!iframesInitialized) {
                     preloadIframes();
                 }
                 
-                // 隐藏所有iframe
+                // Hide all iframes
                 Object.values(preloadedIframes).forEach(iframe => {
                     iframe.style.display = 'none';
                 });
                 
-                // 移除占位符
+                // Remove placeholder
                 const placeholder = content.querySelector('.status-placeholder');
                 if (placeholder) {
                     placeholder.remove();
                 }
                 
-                // 显示当前应用的iframe
+                // Show iframe for current app
                 if (preloadedIframes[app]) {
                     preloadedIframes[app].style.display = 'block';
-                    console.log(`切换到 ${app} 应用 - 无刷新切换`);
+                    console.log(`Switched to app ${app} - Seamless switch`);
                 }
             } else {
-                // 隐藏所有iframe
+                // Hide all iframes
                 Object.values(preloadedIframes).forEach(iframe => {
                     iframe.style.display = 'none';
                 });
                 
-                // 显示状态信息
+                // Show status info
                 let placeholder = content.querySelector('.status-placeholder');
                 if (!placeholder) {
                     placeholder = document.createElement('div');
@@ -2173,13 +2173,13 @@
                 }
                 
                 placeholder.innerHTML = `
-                    <div style="margin-bottom: 10px;">${appNames[app]} 未运行</div>
-                    <div style="font-size: 12px;">状态: ${appStatus[app]}</div>
+                    <div style="margin-bottom: 10px;">${appNames[app]} Not Running</div>
+                    <div style="font-size: 12px;">Status: ${appStatus[app]}</div>
                 `;
             }
         }
 
-        // 检查应用状态
+        // Check App Status
         function checkStatus() {
             fetch('/api/status')
             .then(response => response.json())
@@ -2187,14 +2187,14 @@
                 updateAppStatus(data);
             })
             .catch(error => {
-                console.error('状态检查失败:', error);
+                console.error('Status check failed:', error);
             });
         }
 
-        // 更新应用状态
+        // Update App Status
         function updateAppStatus(data) {
             for (const [app, info] of Object.entries(data)) {
-                // 适配实际的API格式：{app: {status: string, port: int, output_lines: int}}
+                // Adapt actual API format: {app: {status: string, port: int, output_lines: int}}
                 const status = info.status === 'running' ? 'running' : 'stopped';
                 appStatus[app] = status;
                 
@@ -2204,27 +2204,27 @@
                 }
             }
 
-            // 如果当前显示的应用状态发生变化，更新嵌入页面
+            // If current displayed app status changes, update embedded page
             updateEmbeddedPage(currentApp);
         }
 
-        // 更新连接状态
+        // Update connection status
         function updateConnectionStatus(status) {
             document.getElementById('connectionStatus').textContent = status;
         }
 
-        // 更新时间
+        // Update Time
         function updateTime() {
             const now = new Date();
-            const timeString = now.toLocaleTimeString('zh-CN');
+            const timeString = now.toLocaleTimeString('en-US');
             document.getElementById('systemTime').textContent = timeString;
         }
 
-        // 显示消息
+        // Show Message
         function showMessage(text, type = 'info') {
             const message = document.getElementById('message');
             
-            // 清除之前的定时器
+            // Clear previous timer
             if (message.hideTimer) {
                 clearTimeout(message.hideTimer);
             }
@@ -2235,7 +2235,7 @@
 
             message.hideTimer = setTimeout(() => {
                 message.classList.remove('show');
-                // 延迟清除内容，等待动画完成
+                // Delay clear content, wait for animation completion
                 setTimeout(() => {
                     message.textContent = '';
                     message.className = 'message';
@@ -2243,7 +2243,7 @@
             }, 3000);
         }
 
-        // 处理模板文件上传
+        // Handle template file upload
         function handleTemplateUpload(event) {
             const file = event.target.files[0];
             const statusDiv = document.getElementById('uploadStatus');
@@ -2255,43 +2255,43 @@
                 return;
             }
 
-            // 检查文件类型
+            // Check file type
             const allowedTypes = ['text/markdown', 'text/plain', '.md', '.txt'];
             const fileName = file.name.toLowerCase();
             const isValidType = fileName.endsWith('.md') || fileName.endsWith('.txt') || 
                               allowedTypes.includes(file.type);
 
             if (!isValidType) {
-                statusDiv.textContent = '错误: 请选择 .md 或 .txt 文件';
+                statusDiv.textContent = 'Error: Please select .md or .txt file';
                 statusDiv.className = 'upload-status error';
                 customTemplate = '';
-                event.target.value = ''; // 清空文件输入
+                event.target.value = ''; // Clear file input
                 return;
             }
 
-            // 检查文件大小 (最大 1MB)
+            // Check file size (Max 1MB)
             const maxSize = 1024 * 1024; // 1MB
             if (file.size > maxSize) {
-                statusDiv.textContent = '错误: 文件大小不能超过 1MB';
+                statusDiv.textContent = 'Error: File size cannot exceed 1MB';
                 statusDiv.className = 'upload-status error';
                 customTemplate = '';
                 event.target.value = '';
                 return;
             }
 
-            statusDiv.textContent = '正在读取文件...';
+            statusDiv.textContent = 'Reading file...';
             statusDiv.className = 'upload-status';
 
-            // 读取文件内容
+            // Read file content
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     customTemplate = e.target.result;
-                    statusDiv.textContent = `成功: 已加载自定义模板 "${file.name}" (${(file.size/1024).toFixed(1)}KB)`;
+                    statusDiv.textContent = `Success: Loaded custom template "${file.name}" (${(file.size/1024).toFixed(1)}KB)`;
                     statusDiv.className = 'upload-status success';
-                    showMessage(`自定义模板已加载: ${file.name}`, 'success');
+                    showMessage(`Custom template loaded: ${file.name}`, 'success');
                 } catch (error) {
-                    statusDiv.textContent = '错误: 文件读取失败';
+                    statusDiv.textContent = 'Error: File read failed';
                     statusDiv.className = 'upload-status error';
                     customTemplate = '';
                     event.target.value = '';
@@ -2299,7 +2299,7 @@
             };
 
             reader.onerror = function() {
-                statusDiv.textContent = '错误: 文件读取失败';
+                statusDiv.textContent = 'Error: File read failed';
                 statusDiv.className = 'upload-status error';
                 customTemplate = '';
                 event.target.value = '';
@@ -2308,28 +2308,28 @@
             reader.readAsText(file, 'utf-8');
         }
 
-        // Forum Engine 相关函数
+        // Forum Engine Related Functions
         let forumLogLineCount = 0;
         
-        // Report Engine 相关函数
+        // Report Engine Related Functions
         let reportLogLineCount = 0;
         let reportLockCheckInterval = null;
 
-        // 实时刷新论坛消息（适用于所有页面）
+        // Real-time refresh forum messages (applies to all pages)
         function refreshForumMessages() {
             fetch('/api/forum/log')
             .then(response => response.json())
             .then(data => {
                 if (data.success && data.log_lines.length > forumLogLineCount) {
-                    console.log(`Forum: 发现新消息，当前行数: ${data.log_lines.length}, 上次处理: ${forumLogLineCount}`);
+                    console.log(`Forum: New messages found, current lines: ${data.log_lines.length}, last processed: ${forumLogLineCount}`);
                     
-                    // 只处理新增的日志行
+                    // Process only new log lines
                     const newLines = data.log_lines.slice(forumLogLineCount);
                     newLines.forEach((line, index) => {
-                        console.log(`Forum: 处理新行 ${forumLogLineCount + index + 1}: ${line}`);
+                        console.log(`Forum: Processing new line ${forumLogLineCount + index + 1}: ${line}`);
                         const parsed = parseForumMessage(line);
                         if (parsed) {
-                            console.log(`Forum: 解析成功，添加消息:`, parsed);
+                            console.log(`Forum: Parse success, adding message:`, parsed);
                             addForumMessage(parsed);
                         }
                     });
@@ -2337,35 +2337,35 @@
                 }
             })
             .catch(error => {
-                console.error('刷新论坛消息失败:', error);
+                console.error('Refresh forum messages failed:', error);
             });
         }
 
-        // 初始化论坛功能
+        // Initialize Forum Function
         function initializeForum() {
-            // 初始化时加载一次论坛日志
+            // Load forum log once on initialization
             refreshForumMessages();
         }
 
-        // 加载论坛日志
+        // Load Forum Log
         function loadForumLog() {
             fetch('/api/forum/log')
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // 清空对话区
+                    // Clear chat area
                     const chatArea = document.getElementById('forumChatArea');
                     chatArea.innerHTML += `
                         <div class="forum-message system">
                             <div class="forum-message-header">SYSTEM</div>
-                            <div class="forum-message-content">ForumEngine 论坛已启动，ID：98fiaw4324dwadhsl21awhs908147</div>
-                            <div class="forum-timestamp">${new Date().toLocaleTimeString('zh-CN')}</div>
+                            <div class="forum-message-content">ForumEngine Forum Started, ID: 98fiaw4324dwadhsl21awhs908147</div>
+                            <div class="forum-timestamp">${new Date().toLocaleTimeString('en-US')}</div>
                         </div>
                     `;
                     
-                    // 加载控制台日志
+                    // Load console log
                     const consoleOutput = document.getElementById('consoleOutput');
-                    consoleOutput.innerHTML = '<div class="console-line">[系统] Forum Engine 日志输出</div>';
+                    consoleOutput.innerHTML = '<div class="console-line">[System] Forum Engine Log Output</div>';
                     
                     if (data.log_lines && data.log_lines.length > 0) {
                         data.log_lines.forEach(line => {
@@ -2374,21 +2374,21 @@
                             div.textContent = line;
                             consoleOutput.appendChild(div);
                             
-                            // 解析并添加到对话区
+                            // Parse and add to chat area
                             const parsed = parseForumMessage(line);
                             //if (parsed) {
                                 //addForumMessage(parsed);
                             //}
                         });
                         
-                        // 重置计数器以确保后续消息能正确显示
+                        // Reset counter to ensure subsequent messages display correctly
                         forumLogLineCount = data.log_lines.length;
                     } else {
-                        // 如果没有日志，重置计数器
+                        // If no log, reset counter
                         forumLogLineCount = 0;
                     }
                     
-                    // 如果有解析的消息，直接使用
+                    // If parsed messages exist, use directly
                     if (data.parsed_messages && data.parsed_messages.length > 0) {
                         data.parsed_messages.forEach(message => {
                             // addForumMessage(message);
@@ -2399,11 +2399,11 @@
                 }
             })
             .catch(error => {
-                console.error('加载论坛日志失败:', error);
+                console.error('Failed to load forum log:', error);
             });
         }
 
-        // 刷新论坛日志
+        // Refresh Forum Log
         function refreshForumLog() {
             fetch('/api/forum/log')
             .then(response => response.json())
@@ -2411,7 +2411,7 @@
                 if (data.success && data.log_lines.length > forumLogLineCount) {
                     const consoleOutput = document.getElementById('consoleOutput');
                     
-                    // 只添加新的行
+                    // Add only new lines
                     const newLines = data.log_lines.slice(forumLogLineCount);
                     newLines.forEach(line => {
                         const div = document.createElement('div');
@@ -2419,7 +2419,7 @@
                         div.textContent = line;
                         consoleOutput.appendChild(div);
                         
-                        // 如果是论坛对话内容，也显示到左侧对话区
+                        // If forum dialog content, also display in left chat area
                         const parsed = parseForumMessage(line);
                         if (parsed) {
                             addForumMessage(parsed);
@@ -2431,13 +2431,13 @@
                 }
             })
             .catch(error => {
-                console.error('刷新论坛日志失败:', error);
+                console.error('Failed to refresh forum log:', error);
             });
         }
 
-        // 刷新Report Engine日志
-        // 检查Report Engine锁定状态并自动生成报告
-        let autoGenerateTriggered = false; // 防止重复触发
+        // Refresh Report Engine Log
+        // Check Report Engine lock status and auto-generate report
+        let autoGenerateTriggered = false; // Prevent duplicate trigger
         
         function checkReportLockStatus() {
             fetch('/api/report/status')
@@ -2446,44 +2446,44 @@
                 const reportButton = document.querySelector('[data-app="report"]');
                 
                 if (data.success && data.engines_ready) {
-                    // 文件准备就绪，解锁按钮
+                    // Files ready, unlock button
                     reportButton.classList.remove('locked');
-                    reportButton.title = 'Report Engine - 智能报告生成\n所有引擎都有新文件，可以生成报告';
+                    reportButton.title = 'Report Engine - Intelligent Report Generation\nAll engines have new files, ready to generate report';
                     
-                    // 检查是否已经有报告在显示
+                    // Check if report is already displayed
                     const reportPreview = document.getElementById('reportPreview');
                     const hasReport = reportPreview && reportPreview.querySelector('iframe');
                     
-                    // 如果当前在report页面且还没有触发自动生成且没有正在进行的任务且没有已显示的报告，则自动生成报告
+                    // If on report page, not triggered, no task running, and no report displayed, auto-generate
                     if (currentApp === 'report' && !autoGenerateTriggered && !reportTaskId && !hasReport) {
                         autoGenerateTriggered = true;
-                        console.log('检测到锁消失且无现有报告，自动开始生成报告');
+                        console.log('Lock removed and no existing report, auto-generating report');
                         setTimeout(() => {
                             generateReport();
-                        }, 1000); // 延迟1秒开始生成
+                        }, 1000); // Delay 1s to start generation
                     }
                 } else {
-                    // 文件未准备就绪，锁定按钮
+                    // Files not ready, lock button
                     reportButton.classList.add('locked');
                     
-                    // 构建详细的提示信息
+                    // Build detailed tooltip
                     let titleInfo = '\n';
                     
                     if (data.missing_files && data.missing_files.length > 0) {
-                        titleInfo += '等待新文件:\n' + data.missing_files.join('\n');
+                        titleInfo += 'Waiting for new files:\n' + data.missing_files.join('\n');
                     } else {
-                        titleInfo += '等待三个Agent工作完毕';
+                        titleInfo += 'Waiting for three Agents to complete';
                     }
                     
                     reportButton.title = titleInfo;
                 }
             })
             .catch(error => {
-                console.error('检查Report Engine状态失败:', error);
-                // 出错时默认锁定
+                console.error('Failed to check Report Engine status:', error);
+                // Default lock on error
                 const reportButton = document.querySelector('[data-app="report"]');
                 reportButton.classList.add('locked');
-                reportButton.title = 'Report Engine状态检查失败';
+                reportButton.title = 'Report Engine status check failed';
             });
         }
 
@@ -2494,7 +2494,7 @@
                 if (data.success && data.log_lines.length > reportLogLineCount) {
                     const consoleOutput = document.getElementById('consoleOutput');
                     
-                    // 只添加新的行
+                    // Add only new lines
                     const newLines = data.log_lines.slice(reportLogLineCount);
                     newLines.forEach(line => {
                         const div = document.createElement('div');
@@ -2508,18 +2508,18 @@
                 }
             })
             .catch(error => {
-                console.error('刷新Report日志失败:', error);
+                console.error('Failed to refresh Report log:', error);
             });
         }
 
-        // 加载Report Engine日志
+        // Load Report Engine Log
         function loadReportLog() {
             fetch('/api/report/log')
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     const consoleOutput = document.getElementById('consoleOutput');
-                    consoleOutput.innerHTML = '<div class="console-line">[系统] Report Engine 日志监控已启动</div>';
+                    consoleOutput.innerHTML = '<div class="console-line">[System] Report Engine Log Monitoring Started</div>';
                     
                     if (data.log_lines && data.log_lines.length > 0) {
                         data.log_lines.forEach(line => {
@@ -2529,10 +2529,10 @@
                             consoleOutput.appendChild(div);
                         });
                         
-                        // 重置计数器以确保后续消息能正确显示
+                        // Reset counter to ensure subsequent messages display correctly
                         reportLogLineCount = data.log_lines.length;
                     } else {
-                        // 如果没有日志，重置计数器
+                        // If no log, reset counter
                         reportLogLineCount = 0;
                     }
                     
@@ -2540,34 +2540,34 @@
                 }
             })
             .catch(error => {
-                console.error('加载Report日志失败:', error);
+                console.error('Failed to load Report log:', error);
             });
         }
 
-        // 解析论坛消息并添加到对话区
+        // Parse forum message and add to chat area
         function parseForumMessage(logLine) {
             try {
-                // 解析日志行格式: [HH:MM:SS] [SOURCE] content
+                // Parse log line format: [HH:MM:SS] [SOURCE] content
                 const timeMatch = logLine.match(/^\[(\d{2}:\d{2}:\d{2})\]/);
                 if (!timeMatch) return null;
                 
                 const timestamp = timeMatch[1];
                 const restContent = logLine.substring(timeMatch[0].length).trim();
                 
-                // 解析源标签
+                // Parse source tag
                 const sourceMatch = restContent.match(/^\[([^\]]+)\]\s*(.*)$/);
                 if (!sourceMatch) return null;
                 
                 const source = sourceMatch[1];
                 const content = sourceMatch[2];
                 
-                // 处理四种消息类型：三个Engine和HOST，过滤掉系统消息和空内容
+                // Process 4 message types: 3 Engines and HOST, filter system/empty
                 if (!['QUERY', 'INSIGHT', 'MEDIA', 'HOST'].includes(source.toUpperCase()) || 
                     !content || content.includes('=== ForumEngine')) {
                     return null;
                 }
                 
-                // 根据源类型确定消息类型
+                // Determine message type by source
                 let messageType = 'agent';
                 let displayName = '';
                 
@@ -2587,10 +2587,10 @@
                         break;
                 }
                 
-                // 处理内容中的转义字符
+                // Handle escape characters in content
                 const displayContent = content.replace(/\\n/g, '\n').replace(/\\r/g, '');
                 
-                // 返回解析后的消息对象
+                // Return parsed message object
                 return {
                     type: messageType,
                     source: displayName,
@@ -2599,12 +2599,12 @@
                 };
                 
             } catch (error) {
-                console.error('解析论坛消息失败:', error);
+                console.error('Failed to parse forum message:', error);
                 return null;
             }
         }
 
-        // 添加论坛消息到对话区
+        // Add forum message to chat area
         function addForumMessage(data) {
             const chatArea = document.getElementById('forumChatArea');
             const messageDiv = document.createElement('div');
@@ -2612,12 +2612,12 @@
             const messageType = data.type || 'system';
             messageDiv.className = `forum-message ${messageType}`;
             
-            // 根据来源添加特定的CSS类用于颜色区分
+            // Add specific CSS class for color distinction by source
             if (data.source) {
                 const sourceClass = data.source.toLowerCase().replace(/\s+/g, '-');
                 messageDiv.classList.add(sourceClass);
                 
-                // 添加具体的engine类
+                // Add specific engine class
                 if (data.source.toLowerCase().includes('query')) {
                     messageDiv.classList.add('query-engine');
                 } else if (data.source.toLowerCase().includes('insight')) {
@@ -2629,7 +2629,7 @@
                 }
             }
             
-            // 构建消息头部，显示来源名称
+            // Build message header, show source name
             const headerText = data.sender || data.source || getMessageHeader(messageType);
             
             messageDiv.innerHTML = `
@@ -2640,43 +2640,43 @@
             
             chatArea.appendChild(messageDiv);
             
-            // 自动滚动到底部
+            // Auto scroll to bottom
             chatArea.scrollTop = chatArea.scrollHeight;
         }
 
-        // 格式化消息内容
+        // Format message content
         function formatMessageContent(content) {
             if (!content) return '';
             
-            // 将换行符转换为HTML换行
+            // Convert newlines to HTML line breaks
             return content.replace(/\n/g, '<br>');
         }
 
-        // 获取消息头部
+        // Get message header
         function getMessageHeader(type) {
             switch(type) {
-                case 'user': return '用户';
-                case 'agent': return 'AI助手';
-                case 'system': return '系统';
-                case 'host': return '论坛主持人';
-                default: return '未知';
+                case 'user': return 'User';
+                case 'agent': return 'AI Assistant';
+                case 'system': return 'System';
+                case 'host': return 'Forum Moderator';
+                default: return 'Unknown';
             }
         }
 
-        // Report Engine 相关函数
+        // Report Engine Related Functions
         let reportTaskId = null;
         let reportPollingInterval = null;
 
-        // 加载报告界面
+        // Load Report Interface
         function loadReportInterface() {
             const reportContent = document.getElementById('reportContent');
             
-            // 检查ReportEngine状态
+            // Check ReportEngine Status
             fetch('/api/report/status')
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // 更新ReportEngine状态指示器
+                    // Update ReportEngine Status Indicator
                     const indicator = document.getElementById('status-report');
                     if (indicator) {
                         if (data.initialized) {
@@ -2688,7 +2688,7 @@
                         }
                     }
                     
-                    // 渲染报告界面
+                    // Render Report Interface
                     renderReportInterface(data);
                 } else {
                     reportContent.innerHTML = `
@@ -2708,35 +2708,35 @@
             });
         }
 
-        // 渲染报告界面
+        // Render Report Interface
         function renderReportInterface(statusData) {
             const reportContent = document.getElementById('reportContent');
             
             let interfaceHTML = `
-                <!-- 固定的状态信息块 -->
+                <!-- Fixed status info block -->
                 <div class="engine-status-info" id="engineStatusBlock">
                     <div class="report-status" id="engineStatusContent">
-                        <div>正在初始化...</div>
+                        <div>Initializing...</div>
                     </div>
                 </div>
                 
-                <!-- 任务进度区域 -->
+                <!-- Task progress area -->
                 <div id="taskProgressArea"></div>
                 
-                <!-- 报告预览区域 -->
+                <!-- Report preview area -->
                 <div class="report-preview" id="reportPreview">
                     <div class="report-loading">
-                        点击"生成最终报告"开始生成综合分析报告
+                        Click "Generate Final Report" to start generating comprehensive analysis report
                     </div>
                 </div>
             `;
             
             reportContent.innerHTML = interfaceHTML;
             
-            // 立即更新状态信息
+            // Immediately update status info
             updateEngineStatusDisplay(statusData);
             
-            // 如果有当前任务，显示任务状态
+            // If current task exists, show task status
             if (statusData.current_task) {
                 const taskArea = document.getElementById('taskProgressArea');
                 if (taskArea) {
@@ -2745,17 +2745,17 @@
             }
         }
 
-        // 渲染任务状态（使用新的进度条样式）
+        // Render task status (use new progress bar style)
         function renderTaskStatus(task) {
-            // 状态文本的中文映射
+            // Status text mapping
             const statusText = {
-                'running': '正在生成',
-                'completed': '已完成',
-                'error': '生成失败',
-                'pending': '等待中'
+                'running': 'Generating',
+                'completed': 'Completed',
+                'error': 'Failed',
+                'pending': 'Pending'
             };
             
-            // 状态徽章样式
+            // Status badge style
             const statusBadgeClass = {
                 'running': 'task-status-running',
                 'completed': 'task-status-completed',
@@ -2763,7 +2763,7 @@
                 'pending': 'task-status-running'
             };
             
-            // 为运行状态添加加载指示器
+            // Add loading indicator for running status
             const loadingIndicator = task.status !== 'completed' && task.status !== 'error' 
                 ? '<span class="report-loading-spinner"></span>' 
                 : '';
@@ -2772,7 +2772,7 @@
                 <div class="task-progress-container">
                     <div class="task-progress-header">
                         <div class="task-progress-title">
-                            ${loadingIndicator}报告生成任务
+                            ${loadingIndicator}Report Generation Task
                         </div>
                         <div class="task-progress-bar">
                             <div class="task-progress-fill" style="width: ${Math.min(Math.max(task.progress || 0, 0), 100)}%"></div>
@@ -2782,19 +2782,19 @@
                     
                     <div class="task-info-line">
                         <div class="task-info-item">
-                            <span class="task-info-label">任务ID:</span>
+                            <span class="task-info-label">Task ID:</span>
                             <span class="task-info-value">${task.task_id}</span>
                         </div>
                         <div class="task-info-item">
-                            <span class="task-info-label">查询内容:</span>
+                            <span class="task-info-label">Query:</span>
                             <span class="task-info-value">${task.query}</span>
                         </div>
                         <div class="task-info-item">
-                            <span class="task-info-label">开始时间:</span>
+                            <span class="task-info-label">Start Time:</span>
                             <span class="task-info-value">${new Date(task.created_at).toLocaleString()}</span>
                         </div>
                         <div class="task-info-item">
-                            <span class="task-info-label">更新时间:</span>
+                            <span class="task-info-label">Update Time:</span>
                             <span class="task-info-value">${new Date(task.updated_at).toLocaleString()}</span>
                         </div>
                     </div>
@@ -2803,7 +2803,7 @@
             if (task.error_message) {
                 statusHTML += `
                     <div class="task-error-message">
-                        <strong>错误信息:</strong> ${task.error_message}
+                        <strong>Error Message:</strong> ${task.error_message}
                     </div>
                 `;
             }
@@ -2812,27 +2812,27 @@
             return statusHTML;
         }
 
-        // 生成报告
+        // Generate Report
         function generateReport() {
-            const query = document.getElementById('searchInput').value.trim() || '智能舆情分析报告';
+            const query = document.getElementById('searchInput').value.trim() || 'Intelligent Public Opinion Analysis Report';
             
-            // 重置日志计数器，因为后台会清空日志文件
+            // Reset log counter, as backend clears log file
             reportLogLineCount = 0;
             
-            // 清空控制台显示
+            // Clear console display
             const consoleOutput = document.getElementById('consoleOutput');
-            consoleOutput.innerHTML = '<div class="console-line">[系统] 开始生成报告，日志已重置</div>';
+            consoleOutput.innerHTML = '<div class="console-line">[System] Starting report generation, log reset</div>';
             
-            // 按钮已移除，无需操作按钮状态
+            // Button removed, no need to operate button status
             
-            // 在现有状态信息后添加任务进度状态，而不是替换
-            addTaskProgressStatus('正在启动报告生成任务...', 'loading');
+            // Add task progress status after existing status info, not replace
+            addTaskProgressStatus('Starting report generation task...', 'loading');
             
-            // 构建请求数据，包含自定义模板（如果有的话）
+            // Build request data, include custom template (if any)
             const requestData = { query: query };
             if (customTemplate && customTemplate.trim()) {
                 requestData.custom_template = customTemplate;
-                console.log('使用自定义模板生成报告');
+                console.log('Using custom template for report generation');
             }
             
             fetch('/api/report/generate', {
@@ -2846,42 +2846,42 @@
             .then(data => {
                 if (data.success) {
                     reportTaskId = data.task_id;
-                    showMessage('报告生成已启动', 'success');
+                    showMessage('Report generation started', 'success');
                     
-                    // 更新任务状态显示
+                    // Update task status display
                     updateTaskProgressStatus({
                         task_id: data.task_id,
                         query: query,
                         status: 'running',
-                        progress: 5, // 初始进度设为5%，确保进度条可见
+                        progress: 5, // Initial progress 5%, ensure bar visible
                         created_at: new Date().toISOString(),
                         updated_at: new Date().toISOString()
                     });
                     
-                    // 立即刷新一次日志以确保同步
+                    // Immediately refresh log once to ensure sync
                     setTimeout(() => {
                         refreshReportLog();
                     }, 500);
                     
-                    // 开始轮询任务状态
+                    // Start polling task status
                     startProgressPolling(data.task_id);
                 } else {
-                    updateTaskProgressStatus(null, 'error', '启动失败: ' + data.error);
-                    // 重置标志允许重新尝试
+                    updateTaskProgressStatus(null, 'error', 'Start failed: ' + data.error);
+                    // Reset flag to allow retry
                     autoGenerateTriggered = false;
                     reportTaskId = null;
                 }
             })
             .catch(error => {
-                console.error('生成报告失败:', error);
-                updateTaskProgressStatus(null, 'error', '生成报告失败: ' + error.message);
-                // 重置标志允许重新尝试
+                console.error('Report generation failed:', error);
+                updateTaskProgressStatus(null, 'error', 'Report generation failed: ' + error.message);
+                // Reset flag to allow retry
                 autoGenerateTriggered = false;
                 reportTaskId = null;
             });
         }
 
-        // 开始进度轮询
+        // Start Progress Polling
         function startProgressPolling(taskId) {
             if (reportPollingInterval) {
                 clearInterval(reportPollingInterval);
@@ -2892,43 +2892,44 @@
             }, 2000);
         }
 
-        // 检查任务进度
+        // Check Task Progress
         function checkTaskProgress(taskId) {
             fetch(`/api/report/progress/${taskId}`)
+            .then(response => response.json())
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     updateProgressDisplay(data.task);
                     
-                    // 在检查进度时也刷新日志
+                    // Refresh log when checking progress
                     refreshReportLog();
                     
                     if (data.task.status === 'completed') {
                         clearInterval(reportPollingInterval);
-                        showMessage('报告生成完成！', 'success');
+                        showMessage('Report generation completed!', 'success');
                         
-                        // 自动显示报告
+                        // Auto display report
                         viewReport(taskId);
                         
-                        // 重置自动生成标志，允许下次有新内容时自动生成
+                        // Reset auto-generate flag, allow auto-gen next time new content arrives
                         autoGenerateTriggered = false;
                         reportTaskId = null;
                     } else if (data.task.status === 'error') {
                         clearInterval(reportPollingInterval);
-                        showMessage('报告生成失败: ' + data.task.error_message, 'error');
+                        showMessage('Report generation failed: ' + data.task.error_message, 'error');
                         
-                        // 重置自动生成标志，允许重新尝试
+                        // Reset auto-generate flag, allow auto-gen next time new content arrives
                         autoGenerateTriggered = false;
                         reportTaskId = null;
                     }
                 }
             })
             .catch(error => {
-                console.error('检查进度失败:', error);
+                console.error('Check progress failed:', error);
             });
         }
 
-        // 添加任务进度状态（使用固定区域）
+        // Add Task Progress Status (Use fixed area)
         function addTaskProgressStatus(message, status) {
             const taskArea = document.getElementById('taskProgressArea');
             
@@ -2938,14 +2939,14 @@
                 taskArea.innerHTML = `
                     <div class="task-progress-container">
                         <div class="task-progress-header">
-                            ${loadingIndicator}任务状态: ${message}
+                            ${loadingIndicator}Task Status: ${message}
                         </div>
                     </div>
                 `;
             }
         }
         
-        // 更新任务进度状态（使用固定区域）
+        // Update Task Progress Status (Use fixed area)
         function updateTaskProgressStatus(task, status = null, errorMessage = null) {
             const taskArea = document.getElementById('taskProgressArea');
             
@@ -2959,12 +2960,12 @@
             } else if (status && errorMessage) {
                 const loadingIndicator = status === 'loading' ? '<span class="report-loading-spinner"></span>' : '';
                 const statusBadgeClass = status === 'error' ? 'task-status-error' : 'task-status-running';
-                const statusText = status === 'error' ? '错误' : '处理中';
+                const statusText = status === 'error' ? 'Error' : 'Processing';
                 
                 taskArea.innerHTML = `
                     <div class="task-progress-container">
                         <div class="task-progress-header">
-                            ${loadingIndicator}任务状态: ${statusText}
+                            ${loadingIndicator}Task Status: ${statusText}
                         </div>
                         <div style="margin-top: 10px; font-size: 14px;">
                             ${errorMessage}
@@ -2974,80 +2975,80 @@
             }
         }
 
-        // 更新进度显示（保持向后兼容）
+        // Update progress display (keep backward compatibility)
         function updateProgressDisplay(task) {
             updateTaskProgressStatus(task);
         }
 
-        // 查看报告
+        // View Report
         function viewReport(taskId) {
             const reportPreview = document.getElementById('reportPreview');
-            reportPreview.innerHTML = '<div class="report-loading"><span class="report-loading-spinner"></span>加载报告中...</div>';
+            reportPreview.innerHTML = '<div class="report-loading"><span class="report-loading-spinner"></span>Loading report...</div>';
             
             fetch(`/api/report/result/${taskId}`)
             .then(response => {
                 if (response.ok) {
                     return response.text();
                 } else {
-                    throw new Error('报告加载失败');
+                    throw new Error('Report load failed');
                 }
             })
             .then(rawContent => {
                 let htmlContent = rawContent;
                 
-                // 检查是否是JSON格式的响应（包含html_content字段）
+                // Check if JSON response (contains html_content field)
                 try {
                     if (rawContent.includes('"html_content":')) {
-                        // 提取JSON中的html_content
+                        // Extract html_content from JSON
                         const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
                         if (jsonMatch) {
                             const jsonData = JSON.parse(jsonMatch[0]);
                             if (jsonData.html_content) {
                                 htmlContent = jsonData.html_content;
-                                // 处理转义字符
+                                // Handle escape characters
                                 htmlContent = htmlContent.replace(/\\"/g, '"').replace(/\\n/g, '\n');
                             }
                         }
                     }
                 } catch (e) {
-                    console.warn('解析JSON格式报告失败，使用原始内容:', e);
+                    console.warn('Failed to parse JSON report, using raw content:', e);
                 }
                 
-                // 创建iframe来显示HTML内容
+                // Create iframe to display HTML content
                 const iframe = document.createElement('iframe');
                 iframe.style.width = '100%';
                 iframe.style.border = 'none';
-                iframe.style.minHeight = '800px'; // 增加最小高度
-                iframe.style.overflow = 'hidden'; // 强制不显示滚动条
+                iframe.style.minHeight = '800px'; // Increase min height
+                iframe.style.overflow = 'hidden'; // Force hide scrollbar
                 iframe.style.scrollbarWidth = 'none'; // Firefox
                 iframe.style.msOverflowStyle = 'none'; // IE and Edge
-                iframe.scrolling = 'no'; // 传统方式禁用滚动
+                iframe.scrolling = 'no'; // Traditional way to disable scrolling
                 iframe.id = 'report-iframe';
                 
                 reportPreview.innerHTML = '';
                 reportPreview.appendChild(iframe);
                 
-                // 将HTML内容写入iframe
+                // Write HTML content to iframe
                 iframe.contentDocument.open();
                 iframe.contentDocument.write(htmlContent);
                 iframe.contentDocument.close();
                 
-                // 确保iframe内部文档也不显示滚动条
+                // Ensure iframe internal document also hides scrollbar
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
                 if (iframeDoc) {
-                    // 设置body样式
+                    // Set body style
                     if (iframeDoc.body) {
                         iframeDoc.body.style.overflow = 'hidden';
                         iframeDoc.body.style.scrollbarWidth = 'none';
                         iframeDoc.body.style.msOverflowStyle = 'none';
                     }
-                    // 设置html样式
+                    // Set html style
                     if (iframeDoc.documentElement) {
                         iframeDoc.documentElement.style.overflow = 'hidden';
                         iframeDoc.documentElement.style.scrollbarWidth = 'none';
                         iframeDoc.documentElement.style.msOverflowStyle = 'none';
                     }
-                    // 添加CSS规则隐藏webkit滚动条
+                    // Add CSS rules to hide webkit scrollbar
                     const style = iframeDoc.createElement('style');
                     style.textContent = `
                         body::-webkit-scrollbar, html::-webkit-scrollbar {
@@ -3062,17 +3063,17 @@
                     iframeDoc.head.appendChild(style);
                 }
                 
-                // 等待内容加载完成后调整iframe高度
+                // Wait for content load then adjust iframe height
                 iframe.onload = function() {
                     setTimeout(() => {
                         try {
-                            // 获取iframe内容的实际高度
+                            // Get actual height of iframe content
                             const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
                             
-                            // 等待所有资源加载完成
+                            // Wait for all resources to load
                             let contentHeight = 0;
                             
-                            // 尝试多种方式获取内容高度
+                            // Try multiple ways to get content height
                             if (iframeDoc.body) {
                                 contentHeight = Math.max(
                                     iframeDoc.body.scrollHeight || 0,
@@ -3090,51 +3091,51 @@
                                 );
                             }
                             
-                            // 设置iframe高度为内容高度，最小800px
-                            const finalHeight = Math.max(contentHeight + 100, 800); // 添加100px的缓冲
+                            // Set iframe height to content height, min 800px
+                            const finalHeight = Math.max(contentHeight + 100, 800); // Add 100px buffer
                             iframe.style.height = finalHeight + 'px';
                             
-                            console.log(`报告iframe高度已调整为: ${finalHeight}px (内容高度: ${contentHeight}px)`);
+                            console.log(`Report iframe height adjusted to: ${finalHeight}px (content height: ${contentHeight}px)`);
                             
-                            // 确保父容器也能正确显示
+                            // Ensure parent container also displays correctly
                             reportPreview.style.minHeight = finalHeight + 'px';
                             
                         } catch (error) {
-                            console.error('调整iframe高度失败:', error);
-                            // 如果调整失败，使用更大的默认高度
+                            console.error('Failed to adjust iframe height:', error);
+                            // If adjust failed, use larger default height
                             iframe.style.height = '1200px';
                             reportPreview.style.minHeight = '1200px';
                         }
-                    }, 1000); // 延迟1秒等待内容完全渲染
+                    }, 1000); // Delay 1s wait for content full render
                 };
                 
-                // 备用方案：如果onload没有触发，延迟调整高度
+                // Fallback: if onload not triggered, delay adjust height
                 setTimeout(() => {
                     if (iframe.style.height === 'auto' || iframe.style.height === '') {
                         iframe.style.height = '1200px';
                         reportPreview.style.minHeight = '1200px';
-                        console.log('使用备用高度设置: 1200px');
+                        console.log('Using fallback height setting: 1200px');
                     }
                 }, 3000);
             })
             .catch(error => {
-                console.error('查看报告失败:', error);
+                console.error('Failed to view report:', error);
                 reportPreview.innerHTML = `
                     <div class="report-loading">
-                        报告加载失败: ${error.message}
+                        Report load failed: ${error.message}
                     </div>
                 `;
             });
         }
 
-        // 检查报告状态（不重新加载整个界面）
+        // Check report status (no reload entire interface)
         function checkReportStatus() {
-            // 只更新状态信息，不重新渲染整个界面
+            // Only update status info, no re-render entire interface
             fetch('/api/report/status')
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // 更新ReportEngine状态指示器
+                    // Update ReportEngine Status Indicator
                     const indicator = document.getElementById('status-report');
                     if (indicator) {
                         if (data.initialized) {
@@ -3146,43 +3147,43 @@
                         }
                     }
                     
-                    // 更新状态信息（如果存在）
+                    // Update status info (if exists)
                     updateEngineStatusDisplay(data);
                     
-                    showMessage('状态检查完成', 'success');
+                    showMessage('Status check completed', 'success');
                 } else {
-                    showMessage('状态检查失败: ' + data.error, 'error');
+                    showMessage('Status check failed: ' + data.error, 'error');
                 }
             })
             .catch(error => {
-                console.error('检查报告状态失败:', error);
-                showMessage('状态检查失败: ' + error.message, 'error');
+                console.error('Failed to check report status:', error);
+                showMessage('Status check failed: ' + error.message, 'error');
             });
         }
         
-        // 更新引擎状态显示（只更新文本内容）
+        // Update engine status display (only update text content)
         function updateEngineStatusDisplay(statusData) {
             const statusContent = document.getElementById('engineStatusContent');
             
             if (statusContent) {
-                // 确定状态样式
+                // Determine status style
                 const statusClass = statusData.initialized ? 'success' : 'error';
                 
-                // 更新状态信息内容
+                // Update status info content
                 let statusHTML = '';
                 if (statusData.initialized) {
                     statusHTML = `
-                        <strong>ReportEngine状态:</strong> 已初始化<br>
-                        <strong>文件检查:</strong> ${statusData.engines_ready ? '准备就绪' : '文件未就绪'}<br>
-                        <strong>找到文件:</strong> ${statusData.files_found ? statusData.files_found.join(', ') : '无'}<br>
+                        <strong>ReportEngine Status:</strong> Initialized<br>
+                        <strong>File Check:</strong> ${statusData.engines_ready ? 'Ready' : 'Files Not Ready'}<br>
+                        <strong>Files Found:</strong> ${statusData.files_found ? statusData.files_found.join(', ') : 'None'}<br>
                         ${statusData.missing_files && statusData.missing_files.length > 0 ? 
-                          `<strong>缺失文件:</strong> ${statusData.missing_files.join(', ')}` : ''}
+                          `<strong>Missing Files:</strong> ${statusData.missing_files.join(', ')}` : ''}
                     `;
                 } else {
-                    statusHTML = `<strong>ReportEngine状态:</strong> 未初始化`;
+                    statusHTML = `<strong>ReportEngine Status:</strong> Not Initialized`;
                 }
                 
-                // 更新内容和样式
+                // Update content and style
                 statusContent.innerHTML = statusHTML;
                 statusContent.className = `report-status ${statusClass}`;
             }
