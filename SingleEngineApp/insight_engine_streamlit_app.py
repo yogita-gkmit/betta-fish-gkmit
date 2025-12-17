@@ -42,7 +42,7 @@ def main():
 
     st.title("Insight Agent")
     st.markdown("Private Public Opinion Database Deep Analysis AI Agent")
-    st.markdown("Automatically crawls public opinion data 24/7 from 13 social media platforms and technical forums including Weibo, Zhihu, GitHub, CoolAPK, etc.")
+    st.markdown("Automatically crawls public opinion data 24/7 from 13 social media platforms and technical forums including times of india, glassdoor etc.")
 
     # Check URL parameters
     try:

@@ -30,7 +30,7 @@ class PlatformCrawler:
     def __init__(self):
         """Initialize Platform Crawler Manager"""
         self.mediacrawler_path = Path(__file__).parent / "MediaCrawler"
-        self.supported_platforms = ['xhs', 'dy', 'ks', 'bili', 'wb', 'tieba', 'zhihu']
+        self.supported_platforms = ['toi', 'glassdoor']
         self.crawl_stats = {}
         
         # Ensure MediaCrawler directory exists

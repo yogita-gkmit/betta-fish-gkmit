@@ -9,8 +9,8 @@
 # Using this code indicates your agreement to abide by the above principles and all terms in the LICENSE.
 
 # Basic Configuration
-PLATFORM = "bili"  # Platform, xhs | dy | ks | bili | wb | tieba | zhihu
-KEYWORDS = "Demon Slayer Movie, Relatives embezzling compensation of 3 sisters' deceased father, Cyber police cut off online black market targeting minors, People born after 2007 cannot smoke in Maldives, Shen Yue, Is a princess and her own knight, Israeli army abusing prisoners video, Strange Tales of Tang Dynasty, Guangzhou Metro responds to frequent popup ads on app, Quan Hongchan's diet plan accurate to gram"  # Keyword search config, separated by commas
+PLATFORM = "toi"  # Platform，xhs | dy | ks | bili | wb | tieba | zhihu
+KEYWORDS = "India,AI" 
 LOGIN_TYPE = "qrcode"  # qrcode or phone or cookie
 COOKIES = ""
 CRAWLER_TYPE = "search"  # Crawler type, search(keyword search) | detail(post details)| creator(creator homepage data)
@@ -114,3 +114,5 @@ from .ks_config import *
 from .weibo_config import *
 from .tieba_config import *
 from .zhihu_config import *
+from .times_of_india_config import *
+from .glassdoor_config import *

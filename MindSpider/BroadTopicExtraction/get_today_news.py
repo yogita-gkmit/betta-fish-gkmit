@@ -7,39 +7,73 @@ Integrates News API usage and database storage functionality
 
 import sys
 import asyncio
-import httpx
 import json
 from datetime import datetime, date
 from pathlib import Path
 from typing import List, Dict, Optional
 from loguru import logger
 
-# Add project root directory to path
+# Add project root and MediaCrawler to path for imports
 project_root = Path(__file__).parent.parent
 sys.path.append(str(project_root))
+sys.path.append(str(project_root / "DeepSentimentCrawling" / "MediaCrawler"))
+
+# Monkey patch config to satisfy MediaCrawler dependencies if MindSpider config is loaded
+try:
+    import config
+    if not hasattr(config, "HEADLESS"):
+        config.HEADLESS = True
+    if not hasattr(config, "PLATFORM"):
+        config.PLATFORM = "toi"
+    if not hasattr(config, "CRAWLER_TYPE"):
+        config.CRAWLER_TYPE = "search"
+    if not hasattr(config, "KEYWORDS"):
+        config.KEYWORDS = ""
+    # Add other potentially missing configs used by crawlers
+    if not hasattr(config, "LOGIN_TYPE"):
+        config.LOGIN_TYPE = "qrcode"
+    if not hasattr(config, "COOKIES"):
+        config.COOKIES = ""
+
+    # Platform specific configs
+    if not hasattr(config, "TOI_SEARCH_URL_TEMPLATE"):
+        config.TOI_SEARCH_URL_TEMPLATE = "https://timesofindia.indiatimes.com/topic/{keyword}"
+    if not hasattr(config, "TOI_PAGE_WAIT_TIME"):
+        config.TOI_PAGE_WAIT_TIME = 5
+    if not hasattr(config, "GLASSDOOR_SEARCH_URL_TEMPLATE"):
+        config.GLASSDOOR_SEARCH_URL_TEMPLATE = "https://www.glassdoor.com/Search/results.htm?keyword={keyword}"
+    if not hasattr(config, "GLASSDOOR_PAGE_WAIT_TIME"):
+        config.GLASSDOOR_PAGE_WAIT_TIME = 5
+except ImportError:
+    pass
 
 try:
     from BroadTopicExtraction.database_manager import DatabaseManager
 except ImportError as e:
-    raise ImportError(f"Failed to import module: {e}")
+    pass
 
-# News API Base URL
-BASE_URL = "https://newsnow.busiyi.world"
+try:
+    from deep_sentiment_crawling.media_platform.glassdoor.core import GlassdoorCrawler
+    from deep_sentiment_crawling.media_platform.times_of_india.core import TimesOfIndiaCrawler
+except ImportError:
+    # Try alternate import path if modules are structured differently
+    try:
+        from media_platform.glassdoor.core import GlassdoorCrawler
+        from media_platform.times_of_india.core import TimesOfIndiaCrawler
+    except ImportError as e:
+        # Fallback for direct execution where checking paths is tricky
+        try:
+           sys.path.append(str(project_root / "DeepSentimentCrawling" / "MediaCrawler"))
+           from media_platform.glassdoor.core import GlassdoorCrawler
+           from media_platform.times_of_india.core import TimesOfIndiaCrawler
+        except Exception as e2:
+           logger.error(f"Failed to import Crawlers: {e2}")
+           raise e
 
-# News Source Chinese Name Mapping
+# News Source Mapping
 SOURCE_NAMES = {
-    "weibo": "Weibo Hot Search",
-    "zhihu": "Zhihu Hot List",
-    "bilibili-hot-search": "Bilibili Hot Search",
-    "toutiao": "Toutiao",
-    "douyin": "Douyin Hot List",
-    "github-trending-today": "GitHub Trending",
-    "coolapk": "Coolapk Hot List",
-    "tieba": "Baidu Tieba",
-    "wallstreetcn": "WallstreetCN",
-    "thepaper": "The Paper",
-    "cls-hot": "CLS Hot",
-    "xueqiu": "Xueqiu Hot List"
+    "toi": "Times of India",
+    "glassdoor": "Glassdoor"
 }
 
 class NewsCollector:
@@ -47,13 +81,21 @@ class NewsCollector:
     
     def __init__(self):
         """Initialize News Collector"""
-        self.db_manager = DatabaseManager()
+        try:
+            self.db_manager = DatabaseManager()
+        except Exception as e:
+            logger.warning(f"DatabaseManager init failed: {e}. Running in NO-DB mode.")
+            self.db_manager = None
+            
         self.supported_sources = list(SOURCE_NAMES.keys())
     
     def close(self):
         """Close Resources"""
         if self.db_manager:
-            self.db_manager.close()
+             try:
+                 self.db_manager.close()
+             except:
+                 pass
     
     def __enter__(self):
         return self
@@ -67,144 +109,96 @@ class NewsCollector:
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         self.close()
     
-    # ==================== News API Calls ====================
+    # ==================== Search & Fetch Logic ====================
     
-    async def fetch_news(self, source: str) -> dict:
-        """Fetch latest news from specified source"""
-        url = f"{BASE_URL}/api/s?id={source}&latest"
-        headers = {
-            "Accept": "application/json, text/plain, */*",
-            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/124.0.0.0 Safari/537.36"
-            ),
-            "Referer": BASE_URL,
-            "Connection": "keep-alive",
-        }
+    async def search_news(self, keyword: str) -> List[dict]:
+        """Search news/data from all sources by keyword"""
+        results = []
+        logger.info(f"Starting unified search for keyword: {keyword}")
         
+        # Run crawlers in parallel
+        # Note: Playwright might have issues with parallel context creation in same loop if not handled carefully,
+        # but separate instances typically work fine.
+        gd_task = self._run_glassdoor(keyword)
+        toi_task = self._run_toi(keyword)
+        
+        all_results = await asyncio.gather(gd_task, toi_task, return_exceptions=True)
+        
+        for res in all_results:
+            if isinstance(res, Exception):
+                logger.error(f"Search task failed: {res}")
+            else:
+                results.append(res)
+        
+        return results
+
+    async def _run_glassdoor(self, keyword: str) -> dict:
+        """Run Glassdoor Crawler"""
         try:
-            async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
-                response = await client.get(url, headers=headers)
-                response.raise_for_status()
-                
-                # Parse JSON response
-                data = response.json()
-                return {
-                    "source": source,
-                    "status": "success",
-                    "data": data,
-                    "timestamp": datetime.now().isoformat()
-                }
-        except httpx.TimeoutException:
+            logger.info("Initializing Glassdoor Crawler...")
+            crawler = GlassdoorCrawler()
+            items = await crawler.run_search([keyword])
             return {
-                "source": source,
-                "status": "timeout",
-                "error": f"Request timeout: {source}({url})",
-                "timestamp": datetime.now().isoformat()
-            }
-        except httpx.HTTPStatusError as e:
-            return {
-                "source": source,
-                "status": "http_error",
-                "error": f"HTTP Error: {source}({url}) - {e.response.status_code}",
+                "source": "glassdoor",
+                "status": "success",
+                "data": {"items": items},
                 "timestamp": datetime.now().isoformat()
             }
         except Exception as e:
+            logger.error(f"Glassdoor Crawler failed: {e}")
+            return {"source": "glassdoor", "status": "error", "error": str(e)}
+
+    async def _run_toi(self, keyword: str) -> dict:
+        """Run TOI Crawler"""
+        try:
+            logger.info("Initializing Times of India Crawler...")
+            crawler = TimesOfIndiaCrawler()
+            items = await crawler.run_search([keyword])
             return {
-                "source": source,
-                "status": "error",
-                "error": f"Unknown Error: {source}({url}) - {str(e)}",
+                "source": "toi",
+                "status": "success",
+                "data": {"items": items},
                 "timestamp": datetime.now().isoformat()
             }
-    
-    async def get_popular_news(self, sources: List[str] = None) -> List[dict]:
-        """Get Popular News"""
-        if sources is None:
-            sources = list(SOURCE_NAMES.keys())
-        
-        logger.info(f"Fetching latest content from {len(sources)} news sources...")
-        logger.info("=" * 80)
-        
-        results = []
-        for source in sources:
-            source_name = SOURCE_NAMES.get(source, source)
-            logger.info(f"Fetching news from {source_name}...")
-            result = await self.fetch_news(source)
-            results.append(result)
-            
-            if result["status"] == "success":
-                data = result["data"]
-                if 'items' in data and isinstance(data['items'], list):
-                    count = len(data['items'])
-                    logger.info(f"✓ {source_name}: Successfully fetched, total {count} news")
-                else:
-                    logger.info(f"✓ {source_name}: Successfully fetched")
-            else:
-                logger.error(f"✗ {source_name}: {result.get('error', 'Fetch failed')}")
-            
-            # Avoid requesting too fast
-            await asyncio.sleep(0.5)
-        
-        return results
+        except Exception as e:
+            logger.error(f"TOI Crawler failed: {e}")
+            return {"source": "toi", "status": "error", "error": str(e)}
     
     # ==================== Data Processing and Storage ====================
     
-    async def collect_and_save_news(self, sources: Optional[List[str]] = None) -> Dict:
+    async def collect_and_save_search_results(self, keyword: str) -> Dict:
         """
-        Collect and Save Daily Hot News
-        
-        Args:
-            sources: List of specified news sources, None means use all supported sources
-            
-        Returns:
-            Dictionary containing collection results
+        Collect and Save Search Results
         """
-        collection_summary_message = ""
-        collection_summary_message += "\nStarting collection of daily hot news...\n"
-        collection_summary_message += f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-        
-        # Select News Sources
-        if sources is None:
-            # Use all supported news sources
-            sources = list(SOURCE_NAMES.keys())
-        
-        collection_summary_message += f"Will collect data from {len(sources)} news sources:\n"
-        for source in sources:
-            source_name = SOURCE_NAMES.get(source, source)
-            collection_summary_message += f"  - {source_name}\n"
-        
-        logger.info(collection_summary_message)
+        logger.info(f"Starting collection for keyword: {keyword}")
         
         try:
-            # Fetch News Data
-            results = await self.get_popular_news(sources)
+            # Fetch Data
+            results = await self.search_news(keyword)
             
             # Process Results
             processed_data = self._process_news_results(results)
             
-            # Save to Database (Overwrite Mode)
-            if processed_data['news_list']:
-                saved_count = self.db_manager.save_daily_news(
-                    processed_data['news_list'], 
-                    date.today()
-                )
-                processed_data['saved_count'] = saved_count
+            # Save to Database
+            if self.db_manager and processed_data['news_list']:
+                try:
+                    saved_count = self.db_manager.save_daily_news(
+                        processed_data['news_list'], 
+                        date.today()
+                    )
+                    processed_data['saved_count'] = saved_count
+                except Exception as e:
+                    logger.error(f"Failed to save to DB: {e}")
+            else:
+                processed_data['saved_count'] = 0
+                logger.info("Skipped DB save (DB manager not active or no data)")
             
-            # Print Summary Stats
             self._print_collection_summary(processed_data)
-            
             return processed_data
             
         except Exception as e:
             logger.exception(f"Failed to collect news: {e}")
-            return {
-                'success': False,
-                'error': str(e),
-                'news_list': [],
-                'total_news': 0
-            }
+            return {'success': False, 'error': str(e), 'news_list': []}
     
     def _process_news_results(self, results: List[Dict]) -> Dict:
         """Process News Fetch Results"""
@@ -213,22 +207,29 @@ class NewsCollector:
         total_news = 0
         
         for result in results:
-            source = result['source']
-            status = result['status']
+            source = result.get('source', 'unknown')
+            status = result.get('status', 'error')
             
             if status == 'success':
                 successful_sources += 1
-                data = result['data']
+                data = result.get('data', {})
                 
                 if 'items' in data and isinstance(data['items'], list):
                     source_news_count = len(data['items'])
                     total_news += source_news_count
                     
-                    # Process news from this source
                     for i, item in enumerate(data['items'], 1):
-                        processed_news = self._process_news_item(item, source, i)
-                        if processed_news:
-                            news_list.append(processed_news)
+                        # Use specific source type if provided
+                        source_type = item.get('source', source)
+                        
+                        processed_news = {
+                            'id': item.get('id', f"{source}_{i}"), 
+                            'title': item.get('title', 'No Title'),
+                            'url': item.get('url', ''),
+                            'source': source_type, 
+                            'rank': item.get('rank', i)
+                        }
+                        news_list.append(processed_news)
         
         return {
             'success': True,
@@ -239,50 +240,16 @@ class NewsCollector:
             'collection_time': datetime.now().isoformat()
         }
     
-    def _process_news_item(self, item: Dict, source: str, rank: int) -> Optional[Dict]:
-        """Process Single News Item"""
-        try:
-            if isinstance(item, dict):
-                title = item.get('title', 'No Title').strip()
-                url = item.get('url', '')
-                
-                # Generate News ID
-                news_id = f"{source}_{item.get('id', f'rank_{rank}')}"
-                
-                return {
-                    'id': news_id,
-                    'title': title,
-                    'url': url,
-                    'source': source,
-                    'rank': rank
-                }
-            else:
-                # Process string type news
-                title = str(item)[:100] if len(str(item)) > 100 else str(item)
-                return {
-                    'id': f"{source}_rank_{rank}",
-                    'title': title,
-                    'url': '',
-                    'source': source,
-                    'rank': rank
-                }
-                
-        except Exception as e:
-            logger.exception(f"Failed to process news item: {e}")
-            return None
-    
     def _print_collection_summary(self, data: Dict):
         """Print Collection Summary"""
-        collection_summary_message = ""
-        collection_summary_message += f"\nTotal News Sources: {data['total_sources']}\n"
-        collection_summary_message += f"Successful Sources: {data['successful_sources']}\n"
-        collection_summary_message += f"Total News Count: {data['total_news']}\n"
-        if 'saved_count' in data:
-            collection_summary_message += f"Saved Count: {data['saved_count']}\n"
-        logger.info(collection_summary_message)
+        if data.get('success'):
+            logger.info(f"Total News Count: {data['total_news']}")
+            logger.info(f"Saved Count: {data.get('saved_count', 0)}")
     
     def get_today_news(self) -> List[Dict]:
-        """Get Today's News"""
+        """Get Today's News (from DB)"""
+        if not self.db_manager:
+             return []
         try:
             return self.db_manager.get_daily_news(date.today())
         except Exception as e:
@@ -290,19 +257,23 @@ class NewsCollector:
             return []
 
 async def main():
-    """Test News Collector"""
-    logger.info("Testing News Collector...")
+    """Test News Collector via Search"""
+    keyword = "TCS" 
+    if len(sys.argv) > 1:
+        keyword = sys.argv[1]
+        
+    logger.info(f"Testing News Search for: {keyword}")
     
     async with NewsCollector() as collector:
-        # Collect news
-        result = await collector.collect_and_save_news(
-            sources=["weibo", "zhihu"]  # Test use, only use two sources
-        )
+        result = await collector.collect_and_save_search_results(keyword)
         
         if result['success']:
-            logger.info(f"Collection successful! Fetched {result['total_news']} news items")
+            logger.info(f"Search successful! Found {result.get('total_news')} items.")
+            # Verify segregation
+            sources = set(item['source'] for item in result['news_list'])
+            logger.info(f"Data sources found: {sources}")
         else:
-            logger.error(f"Collection failed: {result.get('error', 'Unknown Error')}")
+            logger.error(f"Search failed: {result.get('error')}")
 
 if __name__ == "__main__":
     asyncio.run(main())

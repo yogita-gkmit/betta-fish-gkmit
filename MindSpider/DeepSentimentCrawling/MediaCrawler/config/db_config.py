@@ -10,13 +10,16 @@
 
 
 import os
+from dotenv import load_dotenv
 
-# mysql config - Use MindSpider's database configuration
-MYSQL_DB_PWD = "bettafish"
-MYSQL_DB_USER = "bettafish"
-MYSQL_DB_HOST = "127.0.0.1"
-MYSQL_DB_PORT = 5444
-MYSQL_DB_NAME = "bettafish"
+load_dotenv()
+
+# mysql config - Use env vars
+MYSQL_DB_PWD = os.getenv("MYSQL_DB_PWD", "12345678")
+MYSQL_DB_USER = os.getenv("MYSQL_DB_USER", "pgsql")
+MYSQL_DB_HOST = os.getenv("MYSQL_DB_HOST", "localhost")
+MYSQL_DB_PORT = os.getenv("MYSQL_DB_PORT", 5432)
+MYSQL_DB_NAME = os.getenv("MYSQL_DB_NAME", "betta_fish_local")
 
 mysql_db_config = {
     "user": MYSQL_DB_USER,
@@ -45,11 +48,11 @@ sqlite_db_config = {
 }
 
 # postgresql config - Use MindSpider's database configuration (if DB_DIALECT is postgresql) or env vars
-POSTGRESQL_DB_PWD = os.getenv("POSTGRESQL_DB_PWD", "bettafish")
-POSTGRESQL_DB_USER = os.getenv("POSTGRESQL_DB_USER", "bettafish")
-POSTGRESQL_DB_HOST = os.getenv("POSTGRESQL_DB_HOST", "127.0.0.1")
-POSTGRESQL_DB_PORT = os.getenv("POSTGRESQL_DB_PORT", "5444")
-POSTGRESQL_DB_NAME = os.getenv("POSTGRESQL_DB_NAME", "bettafish")
+POSTGRESQL_DB_PWD = os.getenv("POSTGRESQL_DB_PWD", "12345678")
+POSTGRESQL_DB_USER = os.getenv("POSTGRESQL_DB_USER", "pgsql")
+POSTGRESQL_DB_HOST = os.getenv("POSTGRESQL_DB_HOST", "localhost")
+POSTGRESQL_DB_PORT = os.getenv("POSTGRESQL_DB_PORT", "5432")
+POSTGRESQL_DB_NAME = os.getenv("POSTGRESQL_DB_NAME", "betta_fish_local")
 
 postgresql_db_config = {
     "user": POSTGRESQL_DB_USER,
