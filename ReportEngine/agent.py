@@ -195,7 +195,10 @@ class ReportAgent:
         start_time = datetime.now()
         
         logger.info(f"Start generating report: {query}")
-        self.logger.info(f"Input data - Report count: {len(reports)}, Forum log length: {len(forum_logs)}")
+        logger.info(f"Input data - Report count: {len(reports)}, Forum log length: {len(forum_logs)}")
+        
+        # Initialize state metadata
+        self.state.metadata.query = query
         
         try:
             # Step 1: Template Selection
@@ -204,14 +207,14 @@ class ReportAgent:
             # Step 2: Directly Generate HTML Report
             html_report = self._generate_html_report(query, reports, forum_logs, template_result)
             
-            # Step 3: Save Report
-            if save_report:
-                self._save_report(html_report)
-            
             # Update generation time
             end_time = datetime.now()
             generation_time = (end_time - start_time).total_seconds()
             self.state.metadata.generation_time = generation_time
+            
+            # Step 3: Save Report
+            if save_report:
+                self._save_report(html_report)
             
             logger.info(f"Report generation completed, took: {generation_time:.2f} seconds")
             
@@ -406,8 +409,13 @@ This report analyzes current social hot events, integrating views and data from 
         forum_ready = os.path.exists(forum_log_path)
         
         # Build return result
+        # MODIFICATION: If new files are found, use them. If not, but files exist in all directories,
+        # assume we want to use the latest existing files (e.g. restart case).
+        all_engines_have_files = all(count > 0 for count in check_result['current_counts'].values())
+        files_ready = check_result['ready'] or all_engines_have_files
+        
         result = {
-            'ready': check_result['ready'] and forum_ready,
+            'ready': files_ready and forum_ready,
             'baseline_counts': check_result['baseline_counts'],
             'current_counts': check_result['current_counts'],
             'new_files_found': check_result['new_files_found'],

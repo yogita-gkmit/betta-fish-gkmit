@@ -94,6 +94,7 @@ class BochaMultimodalSearch:
     Each public method is designed as an independent tool for AI Agent calling.
     """
 
+    # here we are using it to call the on search engine for web search
     BOCHA_BASE_URL = settings.BOCHA_BASE_URL or "https://api.bochaai.com/v1/ai-search"
 
     def __init__(self, api_key: Optional[str] = None):

@@ -25,25 +25,27 @@ except ImportError as e:
     logger.error(f"ReportEngine import failed: {e}")
     REPORT_ENGINE_AVAILABLE = False
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'Dedicated-to-creating-a-concise-and-versatile-public-opinion-analysis-platform'
-socketio = SocketIO(app, cors_allowed_origins="*")
+app = Flask(__name__) # initializes the Flask app.
+app.config['SECRET_KEY'] = 'Dedicated-to-creating-a-concise-and-versatile-public-opinion-analysis-platform' # random key
+socketio = SocketIO(app, cors_allowed_origins="*") # initializes the SocketIO app.
 
 # Register ReportEngine Blueprint
 if REPORT_ENGINE_AVAILABLE:
-    app.register_blueprint(report_bp, url_prefix='/api/report')
+    # 'report_engine' is NOT part of the URL
+    app.register_blueprint(report_bp, url_prefix='/api/report') # registers the ReportEngine blueprint with the Flask app.
     logger.info("ReportEngine interface registered")
 else:
     logger.info("ReportEngine unavailable, skipping interface registration")
 
-# Set UTF-8 encoding environment
+# Set UTF-8 encoding environment (Tell the operating system that this process now has an environment variable called PYTHONIOENCODING)
 os.environ['PYTHONIOENCODING'] = 'utf-8'
 os.environ['PYTHONUTF8'] = '1'
 
-# Create log directory
+# Create log directory if doesn't already exist
 LOG_DIR = Path('logs')
 LOG_DIR.mkdir(exist_ok=True)
 
+# coming from Configuration file config.py
 CONFIG_MODULE_NAME = 'config'
 CONFIG_FILE_PATH = Path(__file__).resolve().parent / 'config.py'
 CONFIG_KEYS = [
@@ -298,12 +300,14 @@ def initialize_system_components():
 def init_forum_log():
     """Initialize forum.log file"""
     try:
-        forum_log_file = LOG_DIR / "forum.log"
+        forum_log_file = LOG_DIR / "forum.log" # / is to join path here inside log_dir we will create forum.log file 
         # Create if not exists and write start, otherwise clear and write start
+
         if not forum_log_file.exists():
-            with open(forum_log_file, 'w', encoding='utf-8') as f:
+            # with is for auto operation (file/db) open and close
+            with open(forum_log_file, 'w', encoding='utf-8') as f: # w is for write
                 start_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                f.write(f"=== ForumEngine System Initialization - {start_time} ===\n")
+                f.write(f"=== ForumEngine System Initialization - {start_time} ===\n") # f"" is just like `${}` in js
             logger.info(f"ForumEngine: forum.log initialized")
         else:
             with open(forum_log_file, 'w', encoding='utf-8') as f:
@@ -435,11 +439,11 @@ def monitor_forum_log():
             logger.error(f"Forum log monitor error: {e}")
             time.sleep(5)
 
-# Start Forum log monitor thread
+# Start Forum log monitor thread (Run monitor_forum_log() in the background, at the same time as the rest of the program.)
 forum_monitor_thread = threading.Thread(target=monitor_forum_log, daemon=True)
 forum_monitor_thread.start()
 
-# Global variable to store process info
+# Global variable to store process info (it run STREAMLIT_SCRIPTS this on different ports)
 processes = {
     'insight': {'process': None, 'port': 8501, 'status': 'stopped', 'output': [], 'log_file': None},
     'media': {'process': None, 'port': 8502, 'status': 'stopped', 'output': [], 'log_file': None},
@@ -448,12 +452,12 @@ processes = {
 }
 
 STREAMLIT_SCRIPTS = {
-    'insight': 'SingleEngineApp/insight_engine_streamlit_app.py',
-    'media': 'SingleEngineApp/media_engine_streamlit_app.py',
-    'query': 'SingleEngineApp/query_engine_streamlit_app.py'
+    'insight': 'SingleEngineApp/insight_engine_streamlit_app.py', # python package used for frontend design
+    'media': 'SingleEngineApp/media_engine_streamlit_app.py', # python package used for frontend design
+    'query': 'SingleEngineApp/query_engine_streamlit_app.py' # python package used for frontend design
 }
 
-# Output queues
+# Output queues (provide a way to store output from different processes)
 output_queues = {
     'insight': Queue(),
     'media': Queue(),
@@ -658,9 +662,9 @@ def stop_streamlit_app(app_name):
 
 def check_app_status():
     """Check application status"""
-    for app_name, info in processes.items():
+    for app_name, info in processes.items(): # processes key:value => app_name:info
         if info['process'] is not None:
-            if info['process'].poll() is None:
+            if info['process'].poll() is None: # check if process is running
                 # Process still running, check if port is accessible
                 try:
                     response = requests.get(f"http://localhost:{info['port']}", timeout=2)
@@ -701,19 +705,20 @@ def wait_for_app_startup(app_name, max_wait_time=30):
     
     return False, "Startup timeout"
 
+# When the program exits (normally or unexpectedly), everything is shut down cleanly.
 def cleanup_processes():
     """Cleanup all processes"""
     for app_name in STREAMLIT_SCRIPTS:
-        stop_streamlit_app(app_name)
+        stop_streamlit_app(app_name) # function to terminate the STREAMLIT_SCRIPTS
 
-    processes['forum']['status'] = 'stopped'
+    processes['forum']['status'] = 'stopped' # only because others are covered in STREAMLIT_SCRIPTS
     try:
         stop_forum_engine()
     except Exception:  # pragma: no cover
         logger.exception("Failed to stop ForumEngine")
     _set_system_state(started=False, starting=False)
 
-# Register cleanup function
+# When Python is about to exit, run this function.
 atexit.register(cleanup_processes)
 
 @app.route('/')
@@ -731,16 +736,16 @@ def get_status():
             'port': info['port'],
             'output_lines': len(info['output'])
         }
-        for app_name, info in processes.items()
+        for app_name, info in processes.items() # loop through all processes key:value => app_name:info
     })
 
 @app.route('/api/start/<app_name>')
 def start_app(app_name):
     """Start specified application"""
-    if app_name not in processes:
+    if app_name not in processes: # check if app_name is in processes
         return jsonify({'success': False, 'message': 'Unknown application'})
 
-    if app_name == 'forum':
+    if app_name == 'forum': # remaining app_name check for forum only since its not STREAMLIT_SCRIPTS app
         try:
             start_forum_engine()
             processes['forum']['status'] = 'running'
@@ -753,7 +758,7 @@ def start_app(app_name):
     if not script_path:
         return jsonify({'success': False, 'message': 'App does not support start operation'})
 
-    success, message = start_streamlit_app(
+    success, message = start_streamlit_app( # start_streamlit_app is python package which makes frontend easy to build
         app_name,
         script_path,
         processes[app_name]['port']

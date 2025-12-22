@@ -452,6 +452,9 @@ class LogMonitor:
         
         return content.strip()
    
+   # It turns passive log files into an active event stream. It waits for a specific start signal, 
+   # copies relevant updates to a central chat log, and occasionally pokes a "Host" AI to speak 
+   # up so the user isn't just watching raw logs scroll by.
     def monitor_logs(self):
         """Intelligent log monitoring"""
         logger.info("ForumEngine: Creating forum...")
@@ -472,6 +475,13 @@ class LogMonitor:
                 captured_any = False
                
                 # Process each log file independently
+                # monitored_logs is a dictionary of log files to monitor. it converts the object to 
+                # list of tuples (immutable array) like this:
+                # [
+                #     ('insight', PosixPath('logs/insight.log')),
+                #     ('media',   PosixPath('logs/media.log')),
+                #     ('query',   PosixPath('logs/query.log'))
+                # ]
                 for app_name, log_file in self.monitored_logs.items():
                     current_lines = self.get_file_line_count(log_file)
                     previous_lines = self.file_line_counts.get(app_name, 0)

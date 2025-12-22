@@ -1,7 +1,7 @@
 # Times of India Configuration
 
-# 搜索URL模板
+# Search URL template
 TOI_SEARCH_URL_TEMPLATE = "https://timesofindia.indiatimes.com/topic/{keyword}"
 
-# 页面加载等待时间
+# Page load wait time
 TOI_PAGE_WAIT_TIME = 5
