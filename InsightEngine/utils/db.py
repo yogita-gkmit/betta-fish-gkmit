@@ -60,11 +60,27 @@ async def fetch_all(query: str, params: Optional[Union[Iterable[Any], Dict[str, 
     """
     Execute read-only query and return list of dictionaries.
     """
-    engine: AsyncEngine = get_async_engine()
-    async with engine.connect() as conn:
-        result = await conn.execute(text(query), params or {})
-        rows = result.mappings().all()
-        # Convert RowMapping to normal dictionary
-        return [dict(row) for row in rows]
+    # Ensure we use an engine bound to the current context if needed, or just standard pattern
+    # For safety in mixed sync/async environments (like Flask + asyncio), we should make sure the engine is disposed or compatible.
+    # But usually, keeping a global engine is fine IF the loop is consistent.
+    # If Flask is creating a new loop for each request (via something like asyncio.run), the global _engine created in a different loop will fail.
+    
+    # Simple fix: Create a local engine for the operation if we suspect loop mismatch, OR (better) check loop.
+    # Given the traceback likely points to loop mismatch with the global _engine.
+    
+    # Let's recreate engine if loop seems different or just create a fresh one for now to be safe against loop boundaries.
+    # NOTE: Creating engine per request is expensive but safe. Optimally we'd bond it to the loop.
+    
+    database_url: str = _build_database_url()
+    # disposable engine for this call to avoid "Future attached to a different loop"
+    engine = create_async_engine(database_url, pool_pre_ping=True)
+    
+    try:
+        async with engine.connect() as conn:
+            result = await conn.execute(text(query), params or {})
+            rows = result.mappings().all()
+            return [dict(row) for row in rows]
+    finally:
+        await engine.dispose()
 
 

@@ -19,28 +19,47 @@ class GlassdoorCrawler(AbstractCrawler):
     async def run_search(self, keywords: List[str]) -> List[Dict]:
         """Entry point for external scripts to run search"""
         results = []
-        async with async_playwright() as playwright:
+        browser = None
+        playwright = None
+        
+        try:
+            playwright = await async_playwright().start()
             chromium = playwright.chromium
             self.browser_context = await self.launch_browser(
                 chromium, None, self.user_agent, headless=config.HEADLESS
             )
+            # Get the browser instance associated with the context to close it later
+            browser = self.browser_context.browser
             
             # Resolve absolute path to stealth.min.js
             current_dir = os.path.dirname(os.path.abspath(__file__))
-            # glassdoor(or toi)/core.py -> glassdoor -> media_platform -> MediaCrawler -> libs
             root_dir = os.path.dirname(os.path.dirname(current_dir))
             stealth_path = os.path.join(root_dir, "libs", "stealth.min.js")
             
-            await self.browser_context.add_init_script(path=stealth_path)
+            if os.path.exists(stealth_path):
+                await self.browser_context.add_init_script(path=stealth_path)
+            
             self.context_page = await self.browser_context.new_page()
             
-            # Warm up
+            # Warm up with timeout to prevent hang
             try:
-                await self.context_page.goto(self.index_url, wait_until="domcontentloaded")
-            except:
+                await self.context_page.goto(self.index_url, wait_until="domcontentloaded", timeout=15000)
+            except Exception:
                 pass
                 
             results = await self.search_keywords(keywords)
+            
+        except Exception as e:
+            utils.logger.error(f"[GlassdoorCrawler] run_search failed: {e}")
+        finally:
+            # Explicit cleanup to prevent zombie processes/hangs
+            if self.browser_context:
+                await self.browser_context.close()
+            if browser:
+                await browser.close()
+            if playwright:
+                await playwright.stop()
+            utils.logger.info("[GlassdoorCrawler] Browser resources closed.")
             
         return results
 
@@ -104,55 +123,115 @@ class GlassdoorCrawler(AbstractCrawler):
         return all_results
 
     def _parse_search_results(self, html: str, keyword: str) -> List[Dict]:
-        """Parse Glassdoor HTML results"""
+        """Parse Glassdoor HTML results with robust fallbacks"""
         soup = BeautifulSoup(html, 'html.parser')
         items = []
         
-        # 1. Companies
-        for i, div in enumerate(soup.select('div[data-test="company-card"]')):
-            name = div.select_one('.employer-card_employerName__kSwU7')
-            link = div.select_one('a.employer-card_employerCardContainer__Y7DA5')
-            rating = div.select_one('.employer-card_employerRatingContainer__w93y9')
+        utils.logger.info(f"[GlassdoorCrawler] Parsing HTML length: {len(html)}")
+        
+        # 1. Companies - Try multiple container selectors
+        company_cards = soup.select('div[data-test="company-card"]') or \
+                        soup.select('.employer-card') # Fallback to partial class
+        
+        utils.logger.info(f"[GlassdoorCrawler] Found {len(company_cards)} potential company cards")
+
+        for i, div in enumerate(company_cards):
+            # Try to find name in common locations
+            name_el = div.select_one('[data-test="employer-short-name"]') or \
+                      div.select_one('h2') or \
+                      div.select_one('h3') or \
+                      div.select_one('a') # Last resort: first link
             
-            if name:
+            name_text = name_el.get_text(strip=True) if name_el else div.get_text(strip=True).split('  ')[0]
+            
+            # Find link
+            link = div.find('a', href=True)
+            
+            # Find rating
+            rating_el = div.select_one('[data-test="rating"]') or \
+                        div.select_one('span[class*="rating"]')
+            
+            rating = rating_el.get_text(strip=True) if rating_el else "N/A"
+
+            if name_text:
+                logger_msg = f"[Glassdoor] Found Company: {name_text} (Rating: {rating})"
+                utils.logger.info(logger_msg)
+                print(f"--- FRETCHED DATA: {logger_msg} ---")
+                
                 items.append({
                     "id": f"gd_comp_{keyword}_{i}",
-                    "title": f"[Company] {name.get_text(strip=True)}",
-                    "url": f"https://www.glassdoor.com{link['href']}" if link and link.get('href') else "",
+                    "title": f"[Company] {name_text}",
+                    "url": f"https://www.glassdoor.com{link['href']}" if link else "",
                     "source": "glassdoor_company",
                     "rank": i + 1,
-                    "metadata": {"rating": rating.get_text(strip=True) if rating else "N/A"}
+                    "metadata": {"rating": rating},
+                    "content": div.get_text(separator=' | ', strip=True) # Capture full card text as content
                 })
 
-        # 2. Jobs
-        for i, div in enumerate(soup.select('div[data-test="jobs-item"]')):
-            title = div.select_one('div[data-test="job-title"]')
-            emp = div.select_one('.EmployerProfile_compactEmployerName__9MGcV')
-            loc = div.select_one('div[data-test="emp-location"]')
+        # 2. Jobs - Try multiple container selectors
+        job_cards = soup.select('div[data-test="jobs-item"]') or \
+                    soup.select('li[data-test="job-listing"]') or \
+                    soup.select('.job-search-key') # Common reactive class prefix
+        
+        utils.logger.info(f"[GlassdoorCrawler] Found {len(job_cards)} potential job cards")
+
+        for i, div in enumerate(job_cards):
+            # Job Title
+            title_el = div.select_one('[data-test="job-title"]') or \
+                       div.select_one('a[data-test="job-link"]') or \
+                       div.find('a', class_=lambda x: x and 'job' in x.lower())
             
-            if title:
+            # Employer
+            emp_el = div.select_one('[data-test="employer-name"]') or \
+                     div.find(lambda tag: tag.name == "div" and tag.text and len(tag.text) < 50)
+            
+            title_text = title_el.get_text(strip=True) if title_el else "Unknown Job"
+            emp_text = emp_el.get_text(strip=True) if emp_el else "Unknown Company"
+            
+            if title_el or "Job" in title_text:
+                logger_msg = f"[Glassdoor] Found Job: {title_text} at {emp_text}"
+                print(f"--- FETCHED DATA: {logger_msg} ---")
+                
                 items.append({
                     "id": f"gd_job_{keyword}_{i}",
-                    "title": f"[Job] {title.get_text(strip=True)} at {emp.get_text(strip=True) if emp else 'Unknown'}",
-                    "url": "", # Job links often complex in this view
+                    "title": f"[Job] {title_text} at {emp_text}",
+                    "url": f"https://www.glassdoor.com{title_el['href']}" if title_el and title_el.has_attr('href') else "",
                     "source": "glassdoor_job",
                     "rank": i + 1,
-                    "metadata": {"location": loc.get_text(strip=True) if loc else ""}
+                    "metadata": {"company": emp_text},
+                    "content": div.get_text(separator=' | ', strip=True)
                 })
                 
-        # 3. Conversations (Optional)
-        for i, div in enumerate(soup.select('div[data-test="conversations-item"]')):
-            body = div.select_one('p[data-test="PostPreviewCard-body"]')
-            if body:
+        # 3. Generic Fallback (If structured parsing failed completely)
+        # 3. Force Capture / Generic Fallback
+        if not items:
+            utils.logger.warning("[GlassdoorCrawler] Structured parsing yielded 0 results. Executing Force Capture of text content.")
+            # Capture visible text chunks to form a rough summary
+            main_text = soup.get_text(separator='\n', strip=True)
+            # Filter out too short lines to reduce noise
+            clean_lines = [line for line in main_text.split('\n') if len(line) > 20] 
+            content_dump = "\n".join(clean_lines)[:10000] # Limit to 10k chars
+            
+            if len(content_dump) > 100:
                 items.append({
-                    "id": f"gd_conv_{keyword}_{i}",
-                    "title": f"[Discussion] {body.get_text(strip=True)[:100]}...",
-                    "url": "",
-                    "source": "glassdoor_conversation",
-                    "rank": i + 1
+                    "id": f"gd_dump_{keyword}",
+                    "title": f"[Glassdoor Raw Summary] {keyword}",
+                    "url": config.GLASSDOOR_SEARCH_URL_TEMPLATE.format(keyword=keyword),
+                    "source": "glassdoor_fallback",
+                    "rank": 1,
+                    "metadata": {"type": "page_dump"},
+                    "content": f"Glassdoor Search Results for {keyword} (Raw Text Extraction):\n\n{content_dump}"
                 })
+
+        # Remove duplicates
+        seen_ids = set()
+        unique_items = []
+        for item in items:
+            if item['id'] not in seen_ids:
+                unique_items.append(item)
+                seen_ids.add(item['id'])
                 
-        return items
+        return unique_items
 
     async def launch_browser(self, chromium: BrowserType, playwright_proxy: Optional[Dict], user_agent: Optional[str], headless: bool = True) -> BrowserContext:
         browser = await chromium.launch(headless=headless, proxy=playwright_proxy)

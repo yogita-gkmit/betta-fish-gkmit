@@ -12,7 +12,7 @@ V3.0 Core Updates:
 - Intelligent Hotness Calculation: `search_hot_content` no longer needs `sort_by` parameter, instead uses unified weighted hotness algorithm internally,
   calculating hotness score based on likes, comments, shares, views, etc., making results more intelligent and consistent with comprehensive hotness.
 - New Platform Precise Search Tool: Added `search_topic_on_platform` tool, as a special case,
-  allowing Agent to precisely search for a topic on a specific platform (Bilibili, Weibo, etc. 7 platforms), and supports time filtering.
+  allowing Agent to precisely search for a topic on a specific platform (Glassdoor, Times of India, etc.), and supports time filtering.
 - Structure Optimization: Adjusted data structures and function documentation to adapt to new features.
 
 Main Tools:
@@ -75,19 +75,26 @@ class MediaCrawlerDB:
         pass
         
     def _execute_query(self, query: str, params: tuple = None) -> List[Dict[str, Any]]:
-        try:
-            # Get or create event loop
+        """
+        Execute query in a thread-safe manner, compatible with running event loops.
+        Uses a separate thread to run the async DB operation to avoid nested loop issues.
+        """
+        import concurrent.futures
+        
+        def run_in_new_loop(q, p):
+            new_loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(new_loop)
             try:
-                loop = asyncio.get_event_loop()
-                if loop.is_closed():
-                    loop = asyncio.new_event_loop()
-                    asyncio.set_event_loop(loop)
-            except RuntimeError:
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-            
-            # Run coroutine directly
-            return loop.run_until_complete(fetch_all(query, params))
+                return new_loop.run_until_complete(fetch_all(q, p))
+            finally:
+                new_loop.close()
+
+        try:
+            # Check if there's a running loop to decide detailed strategy, 
+            # but using a thread is the safest "sync-over-async" bridge regardless.
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(run_in_new_loop, query, params)
+                return future.result()
         
         except Exception as e:
             logger.exception(f"Error occurred during database query: {e}")
@@ -198,18 +205,18 @@ class MediaCrawlerDB:
         logger.info(f"--- TOOL: Global Topic Search (params: {params_for_log}) ---")
         
         search_term, all_results = f"%{topic}%", []
-        search_configs = { 'bilibili_video': {'fields': ['title', 'desc', 'source_keyword'], 'type': 'video'}, 'bilibili_video_comment': {'fields': ['content'], 'type': 'comment'}, 'douyin_aweme': {'fields': ['title', 'desc', 'source_keyword'], 'type': 'video'}, 'douyin_aweme_comment': {'fields': ['content'], 'type': 'comment'}, 'kuaishou_video': {'fields': ['title', 'desc', 'source_keyword'], 'type': 'video'}, 'kuaishou_video_comment': {'fields': ['content'], 'type': 'comment'}, 'weibo_note': {'fields': ['content', 'source_keyword'], 'type': 'note'}, 'weibo_note_comment': {'fields': ['content'], 'type': 'comment'}, 'xhs_note': {'fields': ['title', 'desc', 'tag_list', 'source_keyword'], 'type': 'note'}, 'xhs_note_comment': {'fields': ['content'], 'type': 'comment'}, 'zhihu_content': {'fields': ['title', 'desc', 'content_text', 'source_keyword'], 'type': 'content'}, 'zhihu_comment': {'fields': ['content'], 'type': 'comment'}, 'tieba_note': {'fields': ['title', 'desc', 'source_keyword'], 'type': 'note'}, 'tieba_comment': {'fields': ['content'], 'type': 'comment'}, 'daily_news': {'fields': ['title'], 'type': 'news'}, }
+        search_configs = { 'bilibili_video': {'fields': ['title', 'desc', 'source_keyword'], 'type': 'video'}, 'bilibili_video_comment': {'fields': ['content'], 'type': 'comment'}, 'douyin_aweme': {'fields': ['title', 'desc', 'source_keyword'], 'type': 'video'}, 'douyin_aweme_comment': {'fields': ['content'], 'type': 'comment'}, 'kuaishou_video': {'fields': ['title', 'desc', 'source_keyword'], 'type': 'video'}, 'kuaishou_video_comment': {'fields': ['content'], 'type': 'comment'}, 'weibo_note': {'fields': ['content', 'source_keyword'], 'type': 'note'}, 'weibo_note_comment': {'fields': ['content'], 'type': 'comment'}, 'xhs_note': {'fields': ['title', 'desc', 'tag_list', 'source_keyword'], 'type': 'note'}, 'xhs_note_comment': {'fields': ['content'], 'type': 'comment'}, 'zhihu_content': {'fields': ['title', 'desc', 'content_text', 'source_keyword'], 'type': 'content'}, 'zhihu_comment': {'fields': ['content'], 'type': 'comment'}, 'tieba_note': {'fields': ['title', 'desc', 'source_keyword'], 'type': 'note'}, 'tieba_comment': {'fields': ['content'], 'type': 'comment'}, 'daily_news': {'fields': ['title', 'content', 'summary'], 'type': 'news'}, }
         
         for table, config in search_configs.items():
             param_dict = {}
             where_clauses = []
             for idx, field in enumerate(config['fields']):
                 pname = f"term_{idx}"
-                where_clauses.append(f'"{field}" LIKE :{pname}')
+                where_clauses.append(f'"{field}" ILIKE :{pname}')
                 param_dict[pname] = search_term
             param_dict['limit'] = limit_per_table
             where_clause = " OR ".join(where_clauses)
-            query = f'SELECT * FROM "{table}" WHERE {where_clause} ORDER BY id DESC LIMIT :limit'
+            query = f"SELECT * FROM {table} WHERE {where_clause} ORDER BY id DESC LIMIT :limit"
             raw_results = self._execute_query(query, param_dict)
             for row in raw_results:
                 content = (row.get('title') or row.get('content') or row.get('desc') or row.get('content_text', ''))
@@ -264,7 +271,7 @@ class MediaCrawlerDB:
                 param_dict[pname] = search_term
             param_dict['limit'] = limit_per_table
             where_clause = ' OR '.join(where_clauses)
-            query = f'SELECT * FROM "{table}" WHERE {where_clause} ORDER BY id DESC LIMIT :limit'
+            query = f"SELECT * FROM {table} WHERE {where_clause} ORDER BY id DESC LIMIT :limit"
             raw_results = self._execute_query(query, param_dict)
             for row in raw_results:
                 content = (row.get('title') or row.get('content') or row.get('desc') or row.get('content_text', ''))
@@ -320,7 +327,7 @@ class MediaCrawlerDB:
 
     def search_topic_on_platform(
         self,
-        platform: Literal['bilibili', 'weibo', 'douyin', 'kuaishou', 'xhs', 'zhihu', 'tieba'],
+        platform: Literal['glassdoor', 'times_of_india', 'professional_network', 'general_news', 'bilibili', 'weibo', 'douyin', 'kuaishou', 'xhs', 'zhihu', 'tieba'],
         topic: str,
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
@@ -330,7 +337,7 @@ class MediaCrawlerDB:
         [Tool] Platform Directed Search: (New) Search specific topic on specified single social media platform.
 
         Args:
-            platform (Literal['bilibili', ...]): Platform to search, must be one of the seven supported platforms.
+            platform (Literal['glassdoor', ...]): Platform to search, must be one of the supported platforms.
             topic (str): Topic keyword to search.
             start_date (Optional[str]): Start date, format 'YYYY-MM-DD'. Default is None.
             end_date (Optional[str]): End date, format 'YYYY-MM-DD'. Default is None.
@@ -342,7 +349,19 @@ class MediaCrawlerDB:
         params_for_log = {'platform': platform, 'topic': topic, 'start_date': start_date, 'end_date': end_date, 'limit': limit}
         logger.info(f"--- TOOL: Platform Directed Search (params: {params_for_log}) ---")
 
-        all_configs = { 'bilibili': [{'table': 'bilibili_video', 'fields': ['title', 'desc', 'source_keyword'], 'type': 'video', 'time_col': 'create_time', 'time_type': 'sec'}, {'table': 'bilibili_video_comment', 'fields': ['content'], 'type': 'comment'}], 'douyin': [{'table': 'douyin_aweme', 'fields': ['title', 'desc', 'source_keyword'], 'type': 'video', 'time_col': 'create_time', 'time_type': 'ms'}, {'table': 'douyin_aweme_comment', 'fields': ['content'], 'type': 'comment'}], 'kuaishou': [{'table': 'kuaishou_video', 'fields': ['title', 'desc', 'source_keyword'], 'type': 'video', 'time_col': 'create_time', 'time_type': 'ms'}, {'table': 'kuaishou_video_comment', 'fields': ['content'], 'type': 'comment'}], 'weibo': [{'table': 'weibo_note', 'fields': ['content', 'source_keyword'], 'type': 'note', 'time_col': 'create_date_time', 'time_type': 'str'}, {'table': 'weibo_note_comment', 'fields': ['content'], 'type': 'comment'}], 'xhs': [{'table': 'xhs_note', 'fields': ['title', 'desc', 'tag_list', 'source_keyword'], 'type': 'note', 'time_col': 'time', 'time_type': 'ms'}, {'table': 'xhs_note_comment', 'fields': ['content'], 'type': 'comment'}], 'zhihu': [{'table': 'zhihu_content', 'fields': ['title', 'desc', 'content_text', 'source_keyword'], 'type': 'content', 'time_col': 'created_time', 'time_type': 'sec_str'}, {'table': 'zhihu_comment', 'fields': ['content'], 'type': 'comment'}], 'tieba': [{'table': 'tieba_note', 'fields': ['title', 'desc', 'source_keyword'], 'type': 'note', 'time_col': 'publish_time', 'time_type': 'str'}, {'table': 'tieba_comment', 'fields': ['content'], 'type': 'comment'}] }
+        all_configs = { 
+            'glassdoor': [{'table': 'daily_news', 'fields': ['title', 'content', 'summary'], 'type': 'news', 'time_col': 'crawl_date', 'time_type': 'date_str', 'source_filter': 'glassdoor'}],
+            'times_of_india': [{'table': 'daily_news', 'fields': ['title', 'content', 'summary'], 'type': 'news', 'time_col': 'crawl_date', 'time_type': 'date_str', 'source_filter': 'toi'}],
+            'professional_network': [{'table': 'daily_news', 'fields': ['title', 'content', 'summary'], 'type': 'news', 'time_col': 'crawl_date', 'time_type': 'date_str'}], # Generic search on daily_news
+            'general_news': [{'table': 'daily_news', 'fields': ['title', 'content', 'summary'], 'type': 'news', 'time_col': 'crawl_date', 'time_type': 'date_str'}],
+            'bilibili': [{'table': 'bilibili_video', 'fields': ['title', 'desc', 'source_keyword'], 'type': 'video', 'time_col': 'create_time', 'time_type': 'sec'}, {'table': 'bilibili_video_comment', 'fields': ['content'], 'type': 'comment'}], 
+            'douyin': [{'table': 'douyin_aweme', 'fields': ['title', 'desc', 'source_keyword'], 'type': 'video', 'time_col': 'create_time', 'time_type': 'ms'}, {'table': 'douyin_aweme_comment', 'fields': ['content'], 'type': 'comment'}], 
+            'kuaishou': [{'table': 'kuaishou_video', 'fields': ['title', 'desc', 'source_keyword'], 'type': 'video', 'time_col': 'create_time', 'time_type': 'ms'}, {'table': 'kuaishou_video_comment', 'fields': ['content'], 'type': 'comment'}], 
+            'weibo': [{'table': 'weibo_note', 'fields': ['content', 'source_keyword'], 'type': 'note', 'time_col': 'create_date_time', 'time_type': 'str'}, {'table': 'weibo_note_comment', 'fields': ['content'], 'type': 'comment'}], 
+            'xhs': [{'table': 'xhs_note', 'fields': ['title', 'desc', 'tag_list', 'source_keyword'], 'type': 'note', 'time_col': 'time', 'time_type': 'ms'}, {'table': 'xhs_note_comment', 'fields': ['content'], 'type': 'comment'}], 
+            'zhihu': [{'table': 'zhihu_content', 'fields': ['title', 'desc', 'content_text', 'source_keyword'], 'type': 'content', 'time_col': 'created_time', 'time_type': 'sec_str'}, {'table': 'zhihu_comment', 'fields': ['content'], 'type': 'comment'}], 
+            'tieba': [{'table': 'tieba_note', 'fields': ['title', 'desc', 'source_keyword'], 'type': 'note', 'time_col': 'publish_time', 'time_type': 'str'}, {'table': 'tieba_comment', 'fields': ['content'], 'type': 'comment'}] 
+        }
         
         if platform not in all_configs:
             return DBResponse("search_topic_on_platform", params_for_log, error_message=f"Unsupported platform: {platform}")
@@ -361,9 +380,14 @@ class MediaCrawlerDB:
 
         for config in platform_configs:
             table = config['table']
-            topic_clause = " OR ".join([f"`{field}` LIKE %s" for field in config['fields']])
-            query = f"SELECT * FROM `{table}` WHERE {topic_clause}"
+            topic_clause = " OR ".join([f"{field} LIKE %s" for field in config['fields']])
+            query = f"SELECT * FROM {table} WHERE ({topic_clause})"
             params = [search_term] * len(config['fields'])
+
+            if 'source_filter' in config:
+                # Add source_platform filter for shared tables like daily_news
+                query += " AND source_platform = %s"
+                params.append(config['source_filter'])
 
             if start_dt and end_dt and 'time_col' in config:
                 time_col, time_type = config['time_col'], config['time_type']
@@ -372,8 +396,8 @@ class MediaCrawlerDB:
                 elif time_type in ['str', 'date_str']: t_params = (start_dt.strftime('%Y-%m-%d'), end_dt.strftime('%Y-%m-%d'))
                 else: t_params = (str(int(start_dt.timestamp())), str(int(end_dt.timestamp())))
                 
-                t_clause = f"`{time_col}` >= %s AND `{time_col}` < %s"
-                if table == 'zhihu_content': t_clause = f"CAST(`{time_col}` AS UNSIGNED) >= %s AND CAST(`{time_col}` AS UNSIGNED) < %s"
+                t_clause = f"{time_col} >= %s AND {time_col} < %s"
+                if table == 'zhihu_content': t_clause = f"CAST({time_col} AS UNSIGNED) >= %s AND CAST({time_col} AS UNSIGNED) < %s"
                 
                 query += f" AND ({t_clause})"
                 params.extend(t_params)
@@ -441,12 +465,12 @@ if __name__ == "__main__":
         response3 = db_agent_tools.search_topic_globally(topic="罗永浩", limit_per_table=2)
         print_response_summary(response3)
 
-        # Scenario 4: (New) Precise search "thesis" on Bilibili
-        response4 = db_agent_tools.search_topic_on_platform(platform='bilibili', topic="论文", limit=5)
+        # Scenario 4: (New) Precise search "benefits" on Glassdoor
+        response4 = db_agent_tools.search_topic_on_platform(platform='glassdoor', topic="benefits", limit=5)
         print_response_summary(response4)
 
-        # Scenario 5: (New) Precise search "Xu Kai" on Weibo within a specific day
-        response5 = db_agent_tools.search_topic_on_platform(platform='weibo', topic="许凯", start_date='2025-08-22', end_date='2025-08-22', limit=5)
+        # Scenario 5: (New) Precise search "tax" on Times of India within a specific day
+        response5 = db_agent_tools.search_topic_on_platform(platform='times_of_india', topic="tax", start_date='2025-08-22', end_date='2025-08-22', limit=5)
         print_response_summary(response5)
 
     except ValueError as e:

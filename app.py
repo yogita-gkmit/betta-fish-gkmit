@@ -19,6 +19,7 @@ from pathlib import Path
 
 # Import ReportEngine
 try:
+    logger.info(f"Python Executable: {sys.executable}")
     from ReportEngine.flask_interface import report_bp, initialize_report_engine
     REPORT_ENGINE_AVAILABLE = True
 except ImportError as e:
@@ -1034,7 +1035,7 @@ def handle_status_request():
 
 if __name__ == '__main__':
     HOST = '0.0.0.0'
-    PORT = 5000
+    PORT = 5001
     logger.info("Waiting for config confirmation, system will start components after frontend command...")
     logger.info(f"Flask server started, access at: http://{HOST}:{PORT}")
     

@@ -21,8 +21,9 @@ sys.path.append(str(project_root / "DeepSentimentCrawling" / "MediaCrawler"))
 # Monkey patch config to satisfy MediaCrawler dependencies if MindSpider config is loaded
 try:
     import config
-    if not hasattr(config, "HEADLESS"):
-        config.HEADLESS = True
+    # FORCE HEADLESS = False conditionally check is weak, FORCE IT.
+    config.HEADLESS = False 
+    
     if not hasattr(config, "PLATFORM"):
         config.PLATFORM = "toi"
     if not hasattr(config, "CRAWLER_TYPE"):
@@ -43,7 +44,10 @@ try:
     if not hasattr(config, "GLASSDOOR_SEARCH_URL_TEMPLATE"):
         config.GLASSDOOR_SEARCH_URL_TEMPLATE = "https://www.glassdoor.com/Search/results.htm?keyword={keyword}"
     if not hasattr(config, "GLASSDOOR_PAGE_WAIT_TIME"):
-        config.GLASSDOOR_PAGE_WAIT_TIME = 5
+        config.GLASSDOOR_PAGE_WAIT_TIME = 60
+    else:
+        # Force update to 60s even if it already exists, to override defaults
+        config.GLASSDOOR_PAGE_WAIT_TIME = 60
 except ImportError:
     pass
 
@@ -227,7 +231,9 @@ class NewsCollector:
                             'title': item.get('title', 'No Title'),
                             'url': item.get('url', ''),
                             'source': source_type, 
-                            'rank': item.get('rank', i)
+                            'rank': item.get('rank', i),
+                            'metadata': item.get('metadata', {}),
+                            'content': item.get('content', '')
                         }
                         news_list.append(processed_news)
         
@@ -260,7 +266,8 @@ async def main():
     """Test News Collector via Search"""
     keyword = "TCS" 
     if len(sys.argv) > 1:
-        keyword = sys.argv[1]
+        # Join all arguments to handle multi-word keywords (e.g. "Tata Motors")
+        keyword = " ".join(sys.argv[1:])
         
     logger.info(f"Testing News Search for: {keyword}")
     

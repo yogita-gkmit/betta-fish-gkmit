@@ -78,6 +78,11 @@ class FirstSummaryNode(StateMutationNode):
             else:
                 data = input_data.copy() if isinstance(input_data, dict) else input_data
             
+            # CRITICAL FIX: Bypass LLM for Error Sections to prevent Hallucination
+            if data.get('section_type') == 'error':
+                logger.warning(f"Error section detected ({data.get('title')}). Bypassing LLM summary.")
+                return data.get('content', 'Error: Data Not Available')
+            
             # Read latest HOST speech (if available)
             if FORUM_READER_AVAILABLE:
                 try:
@@ -126,6 +131,9 @@ class FirstSummaryNode(StateMutationNode):
             # Clean response text
             cleaned_output = remove_reasoning_from_output(output)
             cleaned_output = clean_json_tags(cleaned_output)
+            
+            # Sanitize smart quotes for JSON compliance
+            cleaned_output = cleaned_output.replace('“', '"').replace('”', '"')
             
             # Log cleaned output for debugging
             logger.info(f"Cleaned output: {cleaned_output}")
@@ -291,6 +299,9 @@ class ReflectionSummaryNode(StateMutationNode):
             # Clean response text
             cleaned_output = remove_reasoning_from_output(output)
             cleaned_output = clean_json_tags(cleaned_output)
+            
+            # Sanitize smart quotes for JSON compliance
+            cleaned_output = cleaned_output.replace('“', '"').replace('”', '"')
             
             # Log cleaned output for debugging
             logger.info(f"Cleaned output: {cleaned_output}")

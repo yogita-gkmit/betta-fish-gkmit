@@ -39,6 +39,7 @@ class DatabaseManager:
         try:
             dialect = (settings.DB_DIALECT or "mysql").lower()
             if dialect in ("postgresql", "postgres"):
+                # Use psycopg (v3) which is installed
                 url = f"postgresql+psycopg://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
             else:
                 url = f"mysql+pymysql://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}?charset={settings.DB_CHARSET}"
@@ -115,8 +116,8 @@ class DatabaseManager:
                                 """
                                 INSERT INTO daily_news (
                                     news_id, source_platform, title, url, crawl_date,
-                                    rank_position, add_ts, last_modify_ts
-                                ) VALUES (:news_id, :source_platform, :title, :url, :crawl_date, :rank_position, :add_ts, :last_modify_ts)
+                                    rank_position, add_ts, last_modify_ts, summary, content
+                                ) VALUES (:news_id, :source_platform, :title, :url, :crawl_date, :rank_position, :add_ts, :last_modify_ts, :summary, :content)
                                 """
                             ),
                             {
@@ -128,15 +129,20 @@ class DatabaseManager:
                                 "rank_position": news_item.get("rank", None),
                                 "add_ts": current_timestamp,
                                 "last_modify_ts": current_timestamp,
+                                "summary": news_item.get("metadata", {}).get("summary", "") or "",
+                                "content": news_item.get("content", "") or "",
                             },
                         )
                     saved_count += 1
                 except Exception as e:
+                    # Explicit print for visibility
+                    print(f"!!! CRITICAL DB SAVE ERROR for {news_item.get('id')}: {e} !!!")
                     logger.exception(f"Failed to save single news item: {e}")
                     continue
             logger.info(f"Successfully saved {saved_count} news records")
             return saved_count
         except Exception as e:
+            print(f"!!! CRITICAL DB TRANSACTION ERROR: {e} !!!")
             logger.exception(f"Failed to save news data: {e}")
             return 0
 

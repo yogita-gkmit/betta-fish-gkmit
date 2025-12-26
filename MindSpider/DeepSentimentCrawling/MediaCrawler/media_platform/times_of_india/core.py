@@ -19,21 +19,40 @@ class TimesOfIndiaCrawler(AbstractCrawler):
     async def run_search(self, keywords: List[str]) -> List[Dict]:
         """Entry point for external scripts to run search"""
         results = []
-        async with async_playwright() as playwright:
+        browser = None
+        playwright = None
+
+        try:
+            playwright = await async_playwright().start()
             chromium = playwright.chromium
             self.browser_context = await self.launch_browser(
                 chromium, None, self.user_agent, headless=config.HEADLESS
             )
+            # Get the browser instance associated with the context to close it later
+            browser = self.browser_context.browser
             
             # Resolve absolute path to stealth.min.js
             current_dir = os.path.dirname(os.path.abspath(__file__))
             root_dir = os.path.dirname(os.path.dirname(current_dir))
             stealth_path = os.path.join(root_dir, "libs", "stealth.min.js")
             
-            await self.browser_context.add_init_script(path=stealth_path)
+            if os.path.exists(stealth_path):
+                await self.browser_context.add_init_script(path=stealth_path)
+            
             self.context_page = await self.browser_context.new_page()
             
             results = await self.search_keywords(keywords)
+            
+        except Exception as e:
+            utils.logger.error(f"[TimesOfIndiaCrawler] run_search failed: {e}")
+        finally:
+            if self.browser_context:
+                await self.browser_context.close()
+            if browser:
+                await browser.close()
+            if playwright:
+                await playwright.stop()
+            utils.logger.info("[TimesOfIndiaCrawler] Browser resources closed.")
             
         return results
 

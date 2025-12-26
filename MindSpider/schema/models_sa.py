@@ -49,6 +49,9 @@ class DailyNews(Base):
     rank_position: Mapped[Optional[int]] = mapped_column(Integer)
     add_ts: Mapped[int] = mapped_column(BigInteger, nullable=False)
     last_modify_ts: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    # Added missing columns for persistence
+    summary: Mapped[Optional[str]] = mapped_column(Text)
+    content: Mapped[Optional[str]] = mapped_column(Text)
 
 
 class DailyTopic(Base):
