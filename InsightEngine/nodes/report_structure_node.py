@@ -169,19 +169,22 @@ class ReportStructureNode(StateMutationNode):
 
             # Call LLM with augmented query
             if context_str:
-                # DEBUG: Log context for hallucination check
-                with open("/Users/tesing/Development/betta-fish-gkmit/node_debug.log", "a") as f:
-                    f.write(f"--- CONTEXT FOR '{self.query}' ---\n")
-                    f.write(context_str[:2000] + "...\n") 
-                    f.write("------------------------------\n")
-
                 # STRICT MODE: Force LLM to use the context
                 strict_instruction = (
                     "CRITICAL: The user has provided specific data context below. "
                     "You MUST design the report structure primarily based on this context. "
                     "Do NOT hallucinate generic topics like Climate Change or AI Art if the context is about a specific company (e.g. Socure). "
-                    "Use the topics found in the context."
+                    "Use the topics found in the context.\n"
+                    "OUTPUT FORMAT: Return ONLY a valid JSON List of objects. \n"
+                    "Each object MUST have exactly two keys: 'title' and 'content'.\n"
+                    "- 'title': A short string for the section header.\n"
+                    "- 'content': A detailed text description of what this section covers (MUST be a single string, NOT a list or object).\n"
+                    "Do NOT return a JSON Schema. Return the actual data list."
                 )
+                
+                context_str_log = context_str[:500] + "..." if context_str else "No context"
+                logger.info(f"Generating report structure for query: {self.query} with context: {context_str_log}")
+                
                 full_prompt = f"{strict_instruction}\n\nQuery: {self.query}\n{context_str}\n\nTask: Design a report structure for this query based on the provided context."
             else:
                 full_prompt = self.query
@@ -210,9 +213,28 @@ class ReportStructureNode(StateMutationNode):
             Processed report structure list
         """
         try:
+            # DEBUG: Log raw output to understand failure
+            logger.info(f"--- RAW LLM OUTPUT ---\n{output}\n----------------------")
+            with open("/Users/tesing/Development/betta-fish-gkmit/node_debug.log", "a") as f:
+                f.write(f"\n--- RAW LLM OUTPUT FOR '{self.query}' ---\n")
+                f.write(f"{output}\n") 
+                f.write("------------------------------\n")
+
             # Clean response text
             cleaned_output = remove_reasoning_from_output(output)
             cleaned_output = clean_json_tags(cleaned_output)
+            
+            # SANITIZATION: Fix common LLM JSON syntax errors
+            # 1. Replace Smart Quotes which break JSON string parsing
+            cleaned_output = cleaned_output.replace("“", '"').replace("”", '"')
+            
+            # 2. Fix Double Braces (e.g. }} or } \n }) which happen if LLM adds extra closers
+            # Pattern: } whitespace } followed by comma or end-of-list
+            import re
+            cleaned_output = re.sub(r'\}\s*\}\s*([,\]])', r'}\1', cleaned_output)
+            
+            # 3. Fix Extra Quote after Array Close (e.g. ]")
+            cleaned_output = re.sub(r'\]\s*"\s*([,\}])', r']\1', cleaned_output)
             
             # Log cleaned output for debugging
             logger.info(f"Cleaned output: {cleaned_output}")
@@ -222,58 +244,57 @@ class ReportStructureNode(StateMutationNode):
                 report_structure = json.loads(cleaned_output)
                 logger.info("JSON parsing successful")
             except JSONDecodeError as e:
-                logger.exception(f"JSON parsing failed: {str(e)}")
-                # Using more robust extraction method
-                report_structure = extract_clean_response(cleaned_output)
-                if "error" in report_structure:
-                    logger.exception("JSON parsing failed, attempting to fix...")
-                    # Attempt to fix JSON
-                    fixed_json = fix_incomplete_json(cleaned_output)
-                    if fixed_json:
-                        try:
-                            report_structure = json.loads(fixed_json)
-                            logger.info("JSON fix successful")
-                        except JSONDecodeError:
-                            logger.exception("JSON fix failed")
-                            # Returning default structure
-                            return self._generate_default_structure()
+                logger.warning(f"Initial JSON parsing failed: {str(e)}. Attempting to extract list...")
+                
+                # Fallback 1: Try to find a JSON list [...] in the output
+                try:
+                    # Find the first '[' and last ']' to extract the widest possible list
+                    list_match = re.search(r'\[.*\]', cleaned_output, re.DOTALL)
+                    if list_match:
+                        json_str = list_match.group(0)
+                        # Re-sanitize the extracted chunk just in case
+                        json_str = re.sub(r'\}\s*\}\s*([,\]])', r'}\1', json_str)
+                        report_structure = json.loads(json_str)
+                        logger.info("Extracted JSON list successfully")
                     else:
-                        logger.exception("Unable to fix JSON, using default structure")
-                        return self._generate_default_structure()
-            
-            # Validate structure
-            if not isinstance(report_structure, list):
-                logger.info("Report structure is not a list, attempting conversion...")
-                if isinstance(report_structure, dict):
-                    # If single object, wrap in list
-                    report_structure = [report_structure]
-                else:
-                    logger.exception("Report structure format invalid, using default structure")
-                    return self._generate_default_structure()
-            
-            # Validate each paragraph
+                        raise ValueError("No JSON list found")
+                except Exception as e2:
+                    logger.error(f"Fallback parsing failed: {str(e2)}")
+                    # Try other fixers provided by utils
+                    report_structure = fix_incomplete_json(cleaned_output)
+
+            # Verification: Ensure it's a list of dicts
             validated_structure = []
-            for i, paragraph in enumerate(report_structure):
-                if not isinstance(paragraph, dict):
-                    logger.warning(f"Paragraph {i+1} is not dict format, skipping")
-                    continue
-                
-                title = paragraph.get("title", f"Paragraph {i+1}")
-                content = paragraph.get("content", "")
-                
-                if not title or not content:
-                    logger.warning(f"Paragraph {i+1} missing title or content, skipping")
-                    continue
-                
-                validated_structure.append({
-                    "title": title,
-                    "content": content
-                })
+            if isinstance(report_structure, list):
+                for i, p in enumerate(report_structure):
+                    if not isinstance(p, dict):
+                        logger.warning(f"Paragraph {i+1} is not dict, skipping")
+                        continue
+                        
+                    title = p.get('title')
+                    content = p.get('content')
+                    if not title or not content:
+                        logger.warning(f"Paragraph {i+1} missing title or content, skipping")
+                        continue
+                        
+                    # DATA TYPE FIX: Ensure content is string
+                    # Needed for cases like 'Twilio' where LLM returns complex object
+                    if not isinstance(content, str):
+                        logger.warning(f"Paragraph {i+1} content is not string (type: {type(content)}). Converting to JSON string.")
+                        try:
+                            content = json.dumps(content)
+                        except:
+                            content = str(content)
+                    
+                    validated_structure.append({
+                        "title": title,
+                        "content": content
+                    })
             
             if not validated_structure:
-                logger.warning("No valid paragraph structure, using default structure")
+                logger.error("No valid paragraphs found in parsed structure")
                 return self._generate_default_structure()
-            
+                
             logger.info(f"Successfully validated {len(validated_structure)} paragraph structures")
             return validated_structure
             
