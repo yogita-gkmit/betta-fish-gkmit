@@ -135,10 +135,8 @@ def run_report_generation(task: ReportTask, query: str, custom_template: str = "
 
     except Exception as e:
         task.update_status("error", 0, str(e))
-        # Only clear task on error
-        with task_lock:
-            if current_task and current_task.task_id == task.task_id:
-                current_task = None
+        # Do NOT clear task on error, so UI can fetch the error message
+        logger.error(f"Task {task.task_id} failed: {str(e)}")
 
 
 @report_bp.route('/status', methods=['GET'])
@@ -238,9 +236,8 @@ def generate_report():
 def get_progress(task_id: str):
     """Get report generation progress"""
     try:
+        # If the task no longer exists (e.g., after cleanup), assume it's completed
         if not current_task or current_task.task_id != task_id:
-            # If task does not exist, it might have been completed and cleaned up
-            # Return a default completed status instead of 404
             return jsonify({
                 'success': True,
                 'task': {
@@ -248,15 +245,16 @@ def get_progress(task_id: str):
                     'status': 'completed',
                     'progress': 100,
                     'error_message': '',
-                    'has_result': True
+                    'has_result': True,
+                    'html_content': None
                 }
             })
-
-        return jsonify({
-            'success': True,
-            'task': current_task.to_dict()
-        })
-
+        # Return current task state
+        response = {'success': True, 'task': current_task.to_dict()}
+        # If completed, attach the generated HTML so frontend can display it directly
+        if current_task.status == 'completed':
+            response['task']['html_content'] = current_task.html_content
+        return jsonify(response)
     except Exception as e:
         logger.exception(f"Failed to get report generation progress: {str(e)}")
         return jsonify({

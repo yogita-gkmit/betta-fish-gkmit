@@ -438,13 +438,18 @@ This report analyzes current social hot events, integrating views and data from 
         if forum_ready:
             result['files_found'].append(f"forum: {os.path.basename(forum_log_path)}")
         else:
-            result['missing_files'].append("forum: Log file does not exist")
+            # Forum log is optional, so we treat it as "missing but not blocking"
+            result['missing_files'].append("forum: Log file does not exist (Optional)")
         
         # Get latest file paths (for actual report generation)
-        if result['ready']:
+        # Note: Forum readiness shouldn't block report readiness
+        if files_ready:
+            result['ready'] = True
             result['latest_files'] = self.file_baseline.get_latest_files(directories)
             if forum_ready:
                 result['latest_files']['forum'] = forum_log_path
+        else:
+            result['ready'] = False
         
         return result
     

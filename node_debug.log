@@ -782,3 +782,347 @@ Context from local database (daily_news):
 ]
 ```
 ------------------------------
+
+--- RAW LLM OUTPUT FOR 'Sysdig' ---
+```json
+[
+  {
+    "title": "Sysdig Employee Profile: Junior Customer Solutions Engineer",
+    "content": "This report details the employment history of a Junior Customer Solutions Engineer at Sysdig3.5. The engineer has been employed for 90jobs252reviews406salaries, showcasing a consistent role with strong responsibilities related to customer support and technical documentation.  The role involves troubleshooting issues, providing assistance, and ensuring user satisfaction.  The mention of a 6-month contract highlights their temporary nature within the company.  The engineering background provides a foundation for developing solutions to meet customer needs."
+  },
+  {
+    "title": "Sysdig Employee Profile: GTM Recruiter",
+    "content": "This report focuses on the employment of a GTM Recruiter at Sysdig3.5, an individual held on a 6-month contract. Responsibilities include managing recruitment processes and sourcing talent for the company, likely including candidate evaluations and communication.  The contract status underscores a temporary, project-based engagement within the organization."
+  },
+  {
+    "title": "Sysdig Employee Profile: Software Engineer 2 - Front End",
+    "content": "This report outlines the employment of a Software Engineer 2, positioned within the front-end development team at Sysdig3.5.  The role encompasses the design, implementation, and upkeep of user interfaces to ensure a positive user experience.  The 2-year tenure highlights a stable, ongoing workload within the company.  This position contributes directly to the team's functionality and impact."
+  },
+  {
+    "title": "Sysdig Employee Profile: Senior Technical Writer - East Coast",
+    "content": "This report details the experience of a Senior Technical Writer at Sysdig3.5. The individual is a long-tenured member of the team, indicated by a 90jobs252reviews406salaries rating. Their primary responsibilities revolve around creating and maintaining technical documentation, knowledge base articles, and user guides to assist users in understanding and utilizing Sysdig's products.  The 90jobs252 reviews ratings indicate a valuable and well-regarded employee, showcasing a consistent commitment to quality documentation."
+  },
+  {
+    "title": "Sysdig Company Overview",
+    "content": "This section provides a brief overview of Sysdig3.5, including its company value, 90jobs252reviews406salaries rating, and key hires.  It underlines the company's commitment to employee satisfaction and reinforces its position as a provider of Software engineering and Technical writing solutions focused on the [industry/area of focus - not explicitly stated, but implied by the context].”
+  }
+]
+```
+------------------------------
+
+--- RAW LLM OUTPUT FOR 'Sysdig' ---
+```json
+[
+  {
+    "title": "About Sysdig3.5",
+    "content": "This report provides an overview of Sysdig3.5, highlighting the company’s structure and key roles, primarily focusing on the recent hires and the team's composition. The report details the employee roles, highlighting the Junior Customer Solutions Engineer position, the GTM Recruiter role, and the Software Engineer 2 position, as well as the Senior Technical Writer role. We’ll examine the company’s employee reviews and a snapshot of its industry position, emphasizing the recent additions and the team’s overall focus within the Sysdig ecosystem."
+  },
+  {
+    "title": "Recent Employee Roles & Updates",
+    "content": "This section details the recent employment information for key personnel at Sysdig3.5. It includes information about the Junior Customer Solutions Engineer, GTM Recruiter, Software Engineer 2, and Senior Technical Writer, providing brief biographies and details about their roles within the company. The focus will be on understanding the current team structure and the scope of responsibilities for these positions."
+  },
+  {
+    "title": "Employee Reviews & Feedback",
+    "content": "This report analyzes the provided Glassdoor reviews for Sysdig3.5, offering a summary of key themes and sentiment regarding the company's work environment, roles, and culture. It will identify trends reflected in the reviews, providing context for employee satisfaction and potential areas for improvement.  We'll examine the feedback related to the new hires and potential collaboration between engineering teams."
+  },
+  {
+    "title": "Sysdig3.5 - Organizational Structure",
+    "content": "This section presents a condensed organizational chart showcasing the key departments and teams within Sysdig3.5. It illustrates key roles and reporting lines to provide a high-level overview of the company's structure, reflecting the recent hires and existing team dynamics.  The focus is on understanding the interconnectedness of the different areas and how they contribute to the company’s overall goals."
+  },
+  {
+    "title": "Company Overview & Industry Position",
+    "content": "This section provides a summary of Sysdig3.5's business, including its mission, target market, and overall position within the software and infrastructure industry. It emphasizes the company’s current focus on customer solutions and the significance of its recent hires and employee reviews in aligning with company objectives. The data emphasizes the overall company health and its target audience."
+  }
+]
+```
+------------------------------
+
+--- RAW LLM OUTPUT FOR 'Sysdig' ---
+```json
+[
+  {
+    "title": "Sysdig: Employee Activity & Role Trends - December 29, 2025",
+    "content": "This report analyzes employee activity and role trends at Sysdig3.5, focusing on recent hires and existing staff.  The data reveals three junior roles – Junior Customer Solutions Engineer, GTM Recruiter, and Software Engineer 2 – all filled by employees within the last 6 months. The Senior Technical Writer role is currently vacant, requiring a recruiter search.  The company has 90 jobs advertised on Glassdoor, with an average salary of $140,000.  Job posting activity appears relatively steady, with a consistent stream of searches and new postings, though the focus appears to be primarily on technical roles, particularly in front-end experience.  There are several open positions requiring front-end engineers which are largely open to candidates located on the East Coast.  The '90jobs252reviews406salaries' data suggests a generally positive work environment, with a strong focus on technical challenge and compensation; however, a higher percentage of hires are new roles compared to past years.  The GTM Recruiter is a key figure in the team, demanding proactive outreach and excellent communication skills. The job description highlights the need for a candidate skilled in data analytics and potentially experience with marketing automation platforms.  The presence of a vacant Senior Technical Writer role indicates potential for restructuring or a shift in skillset within the team, requiring strategic talent acquisition. The focus on the front-end engineer job availability supports the need for a focused recruitment push, aiming for specific qualifications."
+  },
+  {
+    "title": "Employee Demographics & Allocation - December 29, 2025",
+    "content": "A detailed analysis of the employee roster reveals several key demographic trends. The recent hires (Junior Customer Solutions Engineer, GTM Recruiter, Software Engineer 2) are predominantly located in the East Coast, with a balance of male and female employees.  A significant portion of those new hires appear to have a background in front-end web development, indicating a need for focusing recruitment efforts on this skill set. The vacant Senior Technical Writer position requires a candidate with experience in front-end development, particularly in the context of modern web design and accessibility. The remaining employees across roles include 3 other Junior roles and a handful of Software Engineers with varying experience levels. A slight increase in the number of full-time employees than previous years is being observed, perhaps partly due to hires, but the overall team size remains stable. The company's overall team size is relatively small, containing around 90 jobs requiring various qualifications. The job postings and Glassdoor data suggest a strong emphasis on technical positions with clear career paths, supporting roles in the front end."
+  },
+  {
+    "title": "Sentiment Analysis of Job Search & Posting Data - December 29, 2025",
+    "content": "The sentiment associated with the posting data reveals a generally positive view, leaning towards appreciation for the company's technical environment and work-life balance. However, there's a moderate level of concern noted for the Senior Technical Writer vacancy; a significant number of candidates express interest in the position.  The overall job outlook is positive relative to previous years, underpinned by 90jobs252reviews406salaries. A notable trend is a relatively low attrition rate; the focus on front-end engineering positions points towards a consistent and engaging work experience.”
+  }
+]
+```
+------------------------------
+
+--- RAW LLM OUTPUT FOR 'Sysdig' ---
+```json
+[
+  {
+    "title": "Employee Profiles - Sysdig3.5",
+    "content": "This report summarizes the current workforce at Sysdig3.5, focusing on key positions and details. It details the roles of junior customer solutions engineers, a GTM recruiter, software engineers, and a senior technical writer. The report highlights the stated responsibilities and experience levels for each role and provides a snapshot of the company's employee base as reported on Glassdoor."
+  },
+  {
+    "title": "Junior Customer Solutions Engineer",
+    "content": "This section details the responsibilities and potential experience level of a Junior Customer Solutions Engineer at Sysdig3.5. It discusses the nature of the role, likely involving customer support, troubleshooting, and potentially assisting in the development of new product features.  The report will explore typical tasks and skillset requirements for this position, reflecting the provided job description details from the company's website and news."
+  },
+  {
+    "title": "GTM Recruiter - Contract",
+    "content": "This section focuses on the role of a GTM Recruiter (6 months contract) at Sysdig3.5. It describes their responsibilities, including sourcing candidates, managing the recruitment pipeline, and potentially conducting technical interviews. The report includes details on the contract length and typical duties associated with this contractual position, as evident from the job posting and Glassdoor review."
+  },
+  {
+    "title": "Software Engineer 2 - Front End",
+    "content": "This section covers a Software Engineer 2 - Front End position at Sysdig3.5. It will provide a brief overview of the role’s content details, including responsibilities and required skillset. The report will examine the company's current engineering priorities and the importance of front-end development within the Sysdig3 ecosystem."
+  },
+  {
+    "title": "Senior Technical Writer - East Coast",
+    "content": "This section describes the responsibilities of a Senior Technical Writer (East Coast) at Sysdig3.5. It will delve into the responsibilities of a senior technical writer – focusing on writing documentation, creating tutorials, and ensuring clarity of the product. The report will touch on expectations for maintaining the company's style guidelines and understanding of the target audience for Sysdig3’s product documentation."
+  },
+  {
+    "title": "Company Overview - Sysdig3.5",
+    "content": "This section provides a contextual overview of Sysdig3.5, incorporating the information from the daily news articles. It offers insight into the company's mission, values, and public image, highlighting key details presented on Glassdoor, including employee reviews, job openings, and company news-related facts. It will consider the reported company values and the state of the company as presented in the sources."
+  }
+]
+```
+------------------------------
+
+--- RAW LLM OUTPUT FOR 'Sysdig' ---
+```json
+[
+  {
+    "title": "Employee Profiles: Sysdig3.5",
+    "content": "This report details the current employee roster at Sysdig3.5, focusing on key roles and recent hires. It includes information on junior engineers, recruiters, software engineers, a senior technical writer, and the company’s overall staff profile based on Glassdoor reviews.  The report highlights the team’s structure and recent additions, analyzing the balance of experience levels and potential for growth within the company.  The report will assess the team's composition, highlighting key strengths and potential areas of focus based on Glassdoor data."
+  },
+  {
+    "title": "Junior Customer Solutions Engineer",
+    "content": "This section focuses on the role of a Junior Customer Solutions Engineer at Sysdig3.5. It details the specific responsibilities of this position, the expected skillset required, and the general management structure tied to this role within the company. The content will cover the typical onboarding process, performance expectations, and potential career path for new hires in this role, supporting data from the job posting and Glassdoor reviews regarding roles at Sysdig."
+  },
+  {
+    "title": "GTM Recruiter - 6 Months Contract",
+    "content": "This report examines the details of a GTM Recruiter contract with Sysdig3.5. It will investigate the recruiter's responsibilities, the duration of the contract, and performance metrics detailed in the Glassdoor review data. The report analyzes the recruiter's impact on recruitment efforts, focusing on the focus on Front End and the overall contract length within Sysdig3. Understanding this role’s impact on recruitment strategy will be a key focus."
+  },
+  {
+    "title": "Software Engineer 2 - Front End",
+    "content": "This report provides an overview of a Software Engineer 2 role at Sysdig3.5, based on the provided job description. Details encompass the technological stack utilized, project responsibilities, and potential growth opportunities within the role. The report draws from the job listing and Glassdoor reviews to analyze the role's key features, including specific technologies demanded and the overall project scope."
+  },
+  {
+    "title": "Senior Technical Writer - East Coast",
+    "content": "This report assesses a Senior Technical Writer on the East Coast position at Sysdig3.5. It analyzes their areas of expertise, the project's scope, and expectations for long-term contributions.  The content includes an examination of the team's focus and the expected technical depth of the work, guided by the Glassdoor overview and the detailed job description. It will also consider team dynamics and identify critical skills necessary for success."
+  },
+  {
+    "title": "Company Overview - Sysdig3.5",
+    "content": "This report provides a comprehensive overview of Sysdig3.5, encompassing its mission, key offerings, and overall strategic direction. The report will reference company-provided information, including the Glassdoor review data concerning internal culture and employee satisfaction, aiming to understand the company’s brand perception and identify areas for improvement. It will describe the company’s roadmap and demonstrate a value assessment based on available data."
+  }
+]
+```
+------------------------------
+
+--- RAW LLM OUTPUT FOR 'Sysdig' ---
+```json
+[
+  {
+    "title": "Sysdig: Recent Employee Turnover and Potential Impact",
+    "content": "This report analyzes recent employee departures at Sysdig3.5, focusing on the specific roles of Junior Customer Solutions Engineer, GTM Recruiter, and Software Engineer 2 - Front End. The context reveals a pattern of several recent terminations within the Engineering team, particularly those with 6 months or less experience. The job titles are diverse, encompassing front-end development, technical writing, and customer solutions engineering, suggesting a need for specialized skills across the team. The job descriptions highlight roles related to user experience, content creation, and technical documentation, adding to a focus on quality and clear communication. The combined effect of these departures could represent a potential strategic shift requiring re-evaluation of team structure, skillset alignment, and resource allocation, impacting project timelines and potentially affecting customer satisfaction. Further investigation into the reasons behind these departures (performance reviews, project assignments, team dynamics) is warranted to assess the full scope of the impact."
+  },
+  {
+    "title": "Employee Exit Analysis: A Deep Dive into the Engineering Team",
+    "content": "This detailed analysis examines the recent turnover at Sysdig3.5, focusing on the key departing employees: the Junior Customer Solutions Engineer, GTM Recruiter, and Software Engineer 2 - Front End. We've extracted data concerning their tenure, experience levels, and the types of projects they were involved in. The Junior Customer Solutions Engineer's tenure is relatively short (6 months) compared to other engineers, indicating a possible need for further mentorship and training. The GTM Recruiter's contract length (6 months) also suggests potential for a transition period. The Software Engineer 2 - Front End's involvement indicates a likely focus on front-end development, which falls under the ‘Customer Solutions’ area of the company.  The data shows that the Junior Customer Solutions Engineer’s role is less dynamic than the other two roles, suggesting this position may require focused attention to optimize the employee’s experience and potentially bolster their career growth. The exit of these roles represents a potentially concerning trend - a need to identify and address the root causes of these departures that require consideration of team dynamics and project mix within the engineering department, aligning expectations around succession planning and potential task re-prioritization."
+  },
+  {
+    "title": "Platform Distribution & Employee Trends – A Closer Look at Sysdig3.5",
+    "content": "The context presents a diverse range of roles within Sysdig3.5, highlighting the importance of distributed engineering talent. The presence of a Junior Customer Solutions Engineer, a GTM Recruiter, and Software Engineer 2 - Front End across several engineering roles suggests a need for cross-functional collaboration and a flexible, adaptable workforce. Examining platform distribution reveals that the Junior Customer Solutions Engineer’s role may be more focused on a specific, narrow platform. The GTM Recruiter's role suggests a balance of front-end and potentially some back-end, highlighting the team's need for both content and development capabilities. The Software Engineer 2 - Front End's role implies a strong emphasis on front-end expertise, potentially highlighting the need for further investment in this area and ensuring the team possesses a diverse skill set. The lack of specific data points on team cohesion or internal communication may require a qualitative understanding of the company culture to fully evaluate this dynamic. Continued monitoring of these roles and potential trends in platform usage across different engineering groups is warranted to ensure the ability for team work and innovation."
+  },
+  {
+    "title": "Potential Underlying Causes: A Social Psychology Perspective",
+    "content": "Based on the provided context, several potential underlying causes for the observed employee turnover are discernible. The documented discrepancies in tenure and experience levels across the Engineering team, particularly among the Junior Customer Solutions Engineer, suggest a possibility of a lack of adequate training or mentorship opportunities leading to increased attrition. Furthermore, the diverse roles within the team, while highlighting flexibility, could also contribute to a sense of perceived imbalance between individual contributors and collaborative opportunities. The presence of multiple contract roles, perhaps signifying a shift towards new business strategy or a different team focusing, could contribute to employee expectations and satisfaction. A deeper analysis requires examining employee performance reviews as a key indicator of these concerns. The potential for social dynamics influenced by distinct team function, project assignments and general team cohesion amongst the engineering team could become a significant challenge. Further investigation into individual employee feedback will be vital in determining this further.”
+  }
+]
+```
+------------------------------
+
+--- RAW LLM OUTPUT FOR 'Sysdig' ---
+```json
+[
+  {
+    "title": "Employee Profiles – Sysdig3.5",
+    "content": "This report details the current employee profiles within Sysdig3.5, focusing on roles held by recent hires, contract workers, and current employees. It highlights recent additions, ongoing obligations, and a snapshot of the team’s composition. The report provides insights into the diversity of personnel within the company, including junior engineers, recruiters, front-end developers, and senior technical writers, offering a brief overview of the existing skill set and potential growth areas.  It analyzes the role of the Senior Technical Writer specifically and considers their responsibilities in maintaining documentation for the Sysdig3.5 platform. The focus is on understanding the current workforce dynamics and identifying key personnel for strategic planning and potential future roles."
+  },
+  {
+    "title": "Junior Customer Solutions Engineer",
+    "content": "This section discusses the recent hiring of a Junior Customer Solutions Engineer at Sysdig3.5. It details the start date, location, and initial responsibilities of this employee. The report will explore their experience and how they fit into the team, focusing on their focus on customer solutions and potential integration into the existing team.  It will cover their initial training and onboarding process, and identify potential mentors or collaborators."
+  },
+  {
+    "title": "GTM Recruiter (6 months contract)",
+    "content": "This report focuses on the GTM Recruiter currently working at Sysdig3.5. It provides a brief overview of their contract duration, responsibility area (targeting and recruitment), and the team's support around the role. It details expected progress during the contract term and how their role contributes to the overall recruitment strategy. Includes an analysis of the specific requirements and goals associated with this position."
+  },
+  {
+    "title": "Software Engineer 2 - Front End",
+    "content": "This section examines the status of a Software Engineer 2 – Front End currently employed at Sysdig3.5.  It examines the ongoing responsibilities of this role and any tasks being assigned. A brief overview of their current projects is included here, and analysis of their impact on the front-end system within the larger Sysdig3 backend"
+  },
+  {
+    "title": "Senior Technical Writer (East Coast)",
+    "content": "This report covers the senior technical writer at Sysdig3.5, outlining their current duties and responsibilities, including project assignments and documentation strategy. The report details their skillset and expertise in writing and maintaining documentation, considering the critical role held for the platform. Assessing any current projects this writer is responsible for."
+  },
+  {
+    "title": "Company – Sysdig3.5 Overview",
+    "content": "This section provides a concise overview of Sysdig3.5, referencing the company’s values, mission, and recent activities, as outlined in the provided context. It will highlight key features of the company, including the job requirements.  It will also address important information on the company and industry as shared in the external source."
+  }
+]
+```
+------------------------------
+
+--- RAW LLM OUTPUT FOR 'Sysdig' ---
+```json
+[
+  {
+    "title": "Employee Profiles - Sysdig3.5",
+    "content": "This report summarizes the key personnel currently employed at Sysdig3.5, focusing on current roles and relevant experience. It includes details about Junior Customer Solutions Engineer, a GTM Recruiter, Software Engineer 2, Senior Technical Writer, and the company's overall employee profile. The report highlights the diverse range of experience within the company and provides a snapshot of current staffing levels."
+  },
+  {
+    "title": "Junior Customer Solutions Engineer",
+    "content": "This report details the responsibilities, experience, and potential career progression for a Junior Customer Solutions Engineer at Sysdig3.5. The report will cover their technical skills, project experience, and learning objectives, aiming to understand their contributions to the team. It also examines their role within the broader Sysdig3.5 framework."
+  },
+  {
+    "title": "GTM Recruiter - 6 Months Contract",
+    "content": "This section focuses on a GTM Recruiter hired for a six-month contract at Sysdig3.5. It will detail the recruiter’s responsibilities, including sourcing, onboarding, and managing relationships with potential clients. The report will assess their skill set related to sales strategies and client acquisition, aligned with the company's GTM goals."
+  },
+  {
+    "title": "Software Engineer 2 - Front End",
+    "content": "This report analyzes the experience of a Software Engineer 2 working on Front End development at Sysdig3.5. It will discuss their technical expertise, contributions to projects, and the team’s development processes, as determined by the job description and the company’s standard practices."
+  },
+  {
+    "title": "Senior Technical Writer - East Coast",
+    "content": "This report examines the qualifications and responsibilities of a Senior Technical Writer working for Sysdig3.5 on the East Coast. It will review experience with technical documentation, content strategy, and collaboration with engineering teams, evaluating the writer's ability to produce clear and accurate technical guides."
+  },
+  {
+    "title": "Company Overview",
+    "content": "This section provides a general overview of Sysdig3.5, including its mission, product offerings, target market, and overall strategy. It illustrates the impact of this specific team and their importance to the company’s growth."
+  }
+]
+```
+------------------------------
+
+--- RAW LLM OUTPUT FOR 'Sysdig' ---
+```json
+[
+  {
+    "title": "Sysdig: Employee Organizational Structure & Recent Activity",
+    "content": "This report analyzes the recent employee structure within Sysdig3.5, highlighting key positions, contract roles, and recent activity. The data reveals a mix of engineering and technical roles with a focus on customer solutions and front-end development.  It identifies a junior engineer, a recruiter, and two software engineers, all contributing to the company's core product.  The '90jobs252reviews406salaries' data indicates a positive work environment, likely shaped by a combination of responsibilities and compensation. The focus is on understanding the current composition of the team and identifying potential trends in employee distribution across different roles and departments."
+  },
+  {
+    "title": "Employee Breakdown by Role & Tenure",
+    "content": "A detailed breakdown of employee roles within Sysdig3.5, examining recent hires and contracts.  We look at the number of employees at each level, including the Junior Customer Solutions Engineer (likely assigned to a specific area), the GTM Recruiter (a contract role), and the Software Engineer 2 – Front End.  The report details the terms of contract length for each role, including the 6-month contract for the GTM Recruiter.  The data focuses on identifying potential skill gaps within the team and how changes in employee distribution might impact engineering efforts."
+  },
+  {
+    "title": "Contract Role Analysis: GTM Recruiter",
+    "content": "This section analyzes the GTM Recruiter's role and tenure within Sysdig3.5.  The contract length (6 months) indicates a short-term engagement, likely focused on early-stage recruitment.  The data includes the Job title, source of hire (None), and the general function associated with the role, highlighting its importance to the Sysdig3.5 strategy. The report investigates the impact of this specific role on recruitment efforts and the recruitment pipeline."
+  },
+  {
+    "title": "Software Engineer 2 - Front End Analysis",
+    "content": "This section focuses on the Software Engineer 2 – Front End, examining their details as a key contributor and understanding their role within Sysdig3.5. The job title provides a descriptive overview of the role. Data points include the source, duration of the contract, and potential areas of overlap or differentiation within the team.  We analyze the data to understand if this engineer is involved in specific features or maintainability improvements.”
+  },
+  {
+    "title": "Junior Customer Solutions Engineer - Recent Activity",
+    "content": "This section analyzes recent activities of the Junior Customer Solutions Engineer as a key team member for Sysdig3.5. We examine their role, the scope of their responsibilities, and the types of tasks they've been assigned. The recent activity provides insight into strategic priorities for the role on the team. We'll analyze data pertaining to the length of their contract, the nature of their tasks, and their role within projects."
+  },
+  {
+    "title": "Trend Analysis: Employee Distribution Across Roles",
+    "content": "A comparative analysis of employee distribution across various roles (Junior, GTM Recruiter, Software Engineer 2) based on [Date(s)] to identify broad patterns. Analyze the distribution across various levels, considering the trend over time and the impact of the recent hire. Examining data trends across departments that may impact workflow and development goals.”
+  },
+  {
+    "title": "Employee Satisfaction & Work Environment (From Glassdoor)",
+    "content": "Briefly summarize the sentiment from Glassdoor regarding the work environment at Sysdig3.5, using data from the 90jobs252reviews406salaries data. Assess aspects like work-life balance, management support, and collaboration. Analyze how the positive sentiment (406) might correlate with specific roles or departments. Consider the influence of contract work when interpreting the findings.”
+  }
+]
+```
+------------------------------
+
+--- RAW LLM OUTPUT FOR 'Sysdig' ---
+```json
+[
+  {
+    "title": "Sysdig Employee Profiles",
+    "content": "This report presents a detailed overview of the current workforce at Sysdig3.5, including job titles, location, and key personnel. It highlights roles such as Junior Customer Solutions Engineer, GTM Recruiter, Software Engineer 2 Front End, and Senior Technical Writer, providing insights into the company's team structure and individual contributions. The report aims to provide a snapshot of the workforce and assess the current staffing levels and roles within the organization."
+  },
+  {
+    "title": "Junior Customer Solutions Engineer",
+    "content": "This section examines the role of a Junior Customer Solutions Engineer, detailing their responsibilities, experience level, and potential growth opportunities within Sysdig3.5. It focuses on the specific skillset and experience required for this role, emphasizing the importance of technical problem-solving and collaboration within a customer-facing environment. The report will also address performance expectations and potential career progression paths."
+  },
+  {
+    "title": "GTM Recruiter - 6 Months Contract",
+    "content": "This outlines the details pertaining to the GTM Recruiter's role, including the duration of the contract, their responsibilities related to recruiting, and the value they bring to the company's hiring efforts."
+  },
+  {
+    "title": "Software Engineer 2 - Front End",
+    "content": "This section focuses on the responsibilities and skills required for a Software Engineer 2 specializing in Front End development, emphasizing the specific technologies they utilize and the impact they have on the platform."
+  },
+  {
+    "title": "Senior Technical Writer - East Coast",
+    "content": "This section details the responsibilities and responsibilities of a Senior Technical Writer located in the East Coast, highlighting their role in creating and maintaining documentation for Sysdig3.5’s products."
+  },
+  {
+    "title": "Sysdig3.5 Overview & Rewards",
+    "content": "This provides context regarding the company’s overall mission, values, and the compensation and benefits package offered to its employees at Sysdig3.5, drawing from the provided ‘Glassdoor’ data."
+  }
+]
+```
+------------------------------
+
+--- RAW LLM OUTPUT FOR 'Sysdig' ---
+```json
+[
+  {
+    "title": "About Sysdig3.5",
+    "content": "This report outlines the company profile of Sysdig3.5, focusing on its core team, recent hires, and overall organizational structure. It details the roles of the Junior Customer Solutions Engineer, GTM Recruiter, Software Engineer 2 (Front End), and Senior Technical Writer, providing a snapshot of the company's current workforce and staffing priorities. The report highlights Sysdig3.5’s positive employee reviews on Glassdoor, emphasizing growth opportunities and a supportive environment. We’ll examine the company’s recent hires, particularly focusing on the Junior Customer Solutions Engineer position, and explore the context of the remaining roles, including the GTM Recruiter and Software Engineer 2 positions, within the Sysdig3.5 ecosystem."
+  },
+  {
+    "title": "Junior Customer Solutions Engineer",
+    "content": "This section details the responsibilities, qualifications, and experience level of the Junior Customer Solutions Engineer role at Sysdig3.5. It covers the integration of the individual into the team, expectations for the role, and the impact on the existing software engineering team. Further analysis will examine the specific challenges and opportunities presented by this role within the company’s strategy regarding customer support and problem-solving."
+  },
+  {
+    "title": "GTM Recruiter - Contract",
+    "content": "This report focuses on the GTM Recruiter – Contract role at Sysdig3.5. It addresses the details of the recruiter’s responsibilities, including the scope of the contract, the target audience, and the key functionalities of the role within the company’s marketing and talent acquisition efforts.  We’ll assess the current recruitment strategy leveraging this role. The contract's value must be understood relative to other similar positions held to determine effectiveness."
+  },
+  {
+    "title": "Software Engineer 2 - Front End",
+    "content": "This section examines the role and responsibilities of the Software Engineer 2 – Front End at Sysdig3.5. It will focus on the skills and experience required, the technologies utilized, and the project contributions of the individual. Furthermore, it will evaluate whether this role is being utilized effectively toward company goals within this area, considering its contribution to maintain and expand existing product features."
+  },
+  {
+    "title": "Senior Technical Writer - East Coast",
+    "content": "This report analyzes the responsibilities and authority of the Senior Technical Writer – East Coast position at Sysdig3.5. The report evaluates the contribution of this role, and how effectively it supports the company’s documentation strategy and knowledge sharing within the company. Considering the specific requirements of the role, this section will examine how well the position is aligned with the company's overall product roadmap development.  We will examine if this role contributes to efficiency of development, quality of product documentation, and overall process."
+  },
+  {
+    "title": "Company Overview and Culture",
+    "content": "This section provides a deeper look at Sysdig3.5, including the company's mission, values, and overall strategy. It details the history of Sysdig3.5, it’s current business-related initiatives and long-term goals, as well as the culture within the company. Considerations will be made of employee satisfaction trends across different roles and departments, with the intention of understanding where the company is leaning in and what improvements are achievable."
+  }
+]
+```
+------------------------------
+
+--- RAW LLM OUTPUT FOR 'Sysdig' ---
+```json
+[
+  {
+    "title": "Sysdig: Employee Profiles & Recent Activity",
+    "content": "This report analyzes recent employee activity and profiles at Sysdig3.5, focusing on Jr. Customer Solutions Engineer, GTM Recruiter, Software Engineer 2 (Front End), and Senior Technical Writer roles. The analysis examines recent hires, contract roles, and overall employee trends within the company. The context highlights Sysdig3.5's focus on engineering, front-end development, and technical documentation, suggesting a priority to maintain high-quality code and documentation. The recent job postings point to a need for strong technical skills, particularly in front-end development and potentially data engineering, alongside established front-end skills. There’s a notable emphasis on the ‘East Coast’ location, indicating potential regional importance for these roles. The Glassdoor review score of 406 suggests a positive but somewhat mixed employee experience, highlighting areas for improvement in employee satisfaction and benefits packages within these key roles."
+  },
+  {
+    "title": "Junior Customer Solutions Engineer - Focus & Challenges",
+    "content": "This report details the experiences of the Junior Customer Solutions Engineer, a recent hire. The data reveals that they are actively engaged in front-end development tasks, working on potentially complex and integrated customer-facing solutions. The assignment is noted to require strong problem-solving and collaborative skills. The context emphasizes Sysdig3.5’s customer-focused approach, suggesting this role directly impacts the customer experience. The '90jobs252reviews406salaries' data indicates a competitive compensation package attracting this role, though potential workload and complexity are also being discussed, likely requiring adaptability.  The mention of 'east coast' location highlights potential geographical considerations for professional development and career progression."
+  },
+  {
+    "title": "GTM Recruiter - Contract Role Dynamics",
+    "content": "This section analyzes the details of the newly hired GTM Recruiter. The data indicates they are a contract role, likely a one-year commitment, contributing directly to the company's growth within the Global Marketing team.  The role has a significant focus on recruitment, showcasing a clear need for efficient recruiting and talent acquisition strategies. The data reveals the recruiter is a crucial link in the company's growth, leveraging the 'east coast' location. The source details suggest a contract, which likely provides flexibility for the position."
+  },
+  {
+    "title": "Software Engineer 2 - Front End - Skill & Pipeline",
+    "content": "This report focuses on the experience of the Software Engineer 2 (Front End) position, highlighting their contributions through front-end development. The analysis notes that this role demands proficient front-end skills and a robust pipeline for code maintenance – suggesting a focus on scalability and maintainability. The context underscores the importance of a high-quality front-end implementation to positively impact user experience and system performance. The deployment/pipeline factors indicate a level of technical proficiency required for this position. The focus emphasizes collaboration with another engineering team, likely within ‘Sysdig3.5’."
+  },
+  {
+    "title": "Senior Technical Writer - East Coast - Documentation & Review",
+    "content": "This report centers on the Senior Technical Writer’s experiences within the East Coast region. The data highlights a key area of focus: the creation and review of technical documentation for Sysdig3.5’s products. It points to maintaining documentation to support users and internal teams. Emphasis on 'east coast' location underscores the importance of the documentation team and the regional talent pool at Sysdig3. The Glassdoor review suggests potential for ongoing evaluation and refinement of existing documentation; quality assurance plays a critical role."
+  }
+]
+```
+------------------------------

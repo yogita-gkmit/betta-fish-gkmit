@@ -132,9 +132,19 @@ Please select the most appropriate template based on query content, report conte
             
             # Verify if selected template exists
             selected_template_name = result.get('template_name', '')
+            
+            # Helper to normalize names for comparison
+            def normalize(name):
+                return name.replace('_', ' ').replace('.md', '').lower().strip()
+                
+            norm_selected = normalize(selected_template_name)
+            
             for template in available_templates:
-                if template['name'] == selected_template_name or selected_template_name in template['name']:
-                    logger.info(f"LLM selected template: {selected_template_name}")
+                norm_template = normalize(template['name'])
+                
+                # Loose matching: Exact match (normalized) OR substring
+                if norm_selected == norm_template or norm_selected in norm_template or norm_template in norm_selected:
+                    logger.info(f"LLM selected template: {template['name']}")
                     return {
                         'template_name': template['name'],
                         'template_content': template['content'],
