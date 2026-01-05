@@ -110,6 +110,13 @@ class TimesOfIndiaCrawler(AbstractCrawler):
     def _parse_search_results(self, html: str, keyword: str) -> List[Dict]:
         """Parse TOI HTML results"""
         soup = BeautifulSoup(html, 'html.parser')
+        
+        # Check for no results message
+        no_result_div = soup.select_one('.hxbkY')
+        if no_result_div and "find any results" in no_result_div.get_text():
+            utils.logger.info(f"[TimesOfIndiaCrawler] No results found for keyword: {keyword}")
+            return []
+
         items = []
         seen_urls = set()
         
@@ -134,35 +141,8 @@ class TimesOfIndiaCrawler(AbstractCrawler):
 
         if items:
             return items
-
-        # 2. Fallback: Generic Link Search for '/articleshow/'
-        articles = soup.find_all('a', href=True)
-        for a in articles:
-            href = a['href']
-            if '/articleshow/' in href and a.get_text(strip=True):
-                # Normalize URL
-                if href.startswith('/'):
-                    full_url = f"https://timesofindia.indiatimes.com{href}"
-                else:
-                    full_url = href
-                    
-                if full_url in seen_urls:
-                    continue
-                seen_urls.add(full_url)
-                
-                items.append({
-                    "id": f"toi_{keyword}_{len(items)}",
-                    "title": a.get_text(strip=True),
-                    "url": full_url,
-                    "source": "toi_news",
-                    "rank": len(items) + 1,
-                    "metadata": {}
-                })
-                
-                if len(items) >= 20: # Limit result count
-                    break
-                    
-        return items
+            
+        return []
 
     async def launch_browser(self, chromium: BrowserType, playwright_proxy: Optional[Dict], user_agent: Optional[str], headless: bool = True) -> BrowserContext:
         browser = await chromium.launch(headless=headless, proxy=playwright_proxy)

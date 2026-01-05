@@ -183,19 +183,22 @@ class NewsCollector:
             # Process Results
             processed_data = self._process_news_results(results)
             
-            # Save to Database
-            if self.db_manager and processed_data['news_list']:
+            # Save to Database (Always call to ensure old data is cleared if new search is empty)
+            if self.db_manager:
                 try:
+                    # save_daily_news will clear existing data for the date before inserting
                     saved_count = self.db_manager.save_daily_news(
                         processed_data['news_list'], 
                         date.today()
                     )
                     processed_data['saved_count'] = saved_count
+                    if not processed_data['news_list']:
+                        logger.info("News list is empty. Cleared existing data for today.")
                 except Exception as e:
                     logger.error(f"Failed to save to DB: {e}")
             else:
                 processed_data['saved_count'] = 0
-                logger.info("Skipped DB save (DB manager not active or no data)")
+                logger.info("Skipped DB save (DB manager not active)")
             
             self._print_collection_summary(processed_data)
             return processed_data
