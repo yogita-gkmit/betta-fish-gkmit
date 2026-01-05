@@ -178,7 +178,7 @@ class ReportAgent:
         self.html_generation_node = HTMLGenerationNode(self.llm_client)
     
     def generate_report(self, query: str, reports: List[Any], forum_logs: str = "", 
-                       custom_template: str = "", save_report: bool = True) -> str:
+                       custom_template: str = "", save_report: bool = True, task_id: str = "") -> str:
         """
         Generate comprehensive report
         
@@ -214,7 +214,7 @@ class ReportAgent:
             
             # Step 3: Save Report
             if save_report:
-                self._save_report(html_report)
+                self._save_report(html_report, task_id)
             
             logger.info(f"Report generation completed, took: {generation_time:.2f} seconds")
             
@@ -346,10 +346,15 @@ This report analyzes current social hot events, integrating views and data from 
 *Generation Time: {generation_time}*
 """
     
-    def _save_report(self, html_content: str):
+    def _save_report(self, html_content: str, task_id: str = ""):
         """Save report to file"""
         # Generate filename
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        if task_id:
+            # If task_id provided (e.g. report_1234567890), extract the timestamp part
+            timestamp = task_id.split('_')[-1]
+        else:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            
         query_safe = "".join(c for c in self.state.metadata.query if c.isalnum() or c in (' ', '-', '_')).rstrip()
         query_safe = query_safe.replace(' ', '_')[:30]
         

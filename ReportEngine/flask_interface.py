@@ -124,7 +124,8 @@ def run_report_generation(task: ReportTask, query: str, custom_template: str = "
             reports=content['reports'],
             forum_logs=content['forum_logs'],
             custom_template=custom_template,
-            save_report=True
+            save_report=True,
+            task_id=task.task_id
         )
 
         task.update_status("running", 90)
@@ -265,26 +266,30 @@ def get_progress(task_id: str):
 
 @report_bp.route('/result/<task_id>', methods=['GET'])
 def get_result(task_id: str):
-    """Get report generation result"""
+    """Get report generation result (HTML)"""
     try:
+        # If the task object is missing (e.g., after cleanup), serve saved HTML file
         if not current_task or current_task.task_id != task_id:
+            # Extract timestamp part from task_id (format: report_<timestamp>)
+            timestamp = task_id.split('_', 1)[-1]
+            import glob, os
+            pattern = os.path.join('final_reports', f'final_report_*_{timestamp}.html')
+            matches = glob.glob(pattern)
+            if matches:
+                with open(matches[0], 'r', encoding='utf-8') as f:
+                    html_content = f.read()
+                return Response(html_content, mimetype='text/html')
             return jsonify({
                 'success': False,
-                'error': 'Task does not exist'
+                'error': 'Report not found and task does not exist'
             }), 404
-
         if current_task.status != "completed":
             return jsonify({
                 'success': False,
                 'error': 'Report not yet completed',
                 'task': current_task.to_dict()
             }), 400
-
-        return Response(
-            current_task.html_content,
-            mimetype='text/html'
-        )
-
+        return Response(current_task.html_content, mimetype='text/html')
     except Exception as e:
         logger.exception(f"Failed to get report generation result: {str(e)}")
         return jsonify({
@@ -298,9 +303,29 @@ def get_result_json(task_id: str):
     """Get report generation result (JSON format)"""
     try:
         if not current_task or current_task.task_id != task_id:
+            # Fallback: if task object missing, try to load saved HTML file
+            timestamp = task_id.split('_', 1)[-1]
+            import glob, os
+            pattern = os.path.join('final_reports', f'final_report_*_{timestamp}.html')
+            matches = glob.glob(pattern)
+            if matches:
+                with open(matches[0], 'r', encoding='utf-8') as f:
+                    html_content = f.read()
+                return jsonify({
+                    'success': True,
+                    'task': {
+                        'task_id': task_id,
+                        'status': 'completed',
+                        'progress': 100,
+                        'error_message': '',
+                        'has_result': True,
+                        'html_content': html_content
+                    },
+                    'html_content': html_content
+                })
             return jsonify({
                 'success': False,
-                'error': 'Task does not exist'
+                'error': 'Report not found and task does not exist'
             }), 404
 
         if current_task.status != "completed":

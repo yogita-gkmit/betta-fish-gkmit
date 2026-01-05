@@ -2896,7 +2896,6 @@
         function checkTaskProgress(taskId) {
             fetch(`/api/report/progress/${taskId}`)
             .then(response => response.json())
-            .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     updateProgressDisplay(data.task);
