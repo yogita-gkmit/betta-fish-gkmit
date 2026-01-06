@@ -8,6 +8,9 @@
 # Please refer to the LICENSE file in the project root for detailed license terms.
 # Using this code indicates your agreement to abide by the above principles and all terms in the LICENSE.
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # Basic Configuration
 PLATFORM = "toi"  # Platform，xhs | dy | ks | bili | wb | tieba | zhihu
 KEYWORDS = "India,AI" 
@@ -28,7 +31,8 @@ IP_PROXY_PROVIDER_NAME = "kuaidaili"  # kuaidaili | wandouhttp
 # Set to False to open a browser
 # If Xiaohongshu login fails repeatedly with QR code, open browser to manually pass sliding captcha
 # If Douyin login fails repeatedly, open browser to see if phone verification appeared after QR scan, pass it manually if so.
-HEADLESS = True
+# If Douyin login fails repeatedly, open browser to see if phone verification appeared after QR scan, pass it manually if so.
+HEADLESS = False
 
 # Whether to save login state
 SAVE_LOGIN_STATE = True

@@ -76,6 +76,8 @@ async def main():
 
 
     crawler = CrawlerFactory.create_crawler(platform=config.PLATFORM)
+    print(f"[DEBUG] main.py: Created crawler for {config.PLATFORM}. Starting...")
+    print(f"[DEBUG] main.py: Config KEYWORDS: {config.KEYWORDS}")
     await crawler.start()
 
     # Generate wordcloud after crawling is complete

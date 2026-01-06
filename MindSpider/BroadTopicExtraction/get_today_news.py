@@ -13,14 +13,36 @@ from pathlib import Path
 from typing import List, Dict, Optional
 from loguru import logger
 
+# Import DatabaseManager
+try:
+    from database_manager import DatabaseManager
+except ImportError:
+    try:
+        from MindSpider.BroadTopicExtraction.database_manager import DatabaseManager
+    except ImportError:
+        logger.error("Could not import DatabaseManager. Database saving will fail.")
+        DatabaseManager = None
+
+
 # Add project root and MediaCrawler to path for imports
 project_root = Path(__file__).parent.parent
+# CRITICAL: Insert MediaCrawler path FIRST to ensure its 'config' package is loaded 
+# instead of the shadowing 'config.py' in MindSpider root.
+media_crawler_path = str(project_root / "DeepSentimentCrawling" / "MediaCrawler")
+if media_crawler_path not in sys.path:
+    sys.path.insert(0, media_crawler_path) 
 sys.path.append(str(project_root))
-sys.path.append(str(project_root / "DeepSentimentCrawling" / "MediaCrawler"))
 
-# Monkey patch config to satisfy MediaCrawler dependencies if MindSpider config is loaded
+# Monkey patch config to satisfy MediaCrawler dependencies if needed
 try:
     import config
+    # Ensure we have the right config
+    if "MediaCrawler" not in getattr(config, "__file__", "") and not hasattr(config, "ENABLE_CDP_MODE"):
+         logger.warning(f"Loaded wrong config from {getattr(config, '__file__', 'unknown')}. forcing reload from MediaCrawler...")
+         import importlib
+         importlib.reload(config)
+
+    # FORCE HEADLESS = False conditionally check is weak, FORCE IT.
     # FORCE HEADLESS = False conditionally check is weak, FORCE IT.
     config.HEADLESS = False 
     
@@ -44,10 +66,7 @@ try:
     if not hasattr(config, "GLASSDOOR_SEARCH_URL_TEMPLATE"):
         config.GLASSDOOR_SEARCH_URL_TEMPLATE = "https://www.glassdoor.com/Search/results.htm?keyword={keyword}"
     if not hasattr(config, "GLASSDOOR_PAGE_WAIT_TIME"):
-        config.GLASSDOOR_PAGE_WAIT_TIME = 60
-    else:
-        # Force update to 60s even if it already exists, to override defaults
-        config.GLASSDOOR_PAGE_WAIT_TIME = 60
+        config.GLASSDOOR_PAGE_WAIT_TIME = 5
 except ImportError:
     pass
 

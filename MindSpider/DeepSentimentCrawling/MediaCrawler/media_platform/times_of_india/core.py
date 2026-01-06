@@ -83,7 +83,7 @@ class TimesOfIndiaCrawler(AbstractCrawler):
         await self.search_keywords(config.KEYWORDS.split(","))
 
     async def search_keywords(self, keywords: List[str]) -> List[Dict]:
-        """Search for multiple keywords and return combined results"""
+        """Search for multiple keywords and return combined results with pagination"""
         all_results = []
         utils.logger.info("[TimesOfIndiaCrawler.search] Begin search keywords")
         
@@ -96,11 +96,64 @@ class TimesOfIndiaCrawler(AbstractCrawler):
                 await self.context_page.goto(search_url, wait_until="domcontentloaded")
                 await asyncio.sleep(config.TOI_PAGE_WAIT_TIME)
                 
-                html_content = await self.context_page.content()
-                items = self._parse_search_results(html_content, keyword)
+                keyword_results = []
+                seen_ids = set()
+                page_count = 1
                 
-                utils.logger.info(f"[TimesOfIndiaCrawler.search] Found {len(items)} results for {keyword}")
-                all_results.extend(items)
+                while len(keyword_results) < config.CRAWLER_MAX_NOTES_COUNT:
+                    # 1. Parse current page content
+                    html_content = await self.context_page.content()
+                    current_items = self._parse_search_results(html_content, keyword)
+                    
+                    # Add new items
+                    new_items_count = 0
+                    for item in current_items:
+                        if item['id'] not in seen_ids:
+                            keyword_results.append(item)
+                            seen_ids.add(item['id'])
+                            new_items_count += 1
+                    
+                    utils.logger.info(f"[TimesOfIndiaCrawler] Keyword '{keyword}': Parsed {len(current_items)} items, {new_items_count} new. Total: {len(keyword_results)}")
+                    
+                    if len(keyword_results) >= config.CRAWLER_MAX_NOTES_COUNT:
+                        break
+
+                    # 2. Try to load more
+                    try:
+                        # Scroll to bottom to ensure button is in view / trigger lazy loads
+                        await self.context_page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                        await asyncio.sleep(2)
+
+                        # Look for "Load More" button
+                        # Note: Selector based on findings: button with text "LOAD MORE ARTICLES"
+                        load_more_btn = self.context_page.locator("button", has_text="LOAD MORE ARTICLES")
+                        
+                        if await load_more_btn.count() > 0 and await load_more_btn.is_visible():
+                            utils.logger.info("[TimesOfIndiaCrawler] 'Load More' button found. Clicking...")
+                            await load_more_btn.click()
+                            
+                            # Wait for network idle or simple timeout
+                            # Better: Wait for item count to increase
+                            previous_count = len(current_items)
+                            try:
+                                await self.context_page.wait_for_function(
+                                    f"document.querySelectorAll('.uwU81').length > {previous_count}",
+                                    timeout=10000
+                                )
+                                await asyncio.sleep(2) # Extra buffer for rendering
+                                page_count += 1
+                            except Exception:
+                                utils.logger.warning("[TimesOfIndiaCrawler] Timed out waiting for new items after click")
+                                break
+                        else:
+                            utils.logger.info("[TimesOfIndiaCrawler] No more 'Load More' buttons found (or end of results).")
+                            break
+                            
+                    except Exception as e:
+                        utils.logger.error(f"[TimesOfIndiaCrawler] Error executing pagination: {e}")
+                        break
+                
+                all_results.extend(keyword_results)
                 
             except Exception as e:
                 utils.logger.error(f"[TimesOfIndiaCrawler] Error during search for {keyword}: {e}")

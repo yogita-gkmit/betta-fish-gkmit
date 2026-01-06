@@ -91,11 +91,11 @@ class DatabaseManager:
 
         try:
             saved_count = 0
-            # Execute deletion in separate transaction to prevent failure in subsequent insertion affecting cleanup
-            with self.engine.begin() as conn:
-                deleted = conn.execute(text("DELETE FROM daily_news WHERE crawl_date = :d"), {"d": crawl_date}).rowcount
-                if deleted and deleted > 0:
-                    logger.info(f"Overwrite mode: Deleted {deleted} existing news records for today")
+            # REMOVED: Blanket deletion of daily records. This unsafe behavior wipes data from other platforms if this crawl returns 0 results.
+            # with self.engine.begin() as conn:
+            #     deleted = conn.execute(text("DELETE FROM daily_news WHERE crawl_date = :d"), {"d": crawl_date}).rowcount
+            #     if deleted and deleted > 0:
+            #         logger.info(f"Overwrite mode: Deleted {deleted} existing news records for today")
 
             # Insert one by one, single failure does not affect subsequent ones (independent transaction per item)
             for news_item in news_data:
@@ -118,6 +118,13 @@ class DatabaseManager:
                                     news_id, source_platform, title, url, crawl_date,
                                     rank_position, add_ts, last_modify_ts, summary, content
                                 ) VALUES (:news_id, :source_platform, :title, :url, :crawl_date, :rank_position, :add_ts, :last_modify_ts, :summary, :content)
+                                ON CONFLICT (news_id) DO UPDATE SET 
+                                    title = EXCLUDED.title,
+                                    url = EXCLUDED.url,
+                                    rank_position = EXCLUDED.rank_position,
+                                    last_modify_ts = EXCLUDED.last_modify_ts,
+                                    summary = EXCLUDED.summary,
+                                    content = EXCLUDED.content
                                 """
                             ),
                             {

@@ -185,7 +185,7 @@ postgresql_db_config = {{
                 elif line.startswith('CRAWLER_MAX_COMMENTS_COUNT_SINGLENOTES = '):
                     new_lines.append('CRAWLER_MAX_COMMENTS_COUNT_SINGLENOTES = 20')
                 elif line.startswith('HEADLESS = '):
-                    new_lines.append('HEADLESS = True')  # Use headless mode
+                    new_lines.append('HEADLESS = False')  # Force visible mode for Cloudflare bypass
                 else:
                     new_lines.append(line)
             
