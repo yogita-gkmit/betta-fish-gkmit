@@ -280,6 +280,10 @@ class GlassdoorCrawler(AbstractCrawler):
                                 
                         utils.logger.info(f"[GlassdoorCrawler] Keyword '{keyword}': Page {page_count}, Parsed {len(current_items)} items, {new_count} new. Total: {len(keyword_results)}")
                         
+                        if new_count == 0:
+                            utils.logger.info(f"[GlassdoorCrawler] No new items found on page {page_count}. Stopping search for this keyword.")
+                            break
+
                         if len(keyword_results) >= config.CRAWLER_MAX_NOTES_COUNT:
                             break
                             
@@ -320,22 +324,30 @@ class GlassdoorCrawler(AbstractCrawler):
                                 utils.logger.info("[GlassdoorCrawler] Clicking Next Page...")
                                 # Force click or rigorous visibility check to handle overlays
                                 try:
-                                    await next_btn.first.click(timeout=5000)
+                                    async with self.context_page.expect_navigation(timeout=15000, wait_until="domcontentloaded"):
+                                        await next_btn.first.click(timeout=5000)
                                 except Exception as click_err:
+                                    # Handle "Execution context was destroyed" specifically
+                                    if "Execution context was destroyed" in str(click_err):
+                                        utils.logger.warning("[GlassdoorCrawler] Context destroyed during navigation. Attempting to re-stabilize...")
+                                        # If context is destroyed, the navigation *might* have happened or we are in a bad state.
+                                        # We will try to rely on the outer loop to check the new page state.
+                                        pass
                                     # Double check for modal if click failed (interception)
-                                    if "intercepts pointer events" in str(click_err):
+                                    elif "intercepts pointer events" in str(click_err):
                                         utils.logger.warning("[GlassdoorCrawler] Click intercepted by modal. Waiting for user...")
                                         await self.wait_for_user_clearance()
-                                        # Retry click once
+                                        # Retry click once if still visible
                                         if await next_btn.first.is_visible():
                                             await next_btn.first.click()
                                     else:
-                                        raise click_err
-    
+                                        # For other timeouts (navigation didn't finish), assume failure and STOP to prevent infinite scraping of same page
+                                        utils.logger.error(f"[GlassdoorCrawler] Navigation wait timed out or failed: {click_err}. Stopping pagination to prevent loops.")
+                                        break
+
                                 previous_count = len(current_items)
-                                # Wait for reload
-                                await asyncio.sleep(3)
-                                # Ideally wait for stale element or content change
+                                # Safety wait for dynamic content
+                                await asyncio.sleep(2)
                                 page_count += 1
                             else:
                                 utils.logger.info("[GlassdoorCrawler] No Next button found. End of results.")

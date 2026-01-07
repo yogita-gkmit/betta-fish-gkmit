@@ -91,11 +91,11 @@ class DatabaseManager:
 
         try:
             saved_count = 0
-            # REMOVED: Blanket deletion of daily records. This unsafe behavior wipes data from other platforms if this crawl returns 0 results.
-            # with self.engine.begin() as conn:
-            #     deleted = conn.execute(text("DELETE FROM daily_news WHERE crawl_date = :d"), {"d": crawl_date}).rowcount
-            #     if deleted and deleted > 0:
-            #         logger.info(f"Overwrite mode: Deleted {deleted} existing news records for today")
+            # STRICT OVERWRITE: Wipe all data for today before saving new search results.
+            with self.engine.begin() as conn:
+                deleted = conn.execute(text("DELETE FROM daily_news WHERE crawl_date = :d"), {"d": crawl_date}).rowcount
+                if deleted and deleted > 0:
+                    logger.info(f"Overwrite mode: Deleted {deleted} existing news records for today")
 
             # Insert one by one, single failure does not affect subsequent ones (independent transaction per item)
             for news_item in news_data:
