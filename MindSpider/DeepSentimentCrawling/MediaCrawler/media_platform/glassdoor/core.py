@@ -116,19 +116,20 @@ class GlassdoorCrawler(AbstractCrawler):
             root_dir = os.path.dirname(os.path.dirname(current_dir))
             stealth_path = os.path.join(root_dir, "libs", "stealth.min.js")
             
-            await self.browser_context.add_init_script(path=stealth_path)
-            
             # Reuse existing page if available (Critical for CDP mode)
             if self.browser_context.pages:
                 self.context_page = self.browser_context.pages[0]
                 utils.logger.info(f"[GlassdoorCrawler] Attaching to existing tab: {await self.context_page.title()}")
             else:
                 self.context_page = await self.browser_context.new_page()
-            
+
             # Anti-Detection: Manually override webdriver property (Redundant safety net)
+            # Only apply stealth/overrides if NOT in CDP mode (Real browsers don't need this and it can cause flags)
             try:
-                await self.context_page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-                print(f"[DEBUG] Injected 'navigator.webdriver = undefined' override.")
+                if not config.ENABLE_CDP_MODE:
+                    await self.browser_context.add_init_script(path=stealth_path)
+                    await self.context_page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+                    print(f"[DEBUG] Injected 'navigator.webdriver = undefined' override.")
             except Exception as e:
                 print(f"[DEBUG] Failed to inject webdriver override: {e}")
 
@@ -173,6 +174,13 @@ class GlassdoorCrawler(AbstractCrawler):
 
         for keyword in keywords:
             if not keyword.strip(): continue
+            
+            # Rate Limiting / Delay: Random sleep to avoid CF-429
+            # Configurable via code for now, default 10-20s
+            delay = random.uniform(10, 20)
+            print(f"[DEBUG] GlassdoorCrawler: Waiting {delay:.2f}s before processing '{keyword}' to avoid rate limits...")
+            await asyncio.sleep(delay)
+
             utils.logger.info(f"[GlassdoorCrawler.search] Current search keyword: {keyword}")
             search_url = config.GLASSDOOR_SEARCH_URL_TEMPLATE.format(keyword=keyword)
             print(f"[DEBUG] GlassdoorCrawler: Navigating to {search_url}")
@@ -209,7 +217,7 @@ class GlassdoorCrawler(AbstractCrawler):
                             
                             # Quick Check for results
                             # If unblocked and URL has keyword or title has relevant terms
-                            if "Just a moment" not in t and "Access denied" not in t:
+                            if "Just a moment" not in t and "Access denied" not in t and "Help Us Protect" not in t:
                                 if (keyword in u) or ("Job" in t) or ("Company" in t) or ("Overview" in t) or ("Reviews" in t):
                                         print(f"[DEBUG] Detected Results Page (Title: {t}). Proceeding to scrape...")
                                         break
@@ -225,8 +233,8 @@ class GlassdoorCrawler(AbstractCrawler):
                 current_title = await self.context_page.title()
                 current_content = await self.context_page.content()
                 
-                if "Just a moment" in current_title or "Help Us Protect Glassdoor" in current_content or "CF-103" in current_content:
-                     print(f"[DEBUG] CAPTCHA BLock Detected post-navigation (Title: {current_title}). Pausing for user...")
+                if "Just a moment" in current_title or "Help Us Protect Glassdoor" in current_content or "CF-103" in current_content or "CF-429" in current_content or "Access denied" in current_title:
+                     print(f"[DEBUG] CAPTCHA Block Detected post-navigation (Title: {current_title}). Pausing for user...")
                      utils.logger.warning("[GlassdoorCrawler] Cloudflare/CAPTCHA detected. Waiting for user clearance in browser...")
                      await self.wait_for_user_clearance()
 
@@ -396,10 +404,11 @@ class GlassdoorCrawler(AbstractCrawler):
                     except:
                         pass
 
-                    # 1. Check Title (Quick check)
+                    # 1. Check Title & Content (Quick check)
                     title = await self.context_page.title()
-                    if "Just a moment" in title or "Access denied" in title:
-                        print(f"[DEBUG] Blocked by Title: {title}")
+                    content = await self.context_page.content()
+                    if "Just a moment" in title or "Access denied" in title or "Help Us Protect" in title or "CF-103" in content or "CF-429" in content:
+                        print(f"[DEBUG] Blocked by Cloudflare (Title: {title}).")
                         await self.wait_for_user_clearance()
                         return
 
@@ -450,7 +459,8 @@ class GlassdoorCrawler(AbstractCrawler):
                 content = await self.context_page.content()
                 
                 # conditions to stay paused
-                is_blocked = "Just a moment" in title or "Help Us Protect Glassdoor" in content or "Access denied" in title
+                # conditions to stay paused
+                is_blocked = "Just a moment" in title or "Help Us Protect Glassdoor" in content or "Access denied" in title or "CF-103" in content or "CF-429" in content
                 is_login_page = "Sign In" in title or "header a[href*='signin']" in content # rough check
                 
                 # Better check: If we see search results or standard header profile
@@ -702,8 +712,9 @@ class GlassdoorCrawler(AbstractCrawler):
                 utils.logger.info(f"[GlassdoorCrawler] Connected to existing Chrome via CDP! Using your verified session.")
                 
                 # CRITICAL: Inject stealth to hide automation property
-                await default_context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-                print(f"[DEBUG] Injected navigator.webdriver stealth override.")
+                # SKIP stealth for CDP mode to avoid corrupting the real browser fingerprint
+                # await default_context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+                # print(f"[DEBUG] Injected navigator.webdriver stealth override.")
                 
                 return default_context
             except Exception as e:
