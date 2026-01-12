@@ -1,12 +1,12 @@
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：
-# 1. 不得用于任何商业用途。
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。
-# 3. 不得进行大规模爬取或对平台造成运营干扰。
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。
-# 5. 不得用于任何非法或不当的用途。
+# Disclaimer: This code is for educational and research purposes only. Users must adhere to the following principles:
+# 1. Not for any commercial use.
+# 2. Comply with the target platform's terms of service and robots.txt.
+# 3. Do not perform large-scale scraping or disrupt platform operations.
+# 4. Reasonably control request frequency to avoid unnecessary burden on the target platform.
+# 5. Not for any illegal or improper purposes.
 #
-# 详细许可条款请参阅项目根目录下的LICENSE文件。
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。
+# For detailed license terms, please refer to the LICENSE file in the project root directory.
+# Using this code indicates your agreement to the above principles and all terms in the LICENSE.
 
 # -*- coding: utf-8 -*-
 # @Author  : relakkes@gmail.com
@@ -40,13 +40,13 @@ class DouyinStoreFactory:
 
 def _extract_note_image_list(aweme_detail: Dict) -> List[str]:
     """
-    提取笔记图片列表
+    Extract note image list
 
     Args:
-        aweme_detail (Dict): 抖音内容详情
+        aweme_detail (Dict): Douyin content detail
 
     Returns:
-        List[str]: 笔记图片列表
+        List[str]: Note image list
     """
     images_res: List[str] = []
     images: List[Dict] = aweme_detail.get("images", [])
@@ -55,7 +55,7 @@ def _extract_note_image_list(aweme_detail: Dict) -> List[str]:
         return []
 
     for image in images:
-        image_url_list = image.get("url_list", [])  # download_url_list 为带水印的图片，url_list 为无水印的图片
+        image_url_list = image.get("url_list", [])  # download_url_list is image with watermark, url_list is image without watermark
         if image_url_list:
             images_res.append(image_url_list[-1])
 
@@ -64,13 +64,13 @@ def _extract_note_image_list(aweme_detail: Dict) -> List[str]:
 
 def _extract_comment_image_list(comment_item: Dict) -> List[str]:
     """
-    提取评论图片列表
+    Extract comment image list
 
     Args:
-        comment_item (Dict): 抖音评论
+        comment_item (Dict): Douyin comment
 
     Returns:
-        List[str]: 评论图片列表
+        List[str]: Comment image list
     """
     images_res: List[str] = []
     image_list: List[Dict] = comment_item.get("image_list", [])
@@ -88,13 +88,13 @@ def _extract_comment_image_list(comment_item: Dict) -> List[str]:
 
 def _extract_content_cover_url(aweme_detail: Dict) -> str:
     """
-    提取视频封面地址
+    Extract video cover url
 
     Args:
-        aweme_detail (Dict): 抖音内容详情
+        aweme_detail (Dict): Douyin content detail
 
     Returns:
-        str: 视频封面地址
+        str: Video cover url
     """
     res_cover_url = ""
 
@@ -108,13 +108,13 @@ def _extract_content_cover_url(aweme_detail: Dict) -> str:
 
 def _extract_video_download_url(aweme_detail: Dict) -> str:
     """
-    提取视频下载地址
+    Extract video download url
 
     Args:
-        aweme_detail (Dict): 抖音视频
+        aweme_detail (Dict): Douyin video
 
     Returns:
-        str: 视频下载地址
+        str: Video download url
     """
     video_item = aweme_detail.get("video", {})
     url_h264_list = video_item.get("play_addr_h264", {}).get("url_list", [])
@@ -128,13 +128,13 @@ def _extract_video_download_url(aweme_detail: Dict) -> str:
 
 def _extract_music_download_url(aweme_detail: Dict) -> str:
     """
-    提取音乐下载地址
+    Extract music download url
 
     Args:
-        aweme_detail (Dict): 抖音视频
+        aweme_detail (Dict): Douyin video
 
     Returns:
-        str: 音乐下载地址
+        str: Music download url
     """
     music_item = aweme_detail.get("music", {})
     play_url = music_item.get("play_url", {})
@@ -239,7 +239,7 @@ async def save_creator(user_id: str, creator: Dict):
 
 async def update_dy_aweme_image(aweme_id, pic_content, extension_file_name):
     """
-    更新抖音笔记图片
+    Update Douyin note image
     Args:
         aweme_id:
         pic_content:
@@ -254,7 +254,7 @@ async def update_dy_aweme_image(aweme_id, pic_content, extension_file_name):
 
 async def update_dy_aweme_video(aweme_id, video_content, extension_file_name):
     """
-    更新抖音短视频
+    Update Douyin short video
     Args:
         aweme_id:
         video_content:

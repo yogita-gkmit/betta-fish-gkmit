@@ -1,0 +1,25 @@
+### **Specific Policy/Industry Trend Analysis Report Template**
+
+- **1.0 Summary: Core Impact & Public Reaction of Policy/Trend**
+  - 1.1 Core Content Interpretation
+  - 1.2 Core Viewpoints in Public Opinion Field
+  - 1.3 Key Impact Prediction
+- **2.0 Policy/Trend Background & Propagation Analysis**
+  - 2.1 Release Background & Interpretation
+  - 2.2 Development & Fermentation Timeline
+  - 2.3 Propagation Volume Analysis
+  - 2.4 Authoritative Interpretation & Media Focus
+- **3.0 Public Attitude & Social Sentiment**
+  - 3.1 Public Opinion Sentiment Distribution
+  - 3.2 Focus of Viewpoints from All Parties
+- **4.0 Potential Impact, Opportunity & Challenge Analysis**
+  - 4.1 Impact on Industry Landscape
+  - 4.2 Impact on Our Enterprise (Opportunities & Challenges)
+  - 4.3 Impact on Related Industries
+- **5.0 Industry Benchmark Cases & Reactions**
+  - 5.1 Reactions of Competitors/Top Companies
+  - 5.2 Viewpoints of Industry Associations/Organizations
+- **6.0 Conclusions & Response Recommendations**
+  - 6.1 Trend Judgement
+  - 6.2 Strategic Response Recommendations
+  - 6.3 Public Relations Communication Recommendations

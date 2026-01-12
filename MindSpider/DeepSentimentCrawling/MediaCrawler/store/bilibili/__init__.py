@@ -1,12 +1,12 @@
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：
-# 1. 不得用于任何商业用途。
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。
-# 3. 不得进行大规模爬取或对平台造成运营干扰。
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。
-# 5. 不得用于任何非法或不当的用途。
+# Disclaimer: This code is for educational and research purposes only. Users must adhere to the following principles:
+# 1. Not for any commercial use.
+# 2. Comply with the target platform's terms of service and robots.txt.
+# 3. Do not perform large-scale scraping or disrupt platform operations.
+# 4. Reasonably control request frequency to avoid unnecessary burden on the target platform.
+# 5. Not for any illegal or improper purposes.
 #
-# 详细许可条款请参阅项目根目录下的LICENSE文件。
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。
+# For detailed license terms, please refer to the LICENSE file in the project root directory.
+# Using this code indicates your agreement to the above principles and all terms in the LICENSE.
 
 # -*- coding: utf-8 -*-
 # @Author  : relakkes@gmail.com
@@ -43,7 +43,7 @@ async def update_bilibili_video(video_item: Dict):
     video_item_view: Dict = video_item.get("View")
     video_user_info: Dict = video_item_view.get("owner")
     video_item_stat: Dict = video_item_view.get("stat")
-    # 保持 video_id 为整数类型，匹配数据库 BigInteger 字段
+    # Keep video_id as integer type, matching BigInteger field in database
     video_id = int(video_item_view.get("aid"))
     save_content_item = {
         "video_id": video_id,
@@ -51,7 +51,7 @@ async def update_bilibili_video(video_item: Dict):
         "title": video_item_view.get("title", "")[:500],
         "desc": video_item_view.get("desc", "")[:500],
         "create_time": video_item_view.get("pubdate"),
-        # user_id 和 liked_count 需要保持为整数类型，匹配数据库 BigInteger/Integer 字段
+        # user_id and liked_count need to remain integer type, matching BigInteger/Integer fields in database
         "user_id": int(video_user_info.get("mid")) if video_user_info.get("mid") else None,
         "nickname": video_user_info.get("name"),
         "avatar": video_user_info.get("face", ""),
@@ -75,7 +75,7 @@ async def update_bilibili_video(video_item: Dict):
 async def update_up_info(video_item: Dict):
     video_item_card_list: Dict = video_item.get("Card")
     video_item_card: Dict = video_item_card_list.get("card")
-    # user_id 需要保持为整数类型，匹配数据库 BigInteger 字段
+    # user_id needs to remain integer type, matching BigInteger field in database
     mid_value = video_item_card.get("mid")
     saver_up_info = {
         "user_id": int(mid_value) if mid_value else None,
@@ -101,16 +101,16 @@ async def batch_update_bilibili_video_comments(video_id: str, comments: List[Dic
 
 
 async def update_bilibili_video_comment(video_id: str, comment_item: Dict):
-    # comment_id 和 video_id 需要保持为整数类型，匹配数据库 BigInteger 字段
+    # comment_id and video_id need to remain integer type, matching BigInteger field in database
     rpid_value = comment_item.get("rpid")
     comment_id = int(rpid_value) if rpid_value else None
     parent_comment_id = str(comment_item.get("parent", 0))
     content: Dict = comment_item.get("content")
     user_info: Dict = comment_item.get("member")
-    # like_count 需要保持为字符串类型，匹配数据库 Text 字段
+    # like_count needs to remain string type, matching Text field in database
     like_count_value = comment_item.get("like", 0)
     like_count = str(like_count_value) if like_count_value is not None else "0"
-    # 将 video_id 转换为整数类型，匹配数据库 BigInteger 字段
+    # Convert video_id to integer type, matching BigInteger field in database
     video_id_int = int(video_id) if video_id else None
     save_comment_item = {
         "comment_id": comment_id,
@@ -118,7 +118,7 @@ async def update_bilibili_video_comment(video_id: str, comment_item: Dict):
         "create_time": comment_item.get("ctime"),
         "video_id": video_id_int,
         "content": content.get("message"),
-        # user_id 需要保持为字符串类型，匹配数据库 String(255) 字段
+        # user_id needs to remain string type, matching String(255) field in database
         "user_id": str(user_info.get("mid")) if user_info.get("mid") else None,
         "nickname": user_info.get("uname"),
         "sex": user_info.get("sex"),
@@ -200,7 +200,7 @@ async def batch_update_bilibili_creator_dynamics(creator_info: Dict, dynamics_li
 
 
 async def update_bilibili_creator_contact(creator_info: Dict, fan_info: Dict):
-    # up_id 和 fan_id 需要保持为整数类型，匹配数据库 BigInteger 字段
+    # up_id and fan_id need to remain integer type, matching BigInteger field in database
     up_id_value = creator_info.get("id")
     fan_id_value = fan_info.get("id")
     save_contact_item = {

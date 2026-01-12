@@ -1,22 +1,25 @@
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：  
-# 1. 不得用于任何商业用途。  
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。  
-# 3. 不得进行大规模爬取或对平台造成运营干扰。  
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。   
-# 5. 不得用于任何非法或不当的用途。
-#   
-# 详细许可条款请参阅项目根目录下的LICENSE文件。  
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。  
+# Disclaimer: This code is for learning and research purposes only. Users must adhere to the following principles:
+# 1. Do not use for any commercial purposes.
+# 2. Comply with the target platform's terms of use and robots.txt rules.
+# 3. Do not perform large-scale crawling or disrupt platform operations.
+# 4. Reasonably control request frequency to avoid unnecessary burden on target platforms.
+# 5. Do not use for any illegal or improper purposes.
+#
+# Please refer to the LICENSE file in the project root for detailed license terms.
+# Using this code indicates your agreement to abide by the above principles and all terms in the LICENSE.  
 
 
 import os
+from dotenv import load_dotenv
 
-# mysql config - 使用MindSpider的数据库配置
-MYSQL_DB_PWD = "bettafish"
-MYSQL_DB_USER = "bettafish"
-MYSQL_DB_HOST = "127.0.0.1"
-MYSQL_DB_PORT = 5444
-MYSQL_DB_NAME = "bettafish"
+load_dotenv()
+
+# mysql config - Use env vars
+MYSQL_DB_PWD = os.getenv("MYSQL_DB_PWD", "12345678")
+MYSQL_DB_USER = os.getenv("MYSQL_DB_USER", "pgsql")
+MYSQL_DB_HOST = os.getenv("MYSQL_DB_HOST", "localhost")
+MYSQL_DB_PORT = os.getenv("MYSQL_DB_PORT", 5432)
+MYSQL_DB_NAME = os.getenv("MYSQL_DB_NAME", "betta_fish_local")
 
 mysql_db_config = {
     "user": MYSQL_DB_USER,
@@ -44,12 +47,12 @@ sqlite_db_config = {
     "db_path": SQLITE_DB_PATH
 }
 
-# postgresql config - 使用MindSpider的数据库配置（如果DB_DIALECT是postgresql）或环境变量
-POSTGRESQL_DB_PWD = os.getenv("POSTGRESQL_DB_PWD", "bettafish")
-POSTGRESQL_DB_USER = os.getenv("POSTGRESQL_DB_USER", "bettafish")
-POSTGRESQL_DB_HOST = os.getenv("POSTGRESQL_DB_HOST", "127.0.0.1")
-POSTGRESQL_DB_PORT = os.getenv("POSTGRESQL_DB_PORT", "5444")
-POSTGRESQL_DB_NAME = os.getenv("POSTGRESQL_DB_NAME", "bettafish")
+# postgresql config - Use MindSpider's database configuration (if DB_DIALECT is postgresql) or env vars
+POSTGRESQL_DB_PWD = os.getenv("POSTGRESQL_DB_PWD", "12345678")
+POSTGRESQL_DB_USER = os.getenv("POSTGRESQL_DB_USER", "pgsql")
+POSTGRESQL_DB_HOST = os.getenv("POSTGRESQL_DB_HOST", "localhost")
+POSTGRESQL_DB_PORT = os.getenv("POSTGRESQL_DB_PORT", "5432")
+POSTGRESQL_DB_NAME = os.getenv("POSTGRESQL_DB_NAME", "betta_fish_local")
 
 postgresql_db_config = {
     "user": POSTGRESQL_DB_USER,

@@ -1,6 +1,6 @@
 """
-状态管理模块
-定义Deep Search Agent的状态数据结构
+State Management Module
+Defines the state data structure of the Deep Search Agent
 """
 
 from .state import State, Paragraph, Research, Search

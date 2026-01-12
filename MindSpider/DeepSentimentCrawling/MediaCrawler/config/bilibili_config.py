@@ -1,22 +1,21 @@
-# -*- coding: utf-8 -*-
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：
-# 1. 不得用于任何商业用途。
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。
-# 3. 不得进行大规模爬取或对平台造成运营干扰。
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。
-# 5. 不得用于任何非法或不当的用途。
+# Declaration: This code is for learning and research purposes only. Users must adhere to the following principles:
+# 1. Do not use for any commercial purposes.
+# 2. Comply with the target platform's terms of use and robots.txt rules.
+# 3. Do not perform large-scale crawling or disrupt platform operations.
+# 4. Reasonably control request frequency to avoid unnecessary burden on the target platform.
+# 5. Do not use for any illegal or improper purposes.
 #
-# 详细许可条款请参阅项目根目录下的LICENSE文件。
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。
-# bilili 平台配置
+# For detailed license terms, please refer to the LICENSE file in the project root directory.
+# Using this code indicates your agreement to abide by the above principles and all terms in the LICENSE.
+# Bilibili platform configuration
 
-# 每天爬取视频/帖子的数量控制
+# Control the number of videos/posts crawled per day
 MAX_NOTES_PER_DAY = 1
 
-# 指定B站视频URL列表 (支持完整URL或BV号)
-# 示例:
-# - 完整URL: "https://www.bilibili.com/video/BV1dwuKzmE26/?spm_id_from=333.1387.homepage.video_card.click"
-# - BV号: "BV1d54y1g7db"
+# Specify Bilibili video URL list (supports full URL or BV ID)
+# Example:
+# - Full URL: "https://www.bilibili.com/video/BV1dwuKzmE26/?spm_id_from=333.1387.homepage.video_card.click"
+# - BV ID: "BV1d54y1g7db"
 BILI_SPECIFIED_ID_LIST = [
     "https://www.bilibili.com/video/BV1dwuKzmE26/?spm_id_from=333.1387.homepage.video_card.click",
     "BV1Sz4y1U77N",
@@ -24,9 +23,9 @@ BILI_SPECIFIED_ID_LIST = [
     # ........................
 ]
 
-# 指定B站创作者URL列表 (支持完整URL或UID)
-# 示例:
-# - 完整URL: "https://space.bilibili.com/434377496?spm_id_from=333.1007.0.0"
+# Specify Bilibili creator URL list (supports full URL or UID)
+# Example:
+# - Full URL: "https://space.bilibili.com/434377496?spm_id_from=333.1007.0.0"
 # - UID: "20813884"
 BILI_CREATOR_ID_LIST = [
     "https://space.bilibili.com/434377496?spm_id_from=333.1007.0.0",
@@ -34,26 +33,26 @@ BILI_CREATOR_ID_LIST = [
     # ........................
 ]
 
-# 指定时间范围
+# Specify time range
 START_DAY = "2024-01-01"
 END_DAY = "2024-01-01"
 
-# 搜索模式
+# Search mode
 BILI_SEARCH_MODE = "normal"
 
-# 视频清晰度（qn）配置，常见取值：
-# 16=360p, 32=480p, 64=720p, 80=1080p, 112=1080p高码率, 116=1080p60, 120=4K
-# 注意：更高清晰度需要账号/视频本身支持
+# Video quality (qn) configuration, common values:
+# 16=360p, 32=480p, 64=720p, 80=1080p, 112=1080p high bitrate, 116=1080p60, 120=4K
+# Note: Higher quality requires account/video support
 BILI_QN = 80
 
-# 是否爬取用户信息
+# Whether to crawl user information
 CREATOR_MODE = True
 
-# 开始爬取用户信息页码
+# Start crawling user information page number
 START_CONTACTS_PAGE = 1
 
-# 单个视频/帖子最大爬取评论数
+# Maximum number of comments to crawl per video/post
 CRAWLER_MAX_CONTACTS_COUNT_SINGLENOTES = 100
 
-# 单个视频/帖子最大爬取动态数
+# Maximum number of dynamics to crawl per video/post
 CRAWLER_MAX_DYNAMICS_COUNT_SINGLENOTES = 50

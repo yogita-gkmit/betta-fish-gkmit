@@ -1,0 +1,23 @@
+### **Daily/Periodic Public Opinion Monitoring Report Template**
+
+- **1.0 Weekly/Monthly Public Opinion Overview**
+  - 1.1 Core Data Dashboard
+  - 1.2 Top 3 Public Opinion Hot Topics
+  - 1.3 Key Warnings
+- **2.0 Key Data Trends**
+  - 2.1 Volume Trend
+  - 2.2 Sentiment Trend
+- **3.0 Public Opinion Dynamics Timeline of the Period**
+  - 3.1 Daily/Weekly Public Opinion Major Events
+- **4.0 Hot Topic Tracking**
+  - 4.1 Details of Hot Events/Topics in this Period
+  - 4.2 New/Sudden Topics
+- **5.0 Key Channel Performance**
+  - 5.1 Core Social Media Performance
+  - 5.2 Core Content Platform Performance
+- **6.0 Negative & Risk Monitoring**
+  - 6.1 Negative Information Summary
+  - 6.2 Potential Risk Alerts
+- **7.0 Briefing & Focus Points**
+  - 7.1 Summary of this Period
+  - 7.2 Focus for Next Period

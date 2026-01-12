@@ -1,12 +1,12 @@
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：
-# 1. 不得用于任何商业用途。
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。
-# 3. 不得进行大规模爬取或对平台造成运营干扰。
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。
-# 5. 不得用于任何非法或不当的用途。
+# Disclaimer: This code is for educational and research purposes only. Users must adhere to the following principles:
+# 1. Not for any commercial use.
+# 2. Comply with the target platform's terms of service and robots.txt.
+# 3. Do not perform large-scale scraping or disrupt platform operations.
+# 4. Reasonably control request frequency to avoid unnecessary burden on the target platform.
+# 5. Not for any illegal or improper purposes.
 #
-# 详细许可条款请参阅项目根目录下的LICENSE文件。
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。
+# For detailed license terms, please refer to the LICENSE file in the project root directory.
+# Using this code indicates your agreement to the above principles and all terms in the LICENSE.
 
 # -*- coding: utf-8 -*-
 import asyncio
@@ -49,9 +49,9 @@ class ZhiHuClient(AbstractApiClient):
 
     async def _pre_headers(self, url: str) -> Dict:
         """
-        请求头参数签名
+        Request header parameter signature
         Args:
-            url:  请求的URL需要包含请求的参数
+            url: Request URL including query params
         Returns:
 
         """
@@ -67,11 +67,11 @@ class ZhiHuClient(AbstractApiClient):
     @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
     async def request(self, method, url, **kwargs) -> Union[str, Any]:
         """
-        封装httpx的公共请求方法，对请求响应做一些处理
+        Encapsulate httpx public request method, handle request response
         Args:
-            method: 请求方法
-            url: 请求的URL
-            **kwargs: 其他请求参数，例如请求头、请求体等
+            method: request method
+            url: request URL
+            **kwargs: other request parameters, such as headers, body, etc.
 
         Returns:
 
@@ -86,7 +86,7 @@ class ZhiHuClient(AbstractApiClient):
             utils.logger.error(f"[ZhiHuClient.request] Requset Url: {url}, Request error: {response.text}")
             if response.status_code == 403:
                 raise ForbiddenError(response.text)
-            elif response.status_code == 404:  # 如果一个content没有评论也是404
+            elif response.status_code == 404:  # If a content has no comments, it also returns 404
                 return {}
 
             raise DataFetchError(response.text)
@@ -105,10 +105,10 @@ class ZhiHuClient(AbstractApiClient):
 
     async def get(self, uri: str, params=None, **kwargs) -> Union[Response, Dict, str]:
         """
-        GET请求，对请求头签名
+        GET request, sign request headers
         Args:
-            uri: 请求路由
-            params: 请求参数
+            uri: request route
+            params: request parameters
 
         Returns:
 
@@ -122,7 +122,7 @@ class ZhiHuClient(AbstractApiClient):
 
     async def pong(self) -> bool:
         """
-        用于检查登录态是否失效了
+        Check if login state is invalid
         Returns:
 
         """
@@ -142,9 +142,9 @@ class ZhiHuClient(AbstractApiClient):
 
     async def update_cookies(self, browser_context: BrowserContext):
         """
-        API客户端提供的更新cookies方法，一般情况下登录成功后会调用此方法
+        Update cookies method provided by API client, usually called after successful login
         Args:
-            browser_context: 浏览器上下文对象
+            browser_context: browser context object
 
         Returns:
 
@@ -155,7 +155,7 @@ class ZhiHuClient(AbstractApiClient):
 
     async def get_current_user_info(self) -> Dict:
         """
-        获取当前登录用户信息
+        Get current logged-in user info
         Returns:
 
         """
@@ -172,14 +172,14 @@ class ZhiHuClient(AbstractApiClient):
         search_time: SearchTime = SearchTime.DEFAULT,
     ) -> List[ZhihuContent]:
         """
-        根据关键词搜索
+        Search by keyword
         Args:
-            keyword: 关键词
-            page: 第几页
-            page_size: 分页size
-            sort: 排序
-            note_type: 搜索结果类型
-            search_time: 搜索多久时间的结果
+            keyword: keyword
+            page: page number
+            page_size: page size
+            sort: sorting
+            note_type: search result type
+            search_time: search time range
 
         Returns:
 
@@ -213,10 +213,10 @@ class ZhiHuClient(AbstractApiClient):
         order_by: str = "score",
     ) -> Dict:
         """
-        获取内容的一级评论
+        Get first-level comments of content
         Args:
-            content_id: 内容ID
-            content_type: 内容类型(answer, article, zvideo)
+            content_id: content ID
+            content_type: content type (answer, article, zvideo)
             offset:
             limit:
             order_by:
@@ -243,7 +243,7 @@ class ZhiHuClient(AbstractApiClient):
         order_by: str = "sort",
     ) -> Dict:
         """
-        获取一级评论下的子评论
+        Get sub-comments under first-level comment
         Args:
             root_comment_id:
             offset:
@@ -268,11 +268,11 @@ class ZhiHuClient(AbstractApiClient):
         callback: Optional[Callable] = None,
     ) -> List[ZhihuComment]:
         """
-        获取指定帖子下的所有一级评论，该方法会一直查找一个帖子下的所有评论信息
+        Get all first-level comments under specified post, this method will keep finding all comment info under a post
         Args:
-            content: 内容详情对象(问题｜文章｜视频)
-            crawl_interval: 爬取一次笔记的延迟单位（秒）
-            callback: 一次笔记爬取结束后
+            content: content detail object (question|article|video)
+            crawl_interval: scraping interval unit (seconds)
+            callback: callback function after one pagination scraping ends
 
         Returns:
 
@@ -309,12 +309,12 @@ class ZhiHuClient(AbstractApiClient):
         callback: Optional[Callable] = None,
     ) -> List[ZhihuComment]:
         """
-        获取指定评论下的所有子评论
+        Get all sub-comments under specified comment
         Args:
-            content: 内容详情对象(问题｜文章｜视频)
-            comments: 评论列表
-            crawl_interval: 爬取一次笔记的延迟单位（秒）
-            callback: 一次笔记爬取结束后
+            content: content detail object (question|article|video)
+            comments: comment list
+            crawl_interval: scraping interval unit (seconds)
+            callback: callback function after one pagination scraping ends
 
         Returns:
 
@@ -351,7 +351,7 @@ class ZhiHuClient(AbstractApiClient):
 
     async def get_creator_info(self, url_token: str) -> Optional[ZhihuCreator]:
         """
-        获取创作者信息
+        Get creator info
         Args:
             url_token:
 
@@ -364,7 +364,7 @@ class ZhiHuClient(AbstractApiClient):
 
     async def get_creator_answers(self, url_token: str, offset: int = 0, limit: int = 20) -> Dict:
         """
-        获取创作者的回答
+        Get creator answers
         Args:
             url_token:
             offset:
@@ -386,7 +386,7 @@ class ZhiHuClient(AbstractApiClient):
 
     async def get_creator_articles(self, url_token: str, offset: int = 0, limit: int = 20) -> Dict:
         """
-        获取创作者的文章
+        Get creator articles
         Args:
             url_token:
             offset:
@@ -407,7 +407,7 @@ class ZhiHuClient(AbstractApiClient):
 
     async def get_creator_videos(self, url_token: str, offset: int = 0, limit: int = 20) -> Dict:
         """
-        获取创作者的视频
+        Get creator videos
         Args:
             url_token:
             offset:
@@ -427,11 +427,11 @@ class ZhiHuClient(AbstractApiClient):
 
     async def get_all_anwser_by_creator(self, creator: ZhihuCreator, crawl_interval: float = 1.0, callback: Optional[Callable] = None) -> List[ZhihuContent]:
         """
-        获取创作者的所有回答
+        Get all answers by creator
         Args:
-            creator: 创作者信息
-            crawl_interval: 爬取一次笔记的延迟单位（秒）
-            callback: 一次笔记爬取结束后
+            creator: creator info
+            crawl_interval: scraping interval unit (seconds)
+            callback: callback function after one scraping ends
 
         Returns:
 
@@ -462,7 +462,7 @@ class ZhiHuClient(AbstractApiClient):
         callback: Optional[Callable] = None,
     ) -> List[ZhihuContent]:
         """
-        获取创作者的所有文章
+        Get all articles by creator
         Args:
             creator:
             crawl_interval:
@@ -496,7 +496,7 @@ class ZhiHuClient(AbstractApiClient):
         callback: Optional[Callable] = None,
     ) -> List[ZhihuContent]:
         """
-        获取创作者的所有视频
+        Get all videos by creator
         Args:
             creator:
             crawl_interval:
@@ -529,7 +529,7 @@ class ZhiHuClient(AbstractApiClient):
         answer_id: str,
     ) -> Optional[ZhihuContent]:
         """
-        获取回答信息
+        Get answer info
         Args:
             question_id:
             answer_id:
@@ -543,7 +543,7 @@ class ZhiHuClient(AbstractApiClient):
 
     async def get_article_info(self, article_id: str) -> Optional[ZhihuContent]:
         """
-        获取文章信息
+        Get article info
         Args:
             article_id:
 
@@ -556,7 +556,7 @@ class ZhiHuClient(AbstractApiClient):
 
     async def get_video_info(self, video_id: str) -> Optional[ZhihuContent]:
         """
-        获取视频信息
+        Get video info
         Args:
             video_id:
 

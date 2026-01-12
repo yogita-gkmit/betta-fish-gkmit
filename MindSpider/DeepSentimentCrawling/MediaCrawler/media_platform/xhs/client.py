@@ -1,12 +1,12 @@
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：
-# 1. 不得用于任何商业用途。
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。
-# 3. 不得进行大规模爬取或对平台造成运营干扰。
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。
-# 5. 不得用于任何非法或不当的用途。
+# Disclaimer: This code is for educational and research purposes only. Users must adhere to the following principles:
+# 1. Not for any commercial use.
+# 2. Comply with the target platform's terms of service and robots.txt.
+# 3. Do not perform large-scale scraping or disrupt platform operations.
+# 4. Reasonably control request frequency to avoid unnecessary burden on the target platform.
+# 5. Not for any illegal or improper purposes.
 #
-# 详细许可条款请参阅项目根目录下的LICENSE文件。
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。
+# For detailed license terms, please refer to the LICENSE file in the project root directory.
+# Using this code indicates your agreement to the above principles and all terms in the LICENSE.
 
 import asyncio
 import json
@@ -34,7 +34,7 @@ class XiaoHongShuClient(AbstractApiClient):
 
     def __init__(
         self,
-        timeout=60,  # 若开启爬取媒体选项，xhs 的长视频需要更久的超时时间
+        timeout=60,  # If media crawling is enabled, xhs long video needs longer timeout
         proxy=None,
         *,
         headers: Dict[str, str],
@@ -46,9 +46,9 @@ class XiaoHongShuClient(AbstractApiClient):
         self.headers = headers
         self._host = "https://edith.xiaohongshu.com"
         self._domain = "https://www.xiaohongshu.com"
-        self.IP_ERROR_STR = "网络连接异常，请检查网络设置或重启试试"
+        self.IP_ERROR_STR = "Network connection exception, please check network settings or restart"
         self.IP_ERROR_CODE = 300012
-        self.NOTE_ABNORMAL_STR = "笔记状态异常，请稍后查看"
+        self.NOTE_ABNORMAL_STR = "Note status abnormal, please check later"
         self.NOTE_ABNORMAL_CODE = -510001
         self.playwright_page = playwright_page
         self.cookie_dict = cookie_dict
@@ -56,7 +56,7 @@ class XiaoHongShuClient(AbstractApiClient):
 
     async def _pre_headers(self, url: str, data=None) -> Dict:
         """
-        请求头参数签名
+        Request header parameter signature
         Args:
             url:
             data:
@@ -85,11 +85,11 @@ class XiaoHongShuClient(AbstractApiClient):
     @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
     async def request(self, method, url, **kwargs) -> Union[str, Any]:
         """
-        封装httpx的公共请求方法，对请求响应做一些处理
+        Encapsulate httpx public request method, handle request response
         Args:
-            method: 请求方法
-            url: 请求的URL
-            **kwargs: 其他请求参数，例如请求头、请求体等
+            method: request method
+            url: request URL
+            **kwargs: other request parameters, such as headers, body, etc.
 
         Returns:
 
@@ -103,7 +103,7 @@ class XiaoHongShuClient(AbstractApiClient):
             # someday someone maybe will bypass captcha
             verify_type = response.headers["Verifytype"]
             verify_uuid = response.headers["Verifyuuid"]
-            msg = f"出现验证码，请求失败，Verifytype: {verify_type}，Verifyuuid: {verify_uuid}, Response: {response}"
+            msg = f"Captcha appeared, request failed, Verifytype: {verify_type}, Verifyuuid: {verify_uuid}, Response: {response}"
             utils.logger.error(msg)
             raise Exception(msg)
 
@@ -137,10 +137,10 @@ class XiaoHongShuClient(AbstractApiClient):
 
     async def post(self, uri: str, data: dict, **kwargs) -> Dict:
         """
-        POST请求，对请求头签名
+        POST request, sign request headers
         Args:
-            uri: 请求路由
-            data: 请求体参数
+            uri: request route
+            data: request body parameters
 
         Returns:
 
@@ -197,9 +197,9 @@ class XiaoHongShuClient(AbstractApiClient):
 
     async def update_cookies(self, browser_context: BrowserContext):
         """
-        API客户端提供的更新cookies方法，一般情况下登录成功后会调用此方法
+        Update cookies method provided by API client, usually called after successful login
         Args:
-            browser_context: 浏览器上下文对象
+            browser_context: browser context object
 
         Returns:
 
@@ -218,13 +218,13 @@ class XiaoHongShuClient(AbstractApiClient):
         note_type: SearchNoteType = SearchNoteType.ALL,
     ) -> Dict:
         """
-        根据关键词搜索笔记
+        Search notes by keyword
         Args:
-            keyword: 关键词参数
-            page: 分页第几页
-            page_size: 分页数据长度
-            sort: 搜索结果排序指定
-            note_type: 搜索的笔记类型
+            keyword: keyword parameter
+            page: page number
+            page_size: page data length
+            sort: search result sorting
+            note_type: search note type
 
         Returns:
 
@@ -247,11 +247,11 @@ class XiaoHongShuClient(AbstractApiClient):
         xsec_token: str,
     ) -> Dict:
         """
-        获取笔记详情API
+        Get note detail API
         Args:
-            note_id:笔记ID
-            xsec_source: 渠道来源
-            xsec_token: 搜索关键字之后返回的比较列表中返回的token
+            note_id: note ID
+            xsec_source: channel source
+            xsec_token: token returned in comparison list after search keyword
 
         Returns:
 
@@ -284,11 +284,11 @@ class XiaoHongShuClient(AbstractApiClient):
         cursor: str = "",
     ) -> Dict:
         """
-        获取一级评论的API
+        Get first-level comments API
         Args:
-            note_id: 笔记ID
-            xsec_token: 验证token
-            cursor: 分页游标
+            note_id: note ID
+            xsec_token: validation token
+            cursor: pagination cursor
 
         Returns:
 
@@ -312,13 +312,13 @@ class XiaoHongShuClient(AbstractApiClient):
         cursor: str = "",
     ):
         """
-        获取指定父评论下的子评论的API
+        Get sub-comments under a specified parent comment API
         Args:
-            note_id: 子评论的帖子ID
-            root_comment_id: 根评论ID
-            xsec_token: 验证token
-            num: 分页数量
-            cursor: 分页游标
+            note_id: note ID of the sub-comment
+            root_comment_id: root comment ID
+            xsec_token: validation token
+            num: pagination quantity
+            cursor: pagination cursor
 
         Returns:
 
@@ -344,13 +344,13 @@ class XiaoHongShuClient(AbstractApiClient):
         max_count: int = 10,
     ) -> List[Dict]:
         """
-        获取指定笔记下的所有一级评论，该方法会一直查找一个帖子下的所有评论信息
+        Get all first-level comments under a specified note, this method will keep finding all comment info under a post
         Args:
-            note_id: 笔记ID
-            xsec_token: 验证token
-            crawl_interval: 爬取一次笔记的延迟单位（秒）
-            callback: 一次笔记爬取结束后
-            max_count: 一次笔记爬取的最大评论数量
+            note_id: note ID
+            xsec_token: validation token
+            crawl_interval: scraping interval unit (seconds)
+            callback: callback function after one pagination scraping ends
+            max_count: max comment count for one note scraping
         Returns:
 
         """
@@ -392,12 +392,12 @@ class XiaoHongShuClient(AbstractApiClient):
         callback: Optional[Callable] = None,
     ) -> List[Dict]:
         """
-        获取指定一级评论下的所有二级评论, 该方法会一直查找一级评论下的所有二级评论信息
+        Get all sub-comments under a specified first-level comment, this method will keep finding all sub-comment info under a first-level comment
         Args:
-            comments: 评论列表
-            xsec_token: 验证token
-            crawl_interval: 爬取一次评论的延迟单位（秒）
-            callback: 一次评论爬取结束后
+            comments: comment list
+            xsec_token: validation token
+            crawl_interval: scraping interval unit (seconds)
+            callback: callback function after one comment scraping ends
 
         Returns:
 
@@ -454,18 +454,18 @@ class XiaoHongShuClient(AbstractApiClient):
         self, user_id: str, xsec_token: str = "", xsec_source: str = ""
     ) -> Dict:
         """
-        通过解析网页版的用户主页HTML，获取用户个人简要信息
-        PC端用户主页的网页存在window.__INITIAL_STATE__这个变量上的，解析它即可
+        Get user brief info by parsing web version user homepage HTML
+        PC user homepage has window.__INITIAL_STATE__ variable, just parse it
 
         Args:
-            user_id: 用户ID
-            xsec_token: 验证token (可选,如果URL中包含此参数则传入)
-            xsec_source: 渠道来源 (可选,如果URL中包含此参数则传入)
+            user_id: User ID
+            xsec_token: Validation token (optional, pass if URL contains this parameter)
+            xsec_source: Channel source (optional, pass if URL contains this parameter)
 
         Returns:
             Dict: 创作者信息
         """
-        # 构建URI,如果有xsec参数则添加到URL中
+        # Construct URI, if xsec parameters exist, add to URL
         uri = f"/user/profile/{user_id}"
         if xsec_token and xsec_source:
             uri = f"{uri}?xsec_token={xsec_token}&xsec_source={xsec_source}"
@@ -482,11 +482,11 @@ class XiaoHongShuClient(AbstractApiClient):
         page_size: int = 30,
     ) -> Dict:
         """
-        获取博主的笔记
+        Get blogger's notes
         Args:
-            creator: 博主ID
-            cursor: 上一页最后一条笔记的ID
-            page_size: 分页数据长度
+            creator: blogger ID
+            cursor: ID of the last note on the previous page
+            page_size: pagination data length
 
         Returns:
 
@@ -507,11 +507,11 @@ class XiaoHongShuClient(AbstractApiClient):
         callback: Optional[Callable] = None,
     ) -> List[Dict]:
         """
-        获取指定用户下的所有发过的帖子，该方法会一直查找一个用户下的所有帖子信息
+        Get all posts posted by the specified user, this method will keep finding all post info under a user
         Args:
-            user_id: 用户ID
-            crawl_interval: 爬取一次的延迟单位（秒）
-            callback: 一次分页爬取结束后的更新回调函数
+            user_id: User ID
+            crawl_interval: scraping interval unit (seconds)
+            callback: update callback function after one pagination scraping ends
 
         Returns:
 
@@ -558,9 +558,9 @@ class XiaoHongShuClient(AbstractApiClient):
 
     async def get_note_short_url(self, note_id: str) -> Dict:
         """
-        获取笔记的短链接
+        Get note short URL
         Args:
-            note_id: 笔记ID
+            note_id: Note ID
 
         Returns:
 
@@ -578,7 +578,7 @@ class XiaoHongShuClient(AbstractApiClient):
         enable_cookie: bool = False,
     ) -> Optional[Dict]:
         """
-        通过解析网页版的笔记详情页HTML，获取笔记详情, 该接口可能会出现失败的情况，这里尝试重试3次
+        Get note detail by parsing web version note detail page HTML, this interface might fail, retry 3 times here
         copy from https://github.com/ReaJason/xhs/blob/eb1c5a0213f6fbb592f0a2897ee552847c69ea2d/xhs/core.py#L217-L259
         thanks for ReaJason
         Args:

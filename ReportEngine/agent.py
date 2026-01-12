@@ -1,6 +1,6 @@
 """
-Report Agent主类
-整合所有模块，实现完整的报告生成流程
+Report Agent Main Class
+Integrates all modules to implement complete report generation flow
 """
 
 import json
@@ -19,33 +19,33 @@ from .utils.config import settings, Settings
 
 
 class FileCountBaseline:
-    """文件数量基准管理器"""
+    """File Count Baseline Manager"""
     
     def __init__(self):
         self.baseline_file = 'logs/report_baseline.json'
         self.baseline_data = self._load_baseline()
     
     def _load_baseline(self) -> Dict[str, int]:
-        """加载基准数据"""
+        """Load baseline data"""
         try:
             if os.path.exists(self.baseline_file):
                 with open(self.baseline_file, 'r', encoding='utf-8') as f:
                     return json.load(f)
         except Exception as e:
-            logger.exception(f"加载基准数据失败: {e}")
+            logger.exception(f"Failed to load baseline data: {e}")
         return {}
     
     def _save_baseline(self):
-        """保存基准数据"""
+        """Save baseline data"""
         try:
             os.makedirs(os.path.dirname(self.baseline_file), exist_ok=True)
             with open(self.baseline_file, 'w', encoding='utf-8') as f:
                 json.dump(self.baseline_data, f, ensure_ascii=False, indent=2)
         except Exception as e:
-            logger.exception(f"保存基准数据失败: {e}")
+            logger.exception(f"Failed to save baseline data: {e}")
     
     def initialize_baseline(self, directories: Dict[str, str]) -> Dict[str, int]:
-        """初始化文件数量基准"""
+        """Initialize file count baseline"""
         current_counts = {}
         
         for engine, directory in directories.items():
@@ -55,15 +55,15 @@ class FileCountBaseline:
             else:
                 current_counts[engine] = 0
         
-        # 保存基准数据
+        # Save baseline data
         self.baseline_data = current_counts.copy()
         self._save_baseline()
         
-        logger.info(f"文件数量基准已初始化: {current_counts}")
+        logger.info(f"File count baseline initialized: {current_counts}")
         return current_counts
     
     def check_new_files(self, directories: Dict[str, str]) -> Dict[str, Any]:
-        """检查是否有新文件"""
+        """Check for new files"""
         current_counts = {}
         new_files_found = {}
         all_have_new = True
@@ -93,7 +93,7 @@ class FileCountBaseline:
         }
     
     def get_latest_files(self, directories: Dict[str, str]) -> Dict[str, str]:
-        """获取每个目录的最新文件"""
+        """Get latest file in each directory"""
         latest_files = {}
         
         for engine, directory in directories.items():
@@ -107,53 +107,53 @@ class FileCountBaseline:
 
 
 class ReportAgent:
-    """Report Agent主类"""
+    """Report Agent Main Class"""
     
     def __init__(self, config: Optional[Settings] = None):
         """
-        初始化Report Agent
+        Initialize Report Agent
         
         Args:
-            config: 配置对象，如果不提供则自动加载
+            config: Config object, automatically loaded if not provided
         """
-        # 加载配置
+        # Load config
         self.config = config or settings
         
-        # 初始化文件基准管理器
+        # Initialize file baseline manager
         self.file_baseline = FileCountBaseline()
         
-        # 初始化日志
+        # Initialize logging
         self._setup_logging()
         
-        # 初始化LLM客户端
+        # Initialize LLM client
         self.llm_client = self._initialize_llm()
         
-        # 初始化节点
+        # Initialize nodes
         self._initialize_nodes()
         
-        # 初始化文件数量基准
+        # Initialize file count baseline
         self._initialize_file_baseline()
         
-        # 状态
+        # State
         self.state = ReportState()
         
-        # 确保输出目录存在
+        # Ensure output dir exists
         os.makedirs(settings.OUTPUT_DIR, exist_ok=True)
         
-        logger.info("Report Agent已初始化")
-        logger.info(f"使用LLM: {self.llm_client.get_model_info()}")
+        logger.info("Report Agent initialized")
+        logger.info(f"Using LLM: {self.llm_client.get_model_info()}")
         
     def _setup_logging(self):
-        """设置日志"""
-        # 确保日志目录存在
+        """Setup logging"""
+        # Ensure log directory exists
         log_dir = os.path.dirname(settings.LOG_FILE)
         os.makedirs(log_dir, exist_ok=True)
         
-        # 创建专用的logger，避免与其他模块冲突
+        # Create dedicated logger to avoid conflict with other modules
         logger.add(settings.LOG_FILE, level="INFO")
         
     def _initialize_file_baseline(self):
-        """初始化文件数量基准"""
+        """Initialize file count baseline"""
         directories = {
             'insight': 'insight_engine_streamlit_reports',
             'media': 'media_engine_streamlit_reports',
@@ -162,7 +162,7 @@ class ReportAgent:
         self.file_baseline.initialize_baseline(directories)
     
     def _initialize_llm(self) -> LLMClient:
-        """初始化LLM客户端"""
+        """Initialize LLM client"""
         return LLMClient(
             api_key=settings.REPORT_ENGINE_API_KEY,
             model_name=settings.REPORT_ENGINE_MODEL_NAME,
@@ -170,7 +170,7 @@ class ReportAgent:
         )
     
     def _initialize_nodes(self):
-        """初始化处理节点"""
+        """Initialize processing nodes"""
         self.template_selection_node = TemplateSelectionNode(
             self.llm_client,
             self.config.TEMPLATE_DIR
@@ -178,60 +178,63 @@ class ReportAgent:
         self.html_generation_node = HTMLGenerationNode(self.llm_client)
     
     def generate_report(self, query: str, reports: List[Any], forum_logs: str = "", 
-                       custom_template: str = "", save_report: bool = True) -> str:
+                       custom_template: str = "", save_report: bool = True, task_id: str = "") -> str:
         """
-        生成综合报告
+        Generate comprehensive report
         
         Args:
-            query: 原始查询
-            reports: 三个子agent的报告列表（按顺序：QueryEngine, MediaEngine, InsightEngine）
-            forum_logs: 论坛日志内容
-            custom_template: 用户自定义模板（可选）
-            save_report: 是否保存报告到文件
+            query: Original query
+            reports: List of reports from 3 sub-agents (Order: QueryEngine, MediaEngine, InsightEngine)
+            forum_logs: Forum log content
+            custom_template: User custom template (optional)
+            save_report: Whether to save report to file
             
         Returns:
-            最终HTML报告内容
+            Final HTML report content
         """
         start_time = datetime.now()
         
-        logger.info(f"开始生成报告: {query}")
-        self.logger.info(f"输入数据 - 报告数量: {len(reports)}, 论坛日志长度: {len(forum_logs)}")
+        logger.info(f"Start generating report: {query}")
+        logger.info(f"Input data - Report count: {len(reports)}, Forum log length: {len(forum_logs)}")
+        
+        # Initialize state metadata
+        self.state.metadata.query = query
         
         try:
-            # Step 1: 模板选择
+            # Step 1: Template Selection
             template_result = self._select_template(query, reports, forum_logs, custom_template)
             
-            # Step 2: 直接生成HTML报告
+            # Step 2: Directly Generate HTML Report
             html_report = self._generate_html_report(query, reports, forum_logs, template_result)
             
-            # Step 3: 保存报告
-            if save_report:
-                self._save_report(html_report)
-            
-            # 更新生成时间
+            # Update generation time
             end_time = datetime.now()
             generation_time = (end_time - start_time).total_seconds()
             self.state.metadata.generation_time = generation_time
             
-            logger.info(f"报告生成完成，耗时: {generation_time:.2f} 秒")
+            # Step 3: Save Report
+            if save_report:
+                self._save_report(html_report, task_id)
+            
+            logger.info(f"Report generation completed, took: {generation_time:.2f} seconds")
             
             return html_report
             
         except Exception as e:
-            logger.exception(f"报告生成过程中发生错误: {str(e)}")
+            logger.exception(f"Error during report generation: {str(e)}")
             raise e
     
     def _select_template(self, query: str, reports: List[Any], forum_logs: str, custom_template: str):
-        """选择报告模板"""
-        logger.info("选择报告模板...")
+        """Select report template"""
+        logger.info("Selecting report template...")
         
-        # 如果用户提供了自定义模板，直接使用
+        # If user provides custom template, use it directly
         if custom_template:
-            logger.info("使用用户自定义模板")
+            logger.info("Using user custom template")
             return {
                 'template_name': 'custom',
                 'template_content': custom_template,
-                'selection_reason': '用户指定的自定义模板'
+                'selection_reason': 'User specified custom template'
             }
         
         template_input = {
@@ -243,34 +246,34 @@ class ReportAgent:
         try:
             template_result = self.template_selection_node.run(template_input)
             
-            # 更新状态
+            # Update state
             self.state.metadata.template_used = template_result['template_name']
             
-            logger.info(f"选择模板: {template_result['template_name']}")
-            logger.info(f"选择理由: {template_result['selection_reason']}")
+            logger.info(f"Selected template: {template_result['template_name']}")
+            logger.info(f"Selection reason: {template_result['selection_reason']}")
             
             return template_result
         except Exception as e:
-            logger.error(f"模板选择失败，使用默认模板: {str(e)}")
-            # 直接使用备用模板
+            logger.error(f"Template selection failed, using default template: {str(e)}")
+            # Use fallback template directly
             fallback_template = {
-                'template_name': '社会公共热点事件分析报告模板',
+                'template_name': 'Social Public Hot Event Analysis Report Template',
                 'template_content': self._get_fallback_template_content(),
-                'selection_reason': '模板选择失败，使用默认社会热点事件分析模板'
+                'selection_reason': 'Template selection failed, using default social hot event analysis template'
             }
             self.state.metadata.template_used = fallback_template['template_name']
             return fallback_template
     
     def _generate_html_report(self, query: str, reports: List[Any], forum_logs: str, template_result: Dict[str, Any]) -> str:
-        """生成HTML报告"""
-        logger.info("多轮生成HTML报告...")
+        """Generate HTML Report"""
+        logger.info("Generating HTML report...")
         
-        # 准备报告内容，确保有3个报告
+        # Prepare report content, ensure 3 reports
         query_report = reports[0] if len(reports) > 0 else ""
         media_report = reports[1] if len(reports) > 1 else ""
         insight_report = reports[2] if len(reports) > 2 else ""
         
-        # 转换为字符串格式
+        # Convert to string format
         query_report = str(query_report) if query_report else ""
         media_report = str(media_report) if media_report else ""
         insight_report = str(insight_report) if insight_report else ""
@@ -284,130 +287,140 @@ class ReportAgent:
             'selected_template': template_result.get('template_content', '')
         }
         
-        # 使用HTML生成节点生成报告
+        # Use HTML generation node to generate report
         html_content = self.html_generation_node.run(html_input)
         
-        # 更新状态
+        # Update state
         self.state.html_content = html_content
         self.state.mark_completed()
         
-        logger.info("HTML报告生成完成")
+        logger.info("HTML report generation completed")
         return html_content
     
     def _get_fallback_template_content(self) -> str:
-        """获取备用模板内容"""
-        return """# 社会公共热点事件分析报告
+        """Get fallback template content"""
+        return """# Social Public Hot Event Analysis Report
 
-## 执行摘要
-本报告针对当前社会热点事件进行综合分析，整合了多方信息源的观点和数据。
+## Executive Summary
+This report analyzes current social hot events, integrating views and data from multiple sources.
 
-## 事件概况
-### 基本信息
-- 事件性质：{event_nature}
-- 发生时间：{event_time}
-- 涉及范围：{event_scope}
+## Event Overview
+### Basic Information
+- Nature of Event: {event_nature}
+- Time of Occurrence: {event_time}
+- Scope of Impact: {event_scope}
 
-## 舆情态势分析
-### 整体趋势
+## Public Opinion Analysis
+### Overall Trend
 {sentiment_analysis}
 
-### 主要观点分布
+### Distribution of Main Opinions
 {opinion_distribution}
 
-## 媒体报道分析
-### 主流媒体态度
+## Media Report Analysis
+### Mainstream Media Attitude
 {media_analysis}
 
-### 报道重点
+### Report Focus
 {report_focus}
 
-## 社会影响评估
-### 直接影响
+## Social Impact Assessment
+### Direct Impact
 {direct_impact}
 
-### 潜在影响
+### Potential Impact
 {potential_impact}
 
-## 应对建议
-### 即时措施
+## Response Suggestions
+### Immediate Measures
 {immediate_actions}
 
-### 长期策略
+### Long-term Strategy
 {long_term_strategy}
 
-## 结论与展望
+## Conclusion and Outlook
 {conclusion}
 
 ---
-*报告类型：社会公共热点事件分析*
-*生成时间：{generation_time}*
+*Report Type: Social Public Hot Event Analysis*
+*Generation Time: {generation_time}*
 """
     
-    def _save_report(self, html_content: str):
-        """保存报告到文件"""
-        # 生成文件名
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    def _save_report(self, html_content: str, task_id: str = ""):
+        """Save report to file"""
+        # Generate filename
+        if task_id:
+            # If task_id provided (e.g. report_1234567890), extract the timestamp part
+            timestamp = task_id.split('_')[-1]
+        else:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            
         query_safe = "".join(c for c in self.state.metadata.query if c.isalnum() or c in (' ', '-', '_')).rstrip()
         query_safe = query_safe.replace(' ', '_')[:30]
         
         filename = f"final_report_{query_safe}_{timestamp}.html"
         filepath = os.path.join(settings.OUTPUT_DIR, filename)
         
-        # 保存HTML报告
+        # Save HTML report
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(html_content)
         
-        logger.info(f"报告已保存到: {filepath}")
+        logger.info(f"Report saved to: {filepath}")
         
-        # 保存状态
+        # Save state
         state_filename = f"report_state_{query_safe}_{timestamp}.json"
         state_filepath = os.path.join(settings.OUTPUT_DIR, state_filename)
         self.state.save_to_file(state_filepath)
-        logger.info(f"状态已保存到: {state_filepath}")
+        logger.info(f"State saved to: {state_filepath}")
     
     def get_progress_summary(self) -> Dict[str, Any]:
-        """获取进度摘要"""
+        """Get progress summary"""
         return self.state.to_dict()
     
     def load_state(self, filepath: str):
-        """从文件加载状态"""
+        """Load state from file"""
         self.state = ReportState.load_from_file(filepath)
-        logger.info(f"状态已从 {filepath} 加载")
+        logger.info(f"State loaded from {filepath}")
     
     def save_state(self, filepath: str):
-        """保存状态到文件"""
+        """Save state to file"""
         self.state.save_to_file(filepath)
-        logger.info(f"状态已保存到 {filepath}")
+        logger.info(f"State saved to {filepath}")
     
     def check_input_files(self, insight_dir: str, media_dir: str, query_dir: str, forum_log_path: str) -> Dict[str, Any]:
         """
-        检查输入文件是否准备就绪（基于文件数量增加）
+        Check if input files are ready (based on file count increase)
         
         Args:
-            insight_dir: InsightEngine报告目录
-            media_dir: MediaEngine报告目录
-            query_dir: QueryEngine报告目录
-            forum_log_path: 论坛日志文件路径
+            insight_dir: InsightEngine report directory
+            media_dir: MediaEngine report directory
+            query_dir: QueryEngine report directory
+            forum_log_path: Forum log file path
             
         Returns:
-            检查结果字典
+            Check result dictionary
         """
-        # 检查各个报告目录的文件数量变化
+        # Check file count changes in each report directory
         directories = {
             'insight': insight_dir,
             'media': media_dir,
             'query': query_dir
         }
         
-        # 使用文件基准管理器检查新文件
+        # Use file baseline manager to check for new files
         check_result = self.file_baseline.check_new_files(directories)
         
-        # 检查论坛日志
+        # Check forum log
         forum_ready = os.path.exists(forum_log_path)
         
-        # 构建返回结果
+        # Build return result
+        # MODIFICATION: If new files are found, use them. If not, but files exist in all directories,
+        # assume we want to use the latest existing files (e.g. restart case).
+        all_engines_have_files = all(count > 0 for count in check_result['current_counts'].values())
+        files_ready = check_result['ready'] or all_engines_have_files
+        
         result = {
-            'ready': check_result['ready'] and forum_ready,
+            'ready': files_ready and forum_ready,
             'baseline_counts': check_result['baseline_counts'],
             'current_counts': check_result['current_counts'],
             'new_files_found': check_result['new_files_found'],
@@ -416,46 +429,51 @@ class ReportAgent:
             'latest_files': {}
         }
         
-        # 构建详细信息
+        # Build detailed information
         for engine, new_count in check_result['new_files_found'].items():
             current_count = check_result['current_counts'][engine]
             baseline_count = check_result['baseline_counts'].get(engine, 0)
             
             if new_count > 0:
-                result['files_found'].append(f"{engine}: {current_count}个文件 (新增{new_count}个)")
+                result['files_found'].append(f"{engine}: {current_count} files (New {new_count})")
             else:
-                result['missing_files'].append(f"{engine}: {current_count}个文件 (基准{baseline_count}个，无新增)")
+                result['missing_files'].append(f"{engine}: {current_count} files (Baseline {baseline_count}, No new files)")
         
-        # 检查论坛日志
+        # Check forum log
         if forum_ready:
             result['files_found'].append(f"forum: {os.path.basename(forum_log_path)}")
         else:
-            result['missing_files'].append("forum: 日志文件不存在")
+            # Forum log is optional, so we treat it as "missing but not blocking"
+            result['missing_files'].append("forum: Log file does not exist (Optional)")
         
-        # 获取最新文件路径（用于实际报告生成）
-        if result['ready']:
+        # Get latest file paths (for actual report generation)
+        # Note: Forum readiness shouldn't block report readiness
+        if files_ready:
+            result['ready'] = True
             result['latest_files'] = self.file_baseline.get_latest_files(directories)
             if forum_ready:
                 result['latest_files']['forum'] = forum_log_path
+        else:
+            result['ready'] = False
         
         return result
     
     def load_input_files(self, file_paths: Dict[str, str]) -> Dict[str, Any]:
         """
-        加载输入文件内容
+        Load input file content
         
         Args:
-            file_paths: 文件路径字典
+            file_paths: File path dictionary
             
         Returns:
-            加载的内容字典
+            Loaded content dictionary
         """
         content = {
             'reports': [],
             'forum_logs': ''
         }
         
-        # 加载报告文件
+        # Load report files
         engines = ['query', 'media', 'insight']
         for engine in engines:
             if engine in file_paths:
@@ -463,33 +481,33 @@ class ReportAgent:
                     with open(file_paths[engine], 'r', encoding='utf-8') as f:
                         report_content = f.read()
                     content['reports'].append(report_content)
-                    logger.info(f"已加载 {engine} 报告: {len(report_content)} 字符")
+                    logger.info(f"Loaded {engine} report: {len(report_content)} chars")
                 except Exception as e:
-                    logger.exception(f"加载 {engine} 报告失败: {str(e)}")
+                    logger.exception(f"Failed to load {engine} report: {str(e)}")
                     content['reports'].append("")
         
-        # 加载论坛日志
+        # Load forum logs
         if 'forum' in file_paths:
             try:
                 with open(file_paths['forum'], 'r', encoding='utf-8') as f:
                     content['forum_logs'] = f.read()
-                logger.info(f"已加载论坛日志: {len(content['forum_logs'])} 字符")
+                logger.info(f"Loaded forum logs: {len(content['forum_logs'])} chars")
             except Exception as e:
-                logger.exception(f"加载论坛日志失败: {str(e)}")
+                logger.exception(f"Failed to load forum logs: {str(e)}")
         
         return content
 
 
 def create_agent(config_file: Optional[str] = None) -> ReportAgent:
     """
-    创建Report Agent实例的便捷函数
+    Convenience function to create Report Agent instance
     
     Args:
-        config_file: 配置文件路径
+        config_file: Config file path
         
     Returns:
-        ReportAgent实例
+        ReportAgent instance
     """
     
-    config = Settings() # 以空配置初始化，而从从环境变量初始化
+    config = Settings() # Initialize with empty config, load from environment variables
     return ReportAgent(config)

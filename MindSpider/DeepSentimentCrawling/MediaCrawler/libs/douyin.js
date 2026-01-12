@@ -243,23 +243,23 @@ function generate_rc4_bb_str(url_search_params, user_agent, window_env_str, suff
     let sm3 = new SM3()
     let start_time = Date.now()
     /**
-     * 进行3次加密处理
-     * 1: url_search_params两次sm3之的结果
-     * 2: 对后缀两次sm3之的结果
-     * 3: 对ua处理之后的结果
+     * Perform 3 encryption processes
+     * 1: Result of two sm3 encryptions of url_search_params
+     * 2: Result of two sm3 encryptions of the suffix
+     * 3: Result after processing ua
      */
-        // url_search_params两次sm3之的结果
+        // Result of two sm3 encryptions of url_search_params
     let url_search_params_list = sm3.sum(sm3.sum(url_search_params + suffix))
-    // 对后缀两次sm3之的结果
+    // Result of two sm3 encryptions of the suffix
     let cus = sm3.sum(sm3.sum(suffix))
-    // 对ua处理之后的结果
+    // Result after processing ua
     let ua = sm3.sum(result_encrypt(rc4_encrypt(user_agent, String.fromCharCode.apply(null, [0.00390625, 1, Arguments[2]])), "s3"))
     //
     let end_time = Date.now()
     // b
     let b = {
-        8: 3, // 固定
-        10: end_time, //3次加密结束时间
+        8: 3, // Fixed
+        10: end_time, // 3rd encryption end time
         15: {
             "aid": 6383,
             "pageId": 6241,
@@ -285,12 +285,12 @@ function generate_rc4_bb_str(url_search_params, user_agent, window_env_str, suff
             "dump": true,
             "rpU": ""
         },
-        16: start_time, //3次加密开始时间
-        18: 44, //固定
+        16: start_time, // 3rd encryption start time
+        18: 44, // Fixed
         19: [1, 0, 1, 5],
     }
 
-    //3次加密开始时间
+    // 3rd encryption start time
     b[20] = (b[16] >> 24) & 255
     b[21] = (b[16] >> 16) & 255
     b[22] = (b[16] >> 8) & 255
@@ -298,7 +298,7 @@ function generate_rc4_bb_str(url_search_params, user_agent, window_env_str, suff
     b[24] = (b[16] / 256 / 256 / 256 / 256) >> 0
     b[25] = (b[16] / 256 / 256 / 256 / 256 / 256) >> 0
 
-    // 参数Arguments [0, 1, 14, ...]
+    // Arguments [0, 1, 14, ...]
     // let Arguments = [0, 1, 14]
     b[26] = (Arguments[0] >> 24) & 255
     b[27] = (Arguments[0] >> 16) & 255
@@ -315,7 +315,7 @@ function generate_rc4_bb_str(url_search_params, user_agent, window_env_str, suff
     b[36] = (Arguments[2] >> 8) & 255
     b[37] = Arguments[2] & 255
 
-    // (url_search_params + "cus") 两次sm3之的结果
+    // Result of two sm3 encryptions of (url_search_params + "cus")
     /**let url_search_params_list = [
      91, 186,  35,  86, 143, 253,   6,  76,
      34,  21, 167, 148,   7,  42, 192, 219,
@@ -325,7 +325,7 @@ function generate_rc4_bb_str(url_search_params, user_agent, window_env_str, suff
     b[38] = url_search_params_list[21]
     b[39] = url_search_params_list[22]
 
-    // ("cus") 对后缀两次sm3之的结果
+    // Result of two sm3 encryptions of ("cus")
     /**
      * let cus = [
      136, 101, 114, 147,  58,  77, 207, 201,
@@ -336,7 +336,7 @@ function generate_rc4_bb_str(url_search_params, user_agent, window_env_str, suff
     b[40] = cus[21]
     b[41] = cus[22]
 
-    // 对ua处理之后的结果
+    // Result after processing ua
     /**
      * let ua = [
      129, 190,  70, 186,  86, 196, 199,  53,
@@ -347,7 +347,7 @@ function generate_rc4_bb_str(url_search_params, user_agent, window_env_str, suff
     b[42] = ua[23]
     b[43] = ua[24]
 
-    //3次加密结束时间
+    // 3rd encryption end time
     b[44] = (b[10] >> 24) & 255
     b[45] = (b[10] >> 16) & 255
     b[46] = (b[10] >> 8) & 255
@@ -357,7 +357,7 @@ function generate_rc4_bb_str(url_search_params, user_agent, window_env_str, suff
     b[50] = (b[10] / 256 / 256 / 256 / 256 / 256) >> 0
 
 
-    // object配置项
+    // object configuration items
     b[51] = b[15]['pageId']
     b[52] = (b[15]['pageId'] >> 24) & 255
     b[53] = (b[15]['pageId'] >> 16) & 255
@@ -370,9 +370,9 @@ function generate_rc4_bb_str(url_search_params, user_agent, window_env_str, suff
     b[59] = (b[15]['aid'] >> 16) & 255
     b[60] = (b[15]['aid'] >> 24) & 255
 
-    // 中间进行了环境检测
-    // 代码索引:  2496 索引值:  17 （索引64关键条件）
-    // '1536|747|1536|834|0|30|0|0|1536|834|1536|864|1525|747|24|24|Win32'.charCodeAt()得到65位数组
+    // Environment check was performed in between
+    // Code index: 2496 Index value: 17 (Index 64 key condition)
+    // '1536|747|1536|834|0|30|0|0|1536|834|1536|864|1525|747|24|24|Win32'.charCodeAt() yields a 65-element array
     /**
      * let window_env_list = [49, 53, 51, 54, 124, 55, 52, 55, 124, 49, 53, 51, 54, 124, 56, 51, 52, 124, 48, 124, 51,
      * 48, 124, 48, 124, 48, 124, 49, 53, 51, 54, 124, 56, 51, 52, 124, 49, 53, 51, 54, 124, 56,
@@ -411,7 +411,7 @@ function generate_random_str() {
     return String.fromCharCode.apply(null, random_str_list)
 }
 
-function sign(url_search_params, user_agent, arguments) {
+function sign(url_search_params, user_agent, args) {
     /**
      * url_search_params："device_platform=webapp&aid=6383&channel=channel_pc_web&update_version_code=170400&pc_client_type=1&version_code=170400&version_name=17.4.0&cookie_enabled=true&screen_width=1536&screen_height=864&browser_language=zh-CN&browser_platform=Win32&browser_name=Chrome&browser_version=123.0.0.0&browser_online=true&engine_name=Blink&engine_version=123.0.0.0&os_name=Windows&os_version=10&cpu_core_num=16&device_memory=8&platform=PC&downlink=10&effective_type=4g&round_trip_time=50&webid=7362810250930783783&msToken=VkDUvz1y24CppXSl80iFPr6ez-3FiizcwD7fI1OqBt6IICq9RWG7nCvxKb8IVi55mFd-wnqoNkXGnxHrikQb4PuKob5Q-YhDp5Um215JzlBszkUyiEvR"
      * user_agent："Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
@@ -421,7 +421,7 @@ function sign(url_search_params, user_agent, arguments) {
         user_agent,
         "1536|747|1536|834|0|30|0|0|1536|834|1536|864|1525|747|24|24|Win32",
         "cus",
-        arguments
+        args
     );
     return result_encrypt(result_str, "s4") + "=";
 }

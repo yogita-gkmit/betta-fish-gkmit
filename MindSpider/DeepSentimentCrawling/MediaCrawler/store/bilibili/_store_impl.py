@@ -1,18 +1,18 @@
-# 声明：本代码仅供学习和研究目的使用。使用者应遵守以下原则：
-# 1. 不得用于任何商业用途。
-# 2. 使用时应遵守目标平台的使用条款和robots.txt规则。
-# 3. 不得进行大规模爬取或对平台造成运营干扰。
-# 4. 应合理控制请求频率，避免给目标平台带来不必要的负担。
-# 5. 不得用于任何非法或不当的用途。
+# Disclaimer: This code is for educational and research purposes only. Users must adhere to the following principles:
+# 1. Not for any commercial use.
+# 2. Comply with the target platform's terms of service and robots.txt.
+# 3. Do not perform large-scale scraping or disrupt platform operations.
+# 4. Reasonably control request frequency to avoid unnecessary burden on the target platform.
+# 5. Not for any illegal or improper purposes.
 #
-# 详细许可条款请参阅项目根目录下的LICENSE文件。
-# 使用本代码即表示您同意遵守上述原则和LICENSE中的所有条款。
+# For detailed license terms, please refer to the LICENSE file in the project root directory.
+# Using this code indicates your agreement to the above principles and all terms in the LICENSE.
 
 
 # -*- coding: utf-8 -*-
 # @Author  : persist1@126.com
 # @Time    : 2025/9/5 19:34
-# @Desc    : B站存储实现类
+# @Desc    : Bilibili storage implementation class
 import asyncio
 import csv
 import json
@@ -119,7 +119,7 @@ class BiliDbStoreImplement(AbstractStore):
             content_item: content item dict
         """
         video_id = content_item.get("video_id")
-        # 确保 video_id 为整数类型，匹配数据库 BigInteger 字段
+        # Ensure video_id is integer type, matching BigInteger field in database
         if video_id is not None:
             video_id = int(video_id) if not isinstance(video_id, int) else video_id
         async with get_session() as session:
@@ -142,7 +142,7 @@ class BiliDbStoreImplement(AbstractStore):
             comment_item: comment item dict
         """
         comment_id = comment_item.get("comment_id")
-        # 确保 comment_id 为整数类型，匹配数据库 BigInteger 字段
+        # Ensure comment_id is integer type, matching BigInteger field in database
         if comment_id is not None:
             comment_id = int(comment_id) if not isinstance(comment_id, int) else comment_id
         async with get_session() as session:
@@ -165,7 +165,7 @@ class BiliDbStoreImplement(AbstractStore):
             creator: creator item dict
         """
         creator_id = creator.get("user_id")
-        # 确保 creator_id 为整数类型，匹配数据库 BigInteger 字段
+        # Ensure creator_id is integer type, matching BigInteger field in database
         if creator_id is not None:
             creator_id = int(creator_id) if not isinstance(creator_id, int) else creator_id
         async with get_session() as session:
@@ -189,7 +189,7 @@ class BiliDbStoreImplement(AbstractStore):
         """
         up_id = contact_item.get("up_id")
         fan_id = contact_item.get("fan_id")
-        # 确保 up_id 和 fan_id 为整数类型，匹配数据库 BigInteger 字段
+        # Ensure up_id and fan_id are integer types, matching BigInteger field in database
         if up_id is not None:
             up_id = int(up_id) if not isinstance(up_id, int) else up_id
         if fan_id is not None:

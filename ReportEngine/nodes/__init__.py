@@ -1,6 +1,6 @@
 """
-Report Engine节点处理模块
-实现报告生成的各个处理步骤
+Report Engine Node Processing Module
+Implements various processing steps for report generation
 """
 
 from .base_node import BaseNode, StateMutationNode
